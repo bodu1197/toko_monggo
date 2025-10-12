@@ -1,0 +1,163 @@
+.product-card {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+  position: relative;
+  width: 100%;
+  height: 220px; /* 높이 220px로 고정 */
+  /* padding-top: 100%; */ /* 1:1 Aspect Ratio 제거 */
+  background-color: #f3f4f6; /* gray-100 */
+}
+
+.product-img {
+  object-fit: cover;
+}
+
+.product-no-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af; /* gray-400 */
+  font-size: 14px;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.favorite-btn:hover {
+  background-color: #fff;
+}
+
+.favorite-btn svg {
+  width: 20px;
+  height: 20px;
+  color: #9ca3af; /* gray-400 */
+}
+
+.product-status {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.product-status.active {
+    background-color: #10b981; /* emerald-500 */
+}
+
+.product-info {
+  padding: 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1f2937; /* 원래 배경색으로 변경 */
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff; /* 흰색으로 변경 */
+  margin: 0 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #10b981; /* emerald-500 - 유지 */
+  margin: 0 0 8px;
+}
+
+.product-location {
+  font-size: 13px;
+  color: #d1d5db; /* 밝은 회색으로 변경 */
+  margin: 0 0 12px;
+}
+
+.product-condition {
+    display: inline-block;
+    /* background-color: #4b5563; */ /* 배경색 제거 */
+    color: #fff; /* 흰색 텍스트 */
+    /* padding: 3px 8px; */ /* 패딩 제거 */
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: auto; /* Pushes it to the bottom */
+}
+
+.product-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db; /* gray-300 */
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+    background-color: #f9fafb; /* gray-50 */
+}
+
+.action-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.edit-btn {
+    color: #3b82f6; /* blue-500 */
+}
+
+.delete-btn {
+    color: #ef4444; /* red-500 */
+}

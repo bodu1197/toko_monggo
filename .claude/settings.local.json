@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.olx.co.id)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
