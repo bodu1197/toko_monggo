@@ -1,9 +1,6 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import getSupabaseClient from './lib/supabase/client';
 import { INDONESIA_REGIONS } from './data/regions';
 import { CATEGORIES, getCategoryIcon } from './data/categories';
 import Footer from './components/Footer';
@@ -12,10 +9,11 @@ import './page.css';
 import { useScreenSize } from './hooks/useScreenSize';
 import LoadingState from './components/common/LoadingState';
 import ProductCard from './components/products/ProductCard';
+import { useSupabaseClient } from './components/SupabaseClientProvider';
 
 export default function HomePage() {
   const router = useRouter();
-  const supabase = getSupabaseClient(); // Get the client instance here
+  const supabase = useSupabaseClient(); // Get the client instance here
   const isMobile = useScreenSize();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -45,9 +43,9 @@ export default function HomePage() {
   useEffect(() => {
     // 초기에는 일반 상품 로드
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
 
-  const tryGetLocationAndFetch = () => {
+  const tryGetLocationAndFetch = useCallback(() => {
     if (!navigator.geolocation) {
       // Geolocation 미지원 - 일반 상품 로드
       setLocationStatus('denied');
@@ -77,9 +75,9 @@ export default function HomePage() {
         maximumAge: 300000, // 5분 캐시
       }
     );
-  };
+  }, [fetchProducts, fetchNearbyProducts]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -129,9 +127,9 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, setLoading, setProducts, setFilteredProducts]);
 
-  const fetchNearbyProducts = async (lat, lng) => {
+  const fetchNearbyProducts = useCallback(async (lat, lng) => {
     try {
       setLoading(true);
 
@@ -199,7 +197,7 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, setLoading, setProducts, setFilteredProducts, setFilters, fetchProducts]);
 
   const handleNearbyClick = () => {
     if (userLocation) {
@@ -288,7 +286,7 @@ export default function HomePage() {
   };
 
   // 검색 함수
-  const searchProducts = async (query) => {
+  const searchProducts = useCallback(async (query) => {
     if (!query || query.trim().length < 2) {
       // 검색어가 없으면 기본 상품 로드
       if (userLocation) {
@@ -375,10 +373,10 @@ export default function HomePage() {
     } finally {
       setIsSearching(false);
     }
-  };
+  }, [supabase, userLocation, fetchNearbyProducts, fetchProducts, setIsSearching, setProducts, setFilteredProducts]);
 
   // 자동완성 함수
-  const fetchAutocompleteSuggestions = async (query) => {
+  const fetchAutocompleteSuggestions = useCallback(async (query) => {
     if (!query || query.trim().length < 2) {
       setSearchSuggestions([]);
       setShowSuggestions(false);
@@ -402,7 +400,7 @@ export default function HomePage() {
       console.error('Autocomplete error:', error);
       setSearchSuggestions([]);
     }
-  };
+  }, [supabase, setSearchSuggestions, setShowSuggestions]);
 
   // 검색 입력 핸들러 (debouncing)
   useEffect(() => {
@@ -416,7 +414,7 @@ export default function HomePage() {
     }, 300); // 300ms debounce
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, fetchAutocompleteSuggestions]);
 
   // 검색 실행 핸들러
   const handleSearch = (e) => {

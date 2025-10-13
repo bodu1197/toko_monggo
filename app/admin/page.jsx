@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Image } from 'next/image'; // Added for image optimization
-import getSupabaseClient from '../lib/supabase/client';
 import './admin.css';
 
 import { useScreenSize } from '../hooks/useScreenSize';
 import LoadingState from '../components/common/LoadingState';
 import { useAuth } from '../hooks/useAuth'; // useAuth 훅 import
+import { useSupabaseClient } from '../components/SupabaseClientProvider';
 
 export default function AdminPage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth({ redirectTo: '/login' }); // useAuth 훅 적용
-  const supabase = getSupabaseClient(); // Get the client instance here
+  const supabase = useSupabaseClient(); // Get the client instance here
   const [isAuthorized, setIsAuthorized] = useState(false); // 관리자 권한 확인을 위해 유지
   const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, users, products, access
   const isMobile = useScreenSize();
@@ -76,11 +76,11 @@ export default function AdminPage() {
         // 로그인하지 않음 (useAuth에서 이미 /login으로 리디렉션)
       }
     }
-  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, fetchRegionalStats, router]);
+  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, fetchRegionalStats, fetchDashboardStats, fetchUsers, fetchProducts, router]);
 
   // ... (fetchDashboardStats, fetchUsers, fetchProducts, fetchReports 등 기존 함수들은 유지) ...
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardStats = useCallback(async () => {
     try {
       // Total users
       const { count: usersCount } = await supabase
@@ -113,9 +113,9 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     }
-  };
+  }, [supabase, setStats]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -131,9 +131,9 @@ export default function AdminPage() {
       setUsers([]);
       setFilteredUsers([]);
     }
-  };
+  }, [supabase, setUsers, setFilteredUsers]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       console.log('[Admin] Fetching products...');
 
@@ -197,7 +197,7 @@ export default function AdminPage() {
       setProducts([]);
       setFilteredProducts([]);
     }
-  };
+  }, [supabase, setProducts, setFilteredProducts]);
 
   const fetchReports = useCallback(async () => {
     try {
@@ -235,7 +235,7 @@ export default function AdminPage() {
       setReports([]);
       setFilteredReports([]);
     }
-  }, [supabase, setReports, filterReports, reportFilter, reports]);
+  }, [supabase, setReports, filterReports, reportFilter]);
 
   const filterReports = (filter, reportsData = reports) => {
     if (filter === 'all') {
@@ -357,6 +357,84 @@ export default function AdminPage() {
   };
 
   const fetchAccessStats = useCallback(async () => {
+    const processHourlyStats = (logs) => {
+      const now = new Date();
+      const hourlyData = [];
+
+      for (let i = 23; i >= 0; i--) {
+        const hour = new Date(now);
+        hour.setHours(hour.getHours() - i);
+        const hourStr = hour.getHours().toString().padStart(2, '0') + ':00';
+
+        const count = logs.filter(log => {
+          const logDate = new Date(log.created_at);
+          return logDate.getHours() === hour.getHours() &&
+                 logDate.getDate() === hour.getDate();
+        }).length;
+
+        hourlyData.push({ label: hourStr, count });
+      }
+
+      return hourlyData;
+    };
+
+    const processDailyStats = (logs) => {
+      const now = new Date();
+      const dailyData = [];
+
+      for (let i = 29; i >= 0; i--) {
+        const day = new Date(now);
+        day.setDate(day.getDate() - i);
+        const dayStr = `${day.getDate()}/${day.getMonth() + 1}`;
+
+        const count = logs.filter(log => {
+          const logDate = new Date(log.created_at);
+          return logDate.getDate() === day.getDate() &&
+                 logDate.getMonth() === day.getMonth() &&
+                 logDate.getFullYear() === day.getFullYear();
+        }).length;
+
+        dailyData.push({ label: dayStr, count });
+      }
+
+      return dailyData;
+    };
+
+    const processMonthlyStats = (logs) => {
+      const now = new Date();
+      const monthlyData = [];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+      for (let i = 11; i >= 0; i--) {
+        const month = new Date(now);
+        month.setMonth(month.getMonth() - i);
+        const monthStr = months[month.getMonth()];
+
+        const count = logs.filter(log => {
+          const logDate = new Date(log.created_at);
+          return logDate.getMonth() === month.getMonth() &&
+                 logDate.getFullYear() === month.getFullYear();
+        }).length;
+
+        monthlyData.push({ label: monthStr, count });
+      }
+
+      return monthlyData;
+    };
+
+    const processYearlyStats = (logs) => {
+      const yearCounts = {};
+
+      logs.forEach(log => {
+        const year = new Date(log.created_at).getFullYear();
+        yearCounts[year] = (yearCounts[year] || 0) + 1;
+      });
+
+      return Object.entries(yearCounts)
+        .map(([year, count]) => ({ label: year, count }))
+        .sort((a, b) => a.label - b.label);
+    };
+
     try {
       // Fetch access logs (assuming access_logs table exists)
       const { data, error } = await supabase
@@ -387,7 +465,7 @@ export default function AdminPage() {
       // Set empty data if table doesn't exist
       setAccessStats({ hourly: [], daily: [], monthly: [], yearly: [] });
     }
-  }, [supabase, setAccessStats, processHourlyStats, processDailyStats, processMonthlyStats, processYearlyStats]);
+  }, [supabase, setAccessStats]);
 
   const fetchRegionalStats = useCallback(async () => {
     try {
@@ -425,84 +503,6 @@ export default function AdminPage() {
       setRegionalStats([]);
     }
   }, [supabase, setRegionalStats]);
-
-  const processHourlyStats = (logs) => {
-    const now = new Date();
-    const hourlyData = [];
-
-    for (let i = 23; i >= 0; i--) {
-      const hour = new Date(now);
-      hour.setHours(hour.getHours() - i);
-      const hourStr = hour.getHours().toString().padStart(2, '0') + ':00';
-
-      const count = logs.filter(log => {
-        const logDate = new Date(log.created_at);
-        return logDate.getHours() === hour.getHours() &&
-               logDate.getDate() === hour.getDate();
-      }).length;
-
-      hourlyData.push({ label: hourStr, count });
-    }
-
-    return hourlyData;
-  };
-
-  const processDailyStats = (logs) => {
-    const now = new Date();
-    const dailyData = [];
-
-    for (let i = 29; i >= 0; i--) {
-      const day = new Date(now);
-      day.setDate(day.getDate() - i);
-      const dayStr = `${day.getDate()}/${day.getMonth() + 1}`;
-
-      const count = logs.filter(log => {
-        const logDate = new Date(log.created_at);
-        return logDate.getDate() === day.getDate() &&
-               logDate.getMonth() === day.getMonth() &&
-               logDate.getFullYear() === day.getFullYear();
-      }).length;
-
-      dailyData.push({ label: dayStr, count });
-    }
-
-    return dailyData;
-  };
-
-  const processMonthlyStats = (logs) => {
-    const now = new Date();
-    const monthlyData = [];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-
-    for (let i = 11; i >= 0; i--) {
-      const month = new Date(now);
-      month.setMonth(month.getMonth() - i);
-      const monthStr = months[month.getMonth()];
-
-      const count = logs.filter(log => {
-        const logDate = new Date(log.created_at);
-        return logDate.getMonth() === month.getMonth() &&
-               logDate.getFullYear() === month.getFullYear();
-      }).length;
-
-      monthlyData.push({ label: monthStr, count });
-    }
-
-    return monthlyData;
-  };
-
-  const processYearlyStats = (logs) => {
-    const yearCounts = {};
-
-    logs.forEach(log => {
-      const year = new Date(log.created_at).getFullYear();
-      yearCounts[year] = (yearCounts[year] || 0) + 1;
-    });
-
-    return Object.entries(yearCounts)
-      .map(([year, count]) => ({ label: year, count }))
-      .sort((a, b) => a.label - b.label);
-  };
 
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
