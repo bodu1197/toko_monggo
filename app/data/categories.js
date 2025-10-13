@@ -26,7 +26,7 @@ export const CATEGORIES = {
   },
   'Handphone & Gadget': {
     icon: '📱',
-    subcategories: ['Handphone', 'Tablet', 'Smartwatch', 'Aksesoris Handphone', 'Power Bank']
+    subcategories: ['Handphone', 'Laptop & Komputer', 'Kamera', 'Audio & Headphone', 'Tablet & iPad']
   },
   'Fashion': {
     icon: '👕',

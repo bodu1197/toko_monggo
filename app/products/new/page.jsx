@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
 import { INDONESIA_REGIONS } from '../../data/regions';
-import { CATEGORIES, getSubcategories } from '../../data/categories';
 import { compressImages, formatFileSize } from '../../utils/imageCompression';
 import './new.css';
 
@@ -35,9 +34,54 @@ export default function NewProductPage() {
 
   // Dropdown states
   const [cities, setCities] = useState([]);
+  const [mainCategories, setMainCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [images, setImages] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
+
+  // Load main categories from DB
+  const loadMainCategories = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('parent_category')
+        .not('parent_category', 'is', null);
+
+      if (error) throw error;
+
+      // Get unique parent categories
+      const uniqueParents = [...new Set(data.map(cat => cat.parent_category))].sort();
+      setMainCategories(uniqueParents);
+      console.log('[New] 📂 Loaded main categories from DB:', uniqueParents);
+    } catch (error) {
+      console.error('Error loading main categories:', error);
+    }
+  }, [supabase]);
+
+  // Load subcategories for a parent category from DB
+  const loadSubcategories = useCallback(async (parentCategory) => {
+    if (!parentCategory) {
+      setSubcategories([]);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('name')
+        .eq('parent_category', parentCategory)
+        .order('name');
+
+      if (error) throw error;
+
+      const subs = data.map(cat => cat.name);
+      setSubcategories(subs);
+      console.log('[New] 📂 Loaded subcategories for', parentCategory, ':', subs);
+    } catch (error) {
+      console.error('Error loading subcategories:', error);
+      setSubcategories([]);
+    }
+  }, [supabase]);
 
   const checkUser = useCallback(async () => {
     try {
@@ -52,11 +96,12 @@ export default function NewProductPage() {
       console.error('Error checking user:', error);
       router.push('/login');
     }
-  }, [supabase, router, setUser]);
+  }, [supabase, router]);
 
   useEffect(() => {
+    loadMainCategories();
     checkUser();
-  }, [checkUser]);
+  }, [loadMainCategories, checkUser]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -70,7 +115,7 @@ export default function NewProductPage() {
 
     // 카테고리 1차 선택 시 2차 업데이트
     if (name === 'category1') {
-      setSubcategories(getSubcategories(value));
+      loadSubcategories(value);
       setFormData(prev => ({ ...prev, category1: value, category2: '' }));
       return;
     }
@@ -179,12 +224,18 @@ export default function NewProductPage() {
         .eq('province_id', provinceData?.province_id)
         .single();
 
-      // 2. Get category_id
-      const { data: categoryData } = await supabase
+      // 2. Get category_id (search by both name and parent_category)
+      const { data: categoryData, error: categoryError } = await supabase
         .from('categories')
         .select('category_id')
         .eq('name', formData.category2)
+        .eq('parent_category', formData.category1)
         .single();
+
+      if (categoryError) {
+        console.error('[New] ❌ Category lookup failed:', categoryError);
+        throw new Error(`카테고리를 찾을 수 없습니다: ${formData.category2} (${formData.category1})`);
+      }
 
       // 3. Create product (위치 정보 및 연락처 포함)
       const { data: product, error: productError } = await supabase
@@ -357,7 +408,7 @@ export default function NewProductPage() {
                   className="form-input"
                 >
                   <option value="">Pilih Kategori</option>
-                  {Object.keys(CATEGORIES).map(cat => (
+                  {mainCategories.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>

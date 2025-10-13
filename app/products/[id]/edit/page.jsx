@@ -5,7 +5,6 @@ import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { createBrowserClient } from '@supabase/ssr';
 import { INDONESIA_REGIONS } from '../../../data/regions';
-import { CATEGORIES, getSubcategories, normalizeCategoryName } from '../../../data/categories';
 import { compressImages, formatFileSize } from '../../../utils/imageCompression';
 import '../../new/new.css';
 
@@ -39,6 +38,7 @@ export default function EditProductPage() {
 
   // Dropdown states
   const [cities, setCities] = useState([]);
+  const [mainCategories, setMainCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
 
   // Existing images from database
@@ -48,6 +48,50 @@ export default function EditProductPage() {
   // New images to upload
   const [newImages, setNewImages] = useState([]);
   const [newImageFiles, setNewImageFiles] = useState([]);
+
+  // Load main categories from DB
+  const loadMainCategories = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('parent_category')
+        .not('parent_category', 'is', null);
+
+      if (error) throw error;
+
+      // Get unique parent categories
+      const uniqueParents = [...new Set(data.map(cat => cat.parent_category))].sort();
+      setMainCategories(uniqueParents);
+      console.log('[Edit] 📂 Loaded main categories from DB:', uniqueParents);
+    } catch (error) {
+      console.error('Error loading main categories:', error);
+    }
+  }, [supabase]);
+
+  // Load subcategories for a parent category from DB
+  const loadSubcategories = useCallback(async (parentCategory) => {
+    if (!parentCategory) {
+      setSubcategories([]);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('name')
+        .eq('parent_category', parentCategory)
+        .order('name');
+
+      if (error) throw error;
+
+      const subs = data.map(cat => cat.name);
+      setSubcategories(subs);
+      console.log('[Edit] 📂 Loaded subcategories for', parentCategory, ':', subs);
+    } catch (error) {
+      console.error('Error loading subcategories:', error);
+      setSubcategories([]);
+    }
+  }, [supabase]);
 
   const checkUserAndLoadProduct = useCallback(async () => {
     try {
@@ -110,55 +154,21 @@ export default function EditProductPage() {
       console.log('[Edit] Product ID:', productData.id);
       console.log('[Edit] Product title:', productData.title);
 
-      // Get category hierarchy
+      // Get category hierarchy from DB
       let category1 = '';
       let category2 = '';
 
       console.log('[Edit] Category from DB - name:', productData.categories?.name);
       console.log('[Edit] Category from DB - parent:', productData.categories?.parent_category);
-      console.log('[Edit] Category from DB - full:', JSON.stringify(productData.categories));
 
       if (productData.categories?.parent_category) {
         // parent_category가 있으면 그것이 category1 (메인 카테고리)
-        // 영어 이름을 인도네시아어로 변환
-        category1 = normalizeCategoryName(productData.categories.parent_category);
+        category1 = productData.categories.parent_category;
         // 현재 카테고리가 category2 (서브카테고리)
         category2 = productData.categories.name;
-        console.log('[Edit] ✅ Case 1: Has parent_category ->', {
-          original: productData.categories.parent_category,
-          normalized: category1,
-          subcategory: category2
-        });
-      } else if (productData.categories?.name) {
-        // parent_category가 없고 name만 있으면, 현재 카테고리가 메인인지 서브인지 확인
-        const categoryName = productData.categories.name;
-        const normalizedName = normalizeCategoryName(categoryName);
-        console.log('[Edit] Case 2: No parent, checking name:', categoryName, '-> normalized:', normalizedName);
-        console.log('[Edit] Available CATEGORIES:', Object.keys(CATEGORIES));
-
-        // CATEGORIES에서 메인 카테고리인지 확인
-        if (CATEGORIES[normalizedName]) {
-          // 메인 카테고리인 경우
-          category1 = normalizedName;
-          category2 = '';
-          console.log('[Edit] ✅ Case 2a: Is main category ->', { category1 });
-        } else {
-          // 서브 카테고리인 경우 - 부모 카테고리 찾기
-          console.log('[Edit] Case 2b: Searching for parent...');
-          for (const [mainCat, catData] of Object.entries(CATEGORIES)) {
-            if (catData.subcategories.includes(categoryName)) {
-              category1 = mainCat;
-              category2 = categoryName;
-              console.log('[Edit] ✅ Found parent ->', { category1, category2 });
-              break;
-            }
-          }
-          if (!category1) {
-            console.error('[Edit] ❌ Could not find parent for subcategory:', categoryName);
-          }
-        }
+        console.log('[Edit] ✅ Parsed categories:', { category1, category2 });
       } else {
-        console.error('[Edit] ❌ No category data found!');
+        console.error('[Edit] ❌ No category parent_category found!');
       }
 
       console.log('[Edit] 📌 Final parsed categories:', { category1, category2 });
@@ -193,9 +203,7 @@ export default function EditProductPage() {
         setCities(citiesList);
       }
       if (category1) {
-        const subs = getSubcategories(category1);
-        console.log('[Edit] 📂 Setting subcategories for', category1, ':', subs);
-        setSubcategories(subs);
+        await loadSubcategories(category1);
       } else {
         console.warn('[Edit] ⚠️ No category1, cannot set subcategories');
       }
@@ -207,13 +215,13 @@ export default function EditProductPage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase, router, params.id, setUser, setProduct, setFormData, setExistingImages, setCities, setSubcategories, setLoading]);
+  }, [supabase, router, params.id, loadSubcategories]);
 
   useEffect(() => {
     console.log('[Edit] Page loaded, product ID:', params.id);
+    loadMainCategories();
     checkUserAndLoadProduct();
-    // 수정 시에는 위치 정보를 새로 가져오지 않음 (원래 위치 유지)
-  }, []);
+  }, [loadMainCategories, checkUserAndLoadProduct]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -229,7 +237,7 @@ export default function EditProductPage() {
     }
 
     if (name === 'category1') {
-      setSubcategories(getSubcategories(value));
+      loadSubcategories(value);
       setFormData(prev => ({ ...prev, category1: value, category2: '' }));
     }
   };
@@ -589,7 +597,7 @@ export default function EditProductPage() {
                   className="form-input"
                 >
                   <option value="">Pilih Kategori</option>
-                  {Object.keys(CATEGORIES).map(cat => (
+                  {mainCategories.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>

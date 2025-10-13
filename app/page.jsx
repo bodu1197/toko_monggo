@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { INDONESIA_REGIONS } from './data/regions';
-import { CATEGORIES, getCategoryIcon } from './data/categories';
 import Footer from './components/Footer';
 import './page.css';
 
@@ -39,8 +38,50 @@ export default function HomePage() {
 
   // 2차 드롭다운 옵션
   const [cities, setCities] = useState([]);
+  const [mainCategories, setMainCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // Load main categories from DB
+  const loadMainCategories = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('parent_category')
+        .not('parent_category', 'is', null);
+
+      if (error) throw error;
+
+      const uniqueParents = [...new Set(data.map(cat => cat.parent_category))].sort();
+      setMainCategories(uniqueParents);
+    } catch (error) {
+      console.error('Error loading main categories:', error);
+    }
+  }, [supabase]);
+
+  // Load subcategories for a parent category from DB
+  const loadSubcategories = useCallback(async (parentCategory) => {
+    if (!parentCategory) {
+      setSubcategories([]);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('name')
+        .eq('parent_category', parentCategory)
+        .order('name');
+
+      if (error) throw error;
+
+      const subs = data.map(cat => cat.name);
+      setSubcategories(subs);
+    } catch (error) {
+      console.error('Error loading subcategories:', error);
+      setSubcategories([]);
+    }
+  }, [supabase]);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -247,8 +288,7 @@ export default function HomePage() {
     }
     // 카테고리 변경 시 서브카테고리 목록 업데이트
     else if (name === 'category') {
-      const subs = value ? (CATEGORIES[value]?.subcategories || []) : [];
-      setSubcategories(subs);
+      loadSubcategories(value);
       setFilters(prev => ({
         ...prev,
         category: value,
@@ -428,9 +468,10 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    // 초기에는 일반 상품 로드
+    // 초기에 카테고리 로드 및 일반 상품 로드
+    loadMainCategories();
     fetchProducts();
-  }, [fetchProducts]);
+  }, [loadMainCategories, fetchProducts]);
 
   return (
     <div className="home-page">
@@ -579,7 +620,7 @@ export default function HomePage() {
                 className="filter-select"
               >
                 <option value="">Semua Kategori</option>
-                {Object.keys(CATEGORIES).map(category => (
+                {mainCategories.map(category => (
                   <option key={category} value={category}>
                     {category}
                   </option>
@@ -781,7 +822,7 @@ export default function HomePage() {
                 className="filter-select"
               >
                 <option value="">Semua Kategori</option>
-                {Object.keys(CATEGORIES).map(category => (
+                {mainCategories.map(category => (
                   <option key={category} value={category}>
                     {category}
                   </option>
