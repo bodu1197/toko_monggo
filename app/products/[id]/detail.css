@@ -110,11 +110,12 @@
 
 .detail-layout {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: minmax(0, 900px) minmax(0, 380px);
   gap: 40px;
   max-width: 1400px;
   margin: 0 auto;
   align-items: start;
+  justify-content: center;
 }
 
 /* Left Column */
