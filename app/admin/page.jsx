@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Image } from 'next/image'; // Added for image optimization
+import Image from 'next/image'; // Added for image optimization
 import './admin.css';
 
 import { useScreenSize } from '../hooks/useScreenSize';
