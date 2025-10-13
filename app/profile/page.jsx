@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { getSupabaseClient } from '../lib/supabase/client'; // Changed to getSupabaseClient
+import getSupabaseClient from '../lib/supabase/client';
 import { compressImage } from '../utils/imageCompression';
 import './profile.css';
 import { useAuth } from '../hooks/useAuth';
