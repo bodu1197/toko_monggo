@@ -319,18 +319,31 @@ export default function EditProductPage() {
 
       const { data: regencyData } = await supabase
         .from('regencies')
-        .select('regency_id')
+        .select('regency_id, latitude, longitude')
         .eq('regency_name', formData.city)
         .eq('province_id', provinceData?.province_id)
         .single();
 
-      const { data: categoryData } = await supabase
+      const { data: categoryData, error: categoryError } = await supabase
         .from('categories')
         .select('category_id')
         .eq('name', formData.category2)
+        .eq('parent_category', formData.category1)
         .single();
 
-      // 2. Update product (위치 정보는 유지, 다른 정보만 업데이트)
+      console.log('[Edit] 💾 Category lookup:', {
+        category1: formData.category1,
+        category2: formData.category2,
+        foundCategoryId: categoryData?.category_id,
+        error: categoryError
+      });
+
+      if (categoryError) {
+        console.error('[Edit] ❌ Category lookup failed:', categoryError);
+        throw new Error(`카테고리를 찾을 수 없습니다: ${formData.category2} (${formData.category1})`);
+      }
+
+      // 2. Update product (지역 변경 시 해당 regency의 위도/경도로 업데이트)
       const updateData = {
         title: formData.title,
         description: formData.description,
@@ -342,9 +355,12 @@ export default function EditProductPage() {
         category_id: categoryData?.category_id,
         phone_number: formData.phone || null,
         whatsapp_number: formData.whatsapp || null,
+        latitude: regencyData?.latitude,
+        longitude: regencyData?.longitude,
         updated_at: new Date().toISOString(),
       };
-      // 위치 정보(latitude, longitude)는 업데이트하지 않음 - 원래 등록된 위치 유지
+
+      console.log('[Edit] 💾 Update data:', updateData);
 
       const { error: updateError } = await supabase
         .from('products')
