@@ -625,7 +625,7 @@
   }
 
   .main-image {
-    aspect-ratio: 16/7; /* 4/3의 70% 높이 = 16:7 비율 */
+    aspect-ratio: 16/7.7; /* 16/7에서 높이 10% 증가 */
     border-radius: 12px;
   }
 
