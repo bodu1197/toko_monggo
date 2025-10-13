@@ -68,7 +68,7 @@ export default function AdminPage() {
       const { count: activeCount } = await supabase
         .from('products')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'available');
+        .eq('status', 'active');
 
       // Total reports (pending only)
       const { count: reportsCount } = await supabase
