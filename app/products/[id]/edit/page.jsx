@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { createBrowserClient } from '@supabase/ssr';
 import { INDONESIA_REGIONS } from '../../../data/regions';
-import { CATEGORIES, getSubcategories } from '../../../data/categories';
+import { CATEGORIES, getSubcategories, normalizeCategoryName } from '../../../data/categories';
 import { compressImages, formatFileSize } from '../../../utils/imageCompression';
 import '../../new/new.css';
 
@@ -120,27 +120,33 @@ export default function EditProductPage() {
 
       if (productData.categories?.parent_category) {
         // parent_category가 있으면 그것이 category1 (메인 카테고리)
-        category1 = productData.categories.parent_category;
+        // 영어 이름을 인도네시아어로 변환
+        category1 = normalizeCategoryName(productData.categories.parent_category);
         // 현재 카테고리가 category2 (서브카테고리)
         category2 = productData.categories.name;
-        console.log('[Edit] ✅ Case 1: Has parent_category ->', { category1, category2 });
+        console.log('[Edit] ✅ Case 1: Has parent_category ->', {
+          original: productData.categories.parent_category,
+          normalized: category1,
+          subcategory: category2
+        });
       } else if (productData.categories?.name) {
         // parent_category가 없고 name만 있으면, 현재 카테고리가 메인인지 서브인지 확인
         const categoryName = productData.categories.name;
-        console.log('[Edit] Case 2: No parent, checking name:', categoryName);
+        const normalizedName = normalizeCategoryName(categoryName);
+        console.log('[Edit] Case 2: No parent, checking name:', categoryName, '-> normalized:', normalizedName);
         console.log('[Edit] Available CATEGORIES:', Object.keys(CATEGORIES));
 
         // CATEGORIES에서 메인 카테고리인지 확인
-        if (CATEGORIES[categoryName]) {
+        if (CATEGORIES[normalizedName]) {
           // 메인 카테고리인 경우
-          category1 = categoryName;
+          category1 = normalizedName;
           category2 = '';
           console.log('[Edit] ✅ Case 2a: Is main category ->', { category1 });
         } else {
           // 서브 카테고리인 경우 - 부모 카테고리 찾기
           console.log('[Edit] Case 2b: Searching for parent...');
-          for (const [mainCat, subCats] of Object.entries(CATEGORIES)) {
-            if (subCats.includes(categoryName)) {
+          for (const [mainCat, catData] of Object.entries(CATEGORIES)) {
+            if (catData.subcategories.includes(categoryName)) {
               category1 = mainCat;
               category2 = categoryName;
               console.log('[Edit] ✅ Found parent ->', { category1, category2 });

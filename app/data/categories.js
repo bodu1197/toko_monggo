@@ -1,3 +1,23 @@
+// 영어-인도네시아어 카테고리 매핑 (DB 호환성)
+export const CATEGORY_NAME_MAP = {
+  // 영어 -> 인도네시아어
+  'Electronics': 'Elektronik',
+  'Phones & Gadgets': 'Handphone & Gadget',
+  'Fashion': 'Fashion',
+  'Home & Garden': 'Rumah & Taman',
+  'Cars': 'Mobil',
+  'Motorcycles': 'Motor',
+  'Hobbies & Sports': 'Hobi & Olahraga',
+  'Personal Care': 'Keperluan Pribadi',
+  'Baby & Kids': 'Perlengkapan Bayi & Anak',
+  'Books & Education': 'Buku & Edukasi',
+  'Office & Industrial': 'Kantor & Industri',
+  'Property': 'Properti',
+  'Services & Jobs': 'Jasa & Lowongan Kerja',
+  'Free Stuff': 'Barang Gratis',
+  'Other': 'Lainnya'
+};
+
 // 인도네시아 상품 카테고리 데이터
 export const CATEGORIES = {
   'Elektronik': {
@@ -74,5 +94,12 @@ export const getMainCategories = () => {
 
 // Get subcategories for a main category
 export const getSubcategories = (mainCategory) => {
-  return CATEGORIES[mainCategory]?.subcategories || [];
+  // 영어 이름이면 인도네시아어로 변환
+  const mappedCategory = CATEGORY_NAME_MAP[mainCategory] || mainCategory;
+  return CATEGORIES[mappedCategory]?.subcategories || [];
+};
+
+// Normalize category name (영어 -> 인도네시아어 변환)
+export const normalizeCategoryName = (categoryName) => {
+  return CATEGORY_NAME_MAP[categoryName] || categoryName;
 };
