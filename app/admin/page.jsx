@@ -185,22 +185,22 @@ export default function AdminPage() {
         .from('reports')
         .select(`
           *,
-          reporter:reporter_id (
+          reporter:profiles!reports_reporter_id_fkey (
             full_name,
             email
           ),
-          reported_product:reported_product_id (
+          reported_product:products!reports_reported_product_id_fkey (
             title,
-            seller_id,
-            profiles:seller_id (
+            user_id,
+            seller:profiles!products_user_id_fkey (
               full_name
             )
           ),
-          reported_user:reported_user_id (
-            email,
-            profiles (full_name)
+          reported_user:profiles!reports_reported_user_id_fkey (
+            full_name,
+            email
           ),
-          resolver:resolved_by (
+          resolver:profiles!reports_resolved_by_fkey (
             full_name
           )
         `)
@@ -212,6 +212,7 @@ export default function AdminPage() {
       filterReports(reportFilter, data || []);
     } catch (error) {
       console.error('Error fetching reports:', error);
+      console.error('Error details:', error);
       setReports([]);
       setFilteredReports([]);
     }
@@ -1057,11 +1058,11 @@ export default function AdminPage() {
                           {report.report_type === 'product' ? (
                             <div className="report-target">
                               <div>{report.reported_product?.title || '삭제된 상품'}</div>
-                              <small>판매자: {report.reported_product?.profiles?.full_name || '-'}</small>
+                              <small>판매자: {report.reported_product?.seller?.full_name || '-'}</small>
                             </div>
                           ) : (
                             <div className="report-target">
-                              <div>{report.reported_user?.profiles?.full_name || '사용자'}</div>
+                              <div>{report.reported_user?.full_name || '사용자'}</div>
                               <small>{report.reported_user?.email || '-'}</small>
                             </div>
                           )}
