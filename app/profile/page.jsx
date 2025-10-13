@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { createClientComponentClient } from '@supabase/ssr';
+import { getSupabaseClient } from '../lib/supabase/client'; // Changed to getSupabaseClient
 import { compressImage } from '../utils/imageCompression';
 import './profile.css';
 import { useAuth } from '../hooks/useAuth';
@@ -13,8 +13,12 @@ import ProductCard from '../components/products/ProductCard';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
   const { user, profile, loading, setProfile } = useAuth();
+  const [supabaseClient, setSupabaseClient] = useState(null);
+
+  useEffect(() => {
+    setSupabaseClient(getSupabaseClient());
+  }, []);
 
   const [userProducts, setUserProducts] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +34,7 @@ export default function ProfilePage() {
     if (user) {
       fetchUserProducts(user.id);
     }
-  }, [user]);
+  }, [user, fetchUserProducts]);
 
   useEffect(() => {
     if (profile) {
@@ -41,9 +45,9 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
-  const fetchUserProducts = async (userId) => {
+  const fetchUserProducts = useCallback(async (userId) => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('products')
         .select(`
           *,
@@ -64,9 +68,9 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error fetching products:', error);
     }
-  };
+  }, [supabaseClient, setUserProducts]);
 
-  const handleAvatarUpload = async (e) => {
+  const handleAvatarUpload = useCallback(async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -89,7 +93,7 @@ export default function ProfilePage() {
         const oldUrlParts = profile.avatar_url.split('/avatars/');
         if (oldUrlParts.length > 1) {
           const oldFilePath = oldUrlParts[1];
-          await supabase.storage
+          await supabaseClient.storage
             .from('avatars')
             .remove([oldFilePath]);
           console.log('Old avatar deleted:', oldFilePath);
@@ -97,17 +101,17 @@ export default function ProfilePage() {
       }
 
       // Upload new avatar
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabaseClient.storage
         .from('avatars')
         .upload(filePath, compressedFile);
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
+      const { data: { publicUrl } } = supabaseClient.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
-      const { error: updateError } = await supabase
+      const { error: updateError } = await supabaseClient
         .from('profiles')
         .update({ avatar_url: publicUrl })
         .eq('id', user.id);
@@ -115,7 +119,7 @@ export default function ProfilePage() {
       if (updateError) throw updateError;
 
       // Re-fetch profile data to update UI
-      const { data: updatedProfile, error: fetchError } = await supabase
+      const { data: updatedProfile, error: fetchError } = await supabaseClient
         .from('profiles')
         .select('*')
         .eq('id', user.id)
@@ -128,11 +132,11 @@ export default function ProfilePage() {
       console.error('Error uploading avatar:', error);
       alert('Gagal mengunggah avatar');
     }
-  };
+  }, [supabaseClient, user, profile, setProfile]);
 
-  const handleSaveProfile = async () => {
+  const handleSaveProfile = useCallback(async () => {
     try {
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('profiles')
         .update({
           full_name: editForm.full_name,
@@ -143,7 +147,7 @@ export default function ProfilePage() {
       if (error) throw error;
 
       // Re-fetch profile data to update UI
-      const { data: updatedProfile, error: fetchError } = await supabase
+      const { data: updatedProfile, error: fetchError } = await supabaseClient
         .from('profiles')
         .select('*')
         .eq('id', user.id)
@@ -157,14 +161,14 @@ export default function ProfilePage() {
       console.error('Error updating profile:', error);
       alert('Gagal memperbarui profil');
     }
-  };
+  }, [supabaseClient, user, setProfile, setIsEditing, editForm]);
 
-  const handleDeleteProduct = async (productId) => {
+  const handleDeleteProduct = useCallback(async (productId) => {
     if (!confirm('Yakin ingin menghapus produk ini?')) return;
 
     try {
       // 1. Get product images first
-      const { data: productImages, error: fetchError } = await supabase
+      const { data: productImages, error: fetchError } = await supabaseClient
         .from('product_images')
         .select('image_url')
         .eq('product_id', productId);
@@ -174,7 +178,7 @@ export default function ProfilePage() {
       }
 
       // 2. Delete product (will cascade delete product_images due to FK)
-      const { error: deleteError } = await supabase
+      const { error: deleteError } = await supabaseClient
         .from('products')
         .delete()
         .eq('id', productId);
@@ -191,7 +195,7 @@ export default function ProfilePage() {
             if (urlParts.length > 1) {
               const filePath = urlParts[1];
 
-              const { error: storageError } = await supabase.storage
+              const { error: storageError } = await supabaseClient.storage
                 .from('product-images')
                 .remove([filePath]);
 
@@ -200,7 +204,7 @@ export default function ProfilePage() {
               } else {
                 console.log('Deleted image:', filePath);
               }
-            }
+            }d
           } catch (error) {
             console.error('Error processing image deletion:', error);
           }
@@ -213,20 +217,20 @@ export default function ProfilePage() {
       console.error('Error deleting product:', error);
       alert('Gagal menghapus produk');
     }
-  };
+  }, [supabaseClient, user, fetchUserProducts]);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     if (!confirm('Yakin ingin keluar?')) return;
 
     try {
-      await supabase.auth.signOut();
+      await supabaseClient.auth.signOut();
       router.push('/login');
     } catch (error) {
       console.error('Error logging out:', error);
     }
-  };
+  }, [supabaseClient, router]);
 
-  if (loading) {
+  if (loading || !supabaseClient) {
     return (
       <div className="profile-page">
         <LoadingState message="Memuat profil..." />
