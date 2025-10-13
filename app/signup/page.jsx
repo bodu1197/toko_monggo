@@ -153,7 +153,7 @@ export default function SignupPage() {
         <div className="auth-brand">
           <div className="brand-content">
             <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ TokoMonggo</h1>
+              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ Toko Monggo</h1>
             </Link>
             <h2 className="brand-title">Bergabung Bersama Kami!</h2>
             <p className="brand-description">
