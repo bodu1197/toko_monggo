@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { supabase } from '../lib/supabase/client';
+import getSupabaseClient from '../lib/supabase/client';
 import './login.css';
 
 export default function LoginPage() {
   const router = useRouter();
+  const supabase = getSupabaseClient(); // Get the client instance here
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

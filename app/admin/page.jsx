@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Image } from 'next/image'; // Added for image optimization
-import { supabase } from '../lib/supabase/client';
+import getSupabaseClient from '../lib/supabase/client';
 import './admin.css';
 
 import { useScreenSize } from '../hooks/useScreenSize';
@@ -13,6 +13,7 @@ import { useAuth } from '../hooks/useAuth'; // useAuth 훅 import
 export default function AdminPage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth({ redirectTo: '/login' }); // useAuth 훅 적용
+  const supabase = getSupabaseClient(); // Get the client instance here
   const [isAuthorized, setIsAuthorized] = useState(false); // 관리자 권한 확인을 위해 유지
   const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, users, products, access
   const isMobile = useScreenSize();

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { supabase } from './lib/supabase/client';
+import getSupabaseClient from './lib/supabase/client';
 import { INDONESIA_REGIONS } from './data/regions';
 import { CATEGORIES, getCategoryIcon } from './data/categories';
 import Footer from './components/Footer';
@@ -15,6 +15,7 @@ import ProductCard from './components/products/ProductCard';
 
 export default function HomePage() {
   const router = useRouter();
+  const supabase = getSupabaseClient(); // Get the client instance here
   const isMobile = useScreenSize();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
