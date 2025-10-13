@@ -479,6 +479,16 @@
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
 }
 
+.admin-badge {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  white-space: nowrap;
+}
+
 /* Access Statistics */
 .access-section {
   min-height: 600px;

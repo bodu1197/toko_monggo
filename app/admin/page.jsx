@@ -89,10 +89,9 @@ export default function AdminPage() {
 
   const fetchUsers = useCallback(async () => {
     try {
+      // Use RPC function to get users with email
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .rpc('get_all_users_with_email');
 
       if (error) throw error;
 
@@ -409,6 +408,92 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Error resolving report:', error);
       alert('처리 실패: ' + error.message);
+    }
+  };
+
+  const handleSuspendUser = async (userId) => {
+    const reason = prompt('활동 중지 사유를 입력하세요:');
+    if (!reason) return;
+
+    if (!confirm('이 회원의 활동을 중지하시겠습니까?\n\n중지된 회원은 로그인 및 모든 활동이 제한됩니다.')) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          is_suspended: true,
+          suspended_at: new Date().toISOString(),
+          suspended_by: user?.id,
+          suspension_reason: reason
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      alert('회원 활동이 중지되었습니다.');
+      await fetchUsers();
+      await fetchDashboardStats();
+    } catch (error) {
+      console.error('Error suspending user:', error);
+      alert('활동 중지 실패: ' + error.message);
+    }
+  };
+
+  const handleActivateUser = async (userId) => {
+    if (!confirm('이 회원의 활동 중지를 해제하시겠습니까?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          is_suspended: false,
+          suspended_at: null,
+          suspended_by: null,
+          suspension_reason: null
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      alert('회원 활동이 재개되었습니다.');
+      await fetchUsers();
+      await fetchDashboardStats();
+    } catch (error) {
+      console.error('Error activating user:', error);
+      alert('활동 재개 실패: ' + error.message);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!confirm('이 회원을 완전히 삭제하시겠습니까?\n\n⚠️ 경고: 이 작업은 되돌릴 수 없으며, 회원의 모든 상품, 댓글, 즐겨찾기 등이 함께 삭제됩니다.')) return;
+
+    const confirmText = prompt('정말로 삭제하시려면 "삭제확인"을 입력하세요:');
+    if (confirmText !== '삭제확인') {
+      alert('삭제가 취소되었습니다.');
+      return;
+    }
+
+    try {
+      console.log('[Admin] Deleting user:', userId);
+
+      // Delete user's profile (CASCADE will delete related data)
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+
+      if (profileError) throw profileError;
+
+      // Note: auth.users deletion requires admin API
+      // For now, we only delete the profile
+      // The user can still login but will have no profile
+
+      alert('회원 프로필이 삭제되었습니다.\n\n참고: 인증 계정은 Supabase Dashboard에서 수동으로 삭제해야 합니다.');
+      await fetchUsers();
+      await fetchDashboardStats();
+    } catch (error) {
+      console.error('[Admin] Error deleting user:', error);
+      alert('삭제 실패: ' + error.message);
     }
   };
 
@@ -879,6 +964,7 @@ export default function AdminPage() {
                       <th>전화번호</th>
                       <th>가입일</th>
                       <th>상태</th>
+                      <th>액션</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -918,7 +1004,48 @@ export default function AdminPage() {
                         <td>{user.phone_number || '-'}</td>
                         <td>{new Date(user.created_at).toLocaleDateString('ko-KR')}</td>
                         <td>
-                          <span className="status-badge active">활성</span>
+                          {user.is_suspended ? (
+                            <span className="status-badge suspended" title={`중지 사유: ${user.suspension_reason || '-'}`}>
+                              활동중지
+                            </span>
+                          ) : (
+                            <span className="status-badge active">활성</span>
+                          )}
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                            {user.role !== 'admin' && (
+                              <>
+                                {user.is_suspended ? (
+                                  <button
+                                    className="btn-activate"
+                                    onClick={() => handleActivateUser(user.id)}
+                                    title="활동 재개"
+                                  >
+                                    재개
+                                  </button>
+                                ) : (
+                                  <button
+                                    className="btn-suspend"
+                                    onClick={() => handleSuspendUser(user.id)}
+                                    title="활동 중지"
+                                  >
+                                    중지
+                                  </button>
+                                )}
+                                <button
+                                  className="btn-delete"
+                                  onClick={() => handleDeleteUser(user.id)}
+                                  title="회원 삭제"
+                                >
+                                  삭제
+                                </button>
+                              </>
+                            )}
+                            {user.role === 'admin' && (
+                              <span className="admin-badge">관리자</span>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
