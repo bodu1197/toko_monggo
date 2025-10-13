@@ -677,7 +677,7 @@ export default function AdminPage() {
     const filtered = users.filter(user =>
       user.full_name?.toLowerCase().includes(query) ||
       user.email?.toLowerCase().includes(query) ||
-      user.phone_number?.includes(query)
+      user.username?.toLowerCase().includes(query)
     );
 
     setFilteredUsers(filtered);
@@ -1083,8 +1083,8 @@ export default function AdminPage() {
                   <thead>
                     <tr>
                       <th>이름</th>
+                      <th>사용자명</th>
                       <th>이메일</th>
-                      <th>전화번호</th>
                       <th>가입일</th>
                       <th>상태</th>
                       <th>액션</th>
@@ -1123,8 +1123,8 @@ export default function AdminPage() {
                             <span>{user.full_name || '사용자'}</span>
                           </div>
                         </td>
+                        <td>{user.username || '-'}</td>
                         <td>{user.email}</td>
-                        <td>{user.phone_number || '-'}</td>
                         <td>{new Date(user.created_at).toLocaleDateString('ko-KR')}</td>
                         <td>
                           {user.is_suspended ? (
