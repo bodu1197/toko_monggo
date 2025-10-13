@@ -42,38 +42,6 @@ export default function HomePage() {
   const [subcategories, setSubcategories] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  const tryGetLocationAndFetch = useCallback(() => {
-    if (!navigator.geolocation) {
-      // Geolocation 미지원 - 일반 상품 로드
-      setLocationStatus('denied');
-      fetchProducts();
-      return;
-    }
-
-    setLocationStatus('loading');
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        // 위치 허용됨
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ latitude, longitude });
-        setLocationStatus('success');
-        fetchNearbyProducts(latitude, longitude);
-      },
-      (error) => {
-        // 위치 거부됨 또는 에러
-        console.log('위치 정보 접근 거부 또는 에러:', error.message);
-        setLocationStatus('denied');
-        fetchProducts(); // 일반 상품 로드
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000, // 5분 캐시
-      }
-    );
-  }, [fetchProducts, fetchNearbyProducts]);
-
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
@@ -195,6 +163,38 @@ export default function HomePage() {
       setLoading(false);
     }
   }, [supabase, setLoading, setProducts, setFilteredProducts, setFilters, fetchProducts]);
+
+  const tryGetLocationAndFetch = useCallback(() => {
+    if (!navigator.geolocation) {
+      // Geolocation 미지원 - 일반 상품 로드
+      setLocationStatus('denied');
+      fetchProducts();
+      return;
+    }
+
+    setLocationStatus('loading');
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // 위치 허용됨
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ latitude, longitude });
+        setLocationStatus('success');
+        fetchNearbyProducts(latitude, longitude);
+      },
+      (error) => {
+        // 위치 거부됨 또는 에러
+        console.log('위치 정보 접근 거부 또는 에러:', error.message);
+        setLocationStatus('denied');
+        fetchProducts(); // 일반 상품 로드
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000, // 5분 캐시
+      }
+    );
+  }, [fetchProducts, fetchNearbyProducts]);
 
   const handleNearbyClick = () => {
     if (userLocation) {
