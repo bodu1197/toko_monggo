@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
-import { INDONESIA_REGIONS } from '../../data/regions';
 import { compressImages, formatFileSize } from '../../utils/imageCompression';
 import './new.css';
 
@@ -33,11 +32,66 @@ export default function NewProductPage() {
   });
 
   // Dropdown states
+  const [provinces, setProvinces] = useState([]);
   const [cities, setCities] = useState([]);
   const [mainCategories, setMainCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [images, setImages] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
+
+  // Load provinces from DB
+  const loadProvinces = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('provinces')
+        .select('province_name')
+        .order('province_name');
+
+      if (error) throw error;
+
+      const provinceNames = data.map(p => p.province_name);
+      setProvinces(provinceNames);
+      console.log('[New] 🗺️ Loaded provinces from DB:', provinceNames.length);
+    } catch (error) {
+      console.error('Error loading provinces:', error);
+    }
+  }, [supabase]);
+
+  // Load cities for a province from DB
+  const loadCities = useCallback(async (provinceName) => {
+    if (!provinceName) {
+      setCities([]);
+      return;
+    }
+
+    try {
+      const { data: provinceData } = await supabase
+        .from('provinces')
+        .select('province_id')
+        .eq('province_name', provinceName)
+        .single();
+
+      if (!provinceData) {
+        setCities([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('regencies')
+        .select('regency_name')
+        .eq('province_id', provinceData.province_id)
+        .order('regency_name');
+
+      if (error) throw error;
+
+      const cityNames = data.map(r => r.regency_name);
+      setCities(cityNames);
+      console.log('[New] 🏙️ Loaded cities for', provinceName, ':', cityNames.length);
+    } catch (error) {
+      console.error('Error loading cities:', error);
+      setCities([]);
+    }
+  }, [supabase]);
 
   // Load main categories from DB
   const loadMainCategories = useCallback(async () => {
@@ -99,16 +153,17 @@ export default function NewProductPage() {
   }, [supabase, router]);
 
   useEffect(() => {
+    loadProvinces();
     loadMainCategories();
     checkUser();
-  }, [loadMainCategories, checkUser]);
+  }, [loadProvinces, loadMainCategories, checkUser]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     // 지역 1차 선택 시 2차 업데이트
     if (name === 'province') {
-      setCities(INDONESIA_REGIONS[value] || []);
+      loadCities(value);
       setFormData(prev => ({ ...prev, province: value, city: '' }));
       return;
     }
@@ -504,7 +559,7 @@ export default function NewProductPage() {
                   className="form-input"
                 >
                   <option value="">Pilih Provinsi</option>
-                  {Object.keys(INDONESIA_REGIONS).map(province => (
+                  {provinces.map(province => (
                     <option key={province} value={province}>{province}</option>
                   ))}
                 </select>

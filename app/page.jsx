@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { INDONESIA_REGIONS } from './data/regions';
 import Footer from './components/Footer';
 import './page.css';
 
@@ -37,10 +36,65 @@ export default function HomePage() {
   });
 
   // 2차 드롭다운 옵션
+  const [provinces, setProvinces] = useState([]);
   const [cities, setCities] = useState([]);
   const [mainCategories, setMainCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // Load provinces from DB
+  const loadProvinces = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('provinces')
+        .select('province_name')
+        .order('province_name');
+
+      if (error) throw error;
+
+      const provinceNames = data.map(p => p.province_name);
+      setProvinces(provinceNames);
+      console.log('[Home] 🗺️ Loaded provinces from DB:', provinceNames.length);
+    } catch (error) {
+      console.error('Error loading provinces:', error);
+    }
+  }, [supabase]);
+
+  // Load cities for a province from DB
+  const loadCities = useCallback(async (provinceName) => {
+    if (!provinceName) {
+      setCities([]);
+      return;
+    }
+
+    try {
+      const { data: provinceData } = await supabase
+        .from('provinces')
+        .select('province_id')
+        .eq('province_name', provinceName)
+        .single();
+
+      if (!provinceData) {
+        setCities([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('regencies')
+        .select('regency_name')
+        .eq('province_id', provinceData.province_id)
+        .order('regency_name');
+
+      if (error) throw error;
+
+      const cityNames = data.map(r => r.regency_name);
+      setCities(cityNames);
+      console.log('[Home] 🏙️ Loaded cities for', provinceName, ':', cityNames.length);
+    } catch (error) {
+      console.error('Error loading cities:', error);
+      setCities([]);
+    }
+  }, [supabase]);
 
   // Load main categories from DB
   const loadMainCategories = useCallback(async () => {
@@ -279,7 +333,7 @@ export default function HomePage() {
 
     // 주 변경 시 시/군 목록 업데이트
     if (name === 'province') {
-      setCities(INDONESIA_REGIONS[value] || []);
+      loadCities(value);
       setFilters(prev => ({
         ...prev,
         province: value,
@@ -468,10 +522,11 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    // 초기에 카테고리 로드 및 일반 상품 로드
+    // 초기에 지역, 카테고리 로드 및 일반 상품 로드
+    loadProvinces();
     loadMainCategories();
     fetchProducts();
-  }, [loadMainCategories, fetchProducts]);
+  }, [loadProvinces, loadMainCategories, fetchProducts]);
 
   return (
     <div className="home-page">
@@ -591,7 +646,7 @@ export default function HomePage() {
                 className="filter-select"
               >
                 <option value="">Semua Provinsi</option>
-                {Object.keys(INDONESIA_REGIONS).map(province => (
+                {provinces.map(province => (
                   <option key={province} value={province}>{province}</option>
                 ))}
               </select>
@@ -793,7 +848,7 @@ export default function HomePage() {
                 className="filter-select"
               >
                 <option value="">Semua Provinsi</option>
-                {Object.keys(INDONESIA_REGIONS).map(province => (
+                {provinces.map(province => (
                   <option key={province} value={province}>{province}</option>
                 ))}
               </select>
