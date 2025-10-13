@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/ssr';
+import { createBrowserClient } from '@supabase/ssr';
 import { INDONESIA_REGIONS } from '../../data/regions';
 import { CATEGORIES, getSubcategories } from '../../data/categories';
 import { compressImages, formatFileSize } from '../../utils/imageCompression';
@@ -11,7 +11,10 @@ import './new.css';
 
 export default function NewProductPage() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
 

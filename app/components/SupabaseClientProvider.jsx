@@ -1,20 +1,17 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/ssr';
+import { createContext, useContext, useMemo } from 'react';
+import { createBrowserClient } from '@supabase/ssr';
 
 const SupabaseContext = createContext(undefined);
 
 export const SupabaseClientProvider = ({ children }) => {
-  const [supabase, setSupabase] = useState(null);
-
-  useEffect(() => {
-    setSupabase(createClientComponentClient());
+  const supabase = useMemo(() => {
+    return createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
   }, []);
-
-  if (!supabase) {
-    return null; // Or a loading spinner
-  }
 
   return (
     <SupabaseContext.Provider value={supabase}>

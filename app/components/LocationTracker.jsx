@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/ssr';
+import { createBrowserClient } from '@supabase/ssr';
 
 const getSessionId = () => {
   let sessionId = localStorage.getItem('visitor_session_id');
@@ -24,7 +24,10 @@ const markLoggedToday = () => {
 };
 
 export default function LocationTracker() {
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
 
   const saveAccessWithoutLocation = useCallback(async (sessionId, userId, userAgent, pageUrl) => {
     try {
