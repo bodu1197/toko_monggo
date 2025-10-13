@@ -25,22 +25,7 @@ export default function ProfilePage() {
       full_name: '',
       bio: '',
     });
-  
-    useEffect(() => {
-      if (user) {
-        fetchUserProducts(user.id);
-      }
-    }, [user, fetchUserProducts]);
-  
-    useEffect(() => {
-      if (profile) {
-        setEditForm({
-          full_name: profile.full_name || '',
-          bio: profile.bio || '',
-        });
-      }
-    }, [profile]);
-  
+
     const fetchUserProducts = useCallback(async (userId) => {
       try {
         const { data, error } = await supabaseClient
@@ -223,7 +208,22 @@ export default function ProfilePage() {
         console.error('Error logging out:', error);
       } 
     }, [supabaseClient, router]);
-  
+
+    useEffect(() => {
+      if (user) {
+        fetchUserProducts(user.id);
+      }
+    }, [user, fetchUserProducts]);
+
+    useEffect(() => {
+      if (profile) {
+        setEditForm({
+          full_name: profile.full_name || '',
+          bio: profile.bio || '',
+        });
+      }
+    }, [profile]);
+
     if (loading) {
       return (
         <div className="profile-page">
