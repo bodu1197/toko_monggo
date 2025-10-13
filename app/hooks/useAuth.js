@@ -40,23 +40,24 @@ export function useAuth({ redirectTo = '/login' } = {}) {
           if (profileError) {
             console.warn('Failed to fetch profile:', profileError);
           }
-          
+
           if (isMounted) {
             setProfile(profileData || null);
+            setLoading(false); // Only set loading to false if we have a valid session
           }
 
         } else {
-          // 세션 없으면 리디렉션
-          router.replace(redirectTo);
+          // 세션 없으면 리디렉션 (loading을 true로 유지하여 페이지 내용이 보이지 않도록)
+          if (isMounted) {
+            router.replace(redirectTo);
+            // Don't set loading to false - keep showing loading state during redirect
+          }
         }
       } catch (error) {
         console.error('Error in useAuth:', error);
         if (isMounted) {
           router.replace(redirectTo);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
+          // Don't set loading to false - keep showing loading state during redirect
         }
       }
     };
@@ -68,5 +69,5 @@ export function useAuth({ redirectTo = '/login' } = {}) {
     };
   }, [router, redirectTo, supabase]); // Add supabase to dependency array
 
-  return { user, profile, loading };
+  return { user, profile, loading, setProfile };
 }
