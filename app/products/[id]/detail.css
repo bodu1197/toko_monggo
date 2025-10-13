@@ -530,10 +530,39 @@
   .detail-layout {
     grid-template-columns: 1fr;
     gap: 16px; /* 24px → 16px */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .left-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .image-section {
+    order: 1; /* 이미지 가장 위 */
   }
 
   .right-sidebar {
     position: static;
+    order: 2; /* 제목/가격/지역/날짜 이미지 바로 아래 */
+  }
+
+  .details-section {
+    order: 3; /* Detail 섹션 */
+  }
+
+  .description-section {
+    order: 4; /* Description 섹션 */
+  }
+
+  .comments-section {
+    order: 5; /* Comments 마지막 */
+  }
+
+  /* Seller 섹션 숨기기 (모바일에서는 불필요) */
+  .seller-section {
+    display: none;
   }
 
   .product-title {
