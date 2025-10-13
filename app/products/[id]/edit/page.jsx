@@ -48,7 +48,6 @@ export default function EditProductPage() {
   // New images to upload
   const [newImages, setNewImages] = useState([]);
   const [newImageFiles, setNewImageFiles] = useState([]);
-  const [userLocation, setUserLocation] = useState(null);
 
   const checkUserAndLoadProduct = useCallback(async () => {
     try {
@@ -107,13 +106,17 @@ export default function EditProductPage() {
 
       setProduct(productData);
 
+      console.log('[Edit] 🔍 Starting category parsing...');
+      console.log('[Edit] Product data:', productData);
+
       // Get category hierarchy
       let category1 = '';
       let category2 = '';
 
-      console.log('[Edit] Product category data:', {
+      console.log('[Edit] Category from DB:', {
         categoryName: productData.categories?.name,
-        parentCategory: productData.categories?.parent_category
+        parentCategory: productData.categories?.parent_category,
+        fullObject: productData.categories
       });
 
       if (productData.categories?.parent_category) {
@@ -121,31 +124,42 @@ export default function EditProductPage() {
         category1 = productData.categories.parent_category;
         // 현재 카테고리가 category2 (서브카테고리)
         category2 = productData.categories.name;
+        console.log('[Edit] ✅ Case 1: Has parent_category ->', { category1, category2 });
       } else if (productData.categories?.name) {
         // parent_category가 없고 name만 있으면, 현재 카테고리가 메인인지 서브인지 확인
         const categoryName = productData.categories.name;
+        console.log('[Edit] Case 2: No parent, checking name:', categoryName);
+        console.log('[Edit] Available CATEGORIES:', Object.keys(CATEGORIES));
 
         // CATEGORIES에서 메인 카테고리인지 확인
         if (CATEGORIES[categoryName]) {
           // 메인 카테고리인 경우
           category1 = categoryName;
           category2 = '';
+          console.log('[Edit] ✅ Case 2a: Is main category ->', { category1 });
         } else {
           // 서브 카테고리인 경우 - 부모 카테고리 찾기
+          console.log('[Edit] Case 2b: Searching for parent...');
           for (const [mainCat, subCats] of Object.entries(CATEGORIES)) {
             if (subCats.includes(categoryName)) {
               category1 = mainCat;
               category2 = categoryName;
+              console.log('[Edit] ✅ Found parent ->', { category1, category2 });
               break;
             }
           }
+          if (!category1) {
+            console.error('[Edit] ❌ Could not find parent for subcategory:', categoryName);
+          }
         }
+      } else {
+        console.error('[Edit] ❌ No category data found!');
       }
 
-      console.log('[Edit] Parsed categories:', { category1, category2 });
+      console.log('[Edit] 📌 Final parsed categories:', { category1, category2 });
 
       // Set form data
-      setFormData({
+      const newFormData = {
         title: productData.title || '',
         description: productData.description || '',
         price: productData.price?.toString() || '',
@@ -157,20 +171,28 @@ export default function EditProductPage() {
         phone: productData.phone_number || '',
         whatsapp: productData.whatsapp_number || '',
         negotiable: productData.is_negotiable || false,
-      });
+      };
+
+      console.log('[Edit] 📝 Setting form data:', newFormData);
+      setFormData(newFormData);
 
       // Set existing images
       const sortedImages = (productData.product_images || []).sort((a, b) => a.order - b.order);
+      console.log('[Edit] 🖼️ Existing images:', sortedImages.length, 'images');
       setExistingImages(sortedImages);
 
       // Set cities and subcategories
       if (productData.provinces?.province_name) {
-        setCities(INDONESIA_REGIONS[productData.provinces.province_name] || []);
+        const citiesList = INDONESIA_REGIONS[productData.provinces.province_name] || [];
+        console.log('[Edit] 🏙️ Setting cities for', productData.provinces.province_name, ':', citiesList.length, 'cities');
+        setCities(citiesList);
       }
       if (category1) {
         const subs = getSubcategories(category1);
-        console.log('[Edit] Setting subcategories for', category1, ':', subs);
+        console.log('[Edit] 📂 Setting subcategories for', category1, ':', subs);
         setSubcategories(subs);
+      } else {
+        console.warn('[Edit] ⚠️ No category1, cannot set subcategories');
       }
 
     } catch (error) {
@@ -183,28 +205,10 @@ export default function EditProductPage() {
   }, [supabase, router, params.id, setUser, setProduct, setFormData, setExistingImages, setCities, setSubcategories, setLoading]);
 
   useEffect(() => {
+    console.log('[Edit] Page loaded, product ID:', params.id);
     checkUserAndLoadProduct();
-    // 페이지 로드 시 사용자 위치 가져오기
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
-          console.log('📍 User location captured:', position.coords.latitude, position.coords.longitude);
-        },
-        (error) => {
-          console.log('위치 정보 거부됨 또는 에러:', error.message);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000
-        }
-      );
-    }
-  }, [params.id, checkUserAndLoadProduct]);
+    // 수정 시에는 위치 정보를 새로 가져오지 않음 (원래 위치 유지)
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -321,7 +325,7 @@ export default function EditProductPage() {
         .eq('name', formData.category2)
         .single();
 
-      // 2. Update product (위치 정보 및 연락처 업데이트)
+      // 2. Update product (위치 정보는 유지, 다른 정보만 업데이트)
       const updateData = {
         title: formData.title,
         description: formData.description,
@@ -335,12 +339,7 @@ export default function EditProductPage() {
         whatsapp_number: formData.whatsapp || null,
         updated_at: new Date().toISOString(),
       };
-
-      // 위치 정보가 있으면 업데이트
-      if (userLocation) {
-        updateData.latitude = userLocation.latitude;
-        updateData.longitude = userLocation.longitude;
-      }
+      // 위치 정보(latitude, longitude)는 업데이트하지 않음 - 원래 등록된 위치 유지
 
       const { error: updateError } = await supabase
         .from('products')

@@ -183,7 +183,7 @@ export default function ProfilePage() {
                 if (storageError) {
                   console.error('Error deleting image from storage:', storageError);
                 }
-              }d
+              }
             } catch (error) {
               console.error('Error processing image deletion:', error);
             }
