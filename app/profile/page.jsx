@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { supabase } from '../lib/supabase/client';
+import { createClientComponentClient } from '@supabase/ssr';
 import { compressImage } from '../utils/imageCompression';
 import './profile.css';
 import { useAuth } from '../hooks/useAuth';
@@ -13,7 +13,8 @@ import ProductCard from '../components/products/ProductCard';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, profile, loading } = useAuth();
+  const supabase = createClientComponentClient();
+  const { user, profile, loading, setProfile } = useAuth();
 
   const [userProducts, setUserProducts] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
