@@ -109,18 +109,40 @@ export default function EditProductPage() {
 
       // Get category hierarchy
       let category1 = '';
-      let category2 = productData.categories?.name || '';
+      let category2 = '';
+
+      console.log('[Edit] Product category data:', {
+        categoryName: productData.categories?.name,
+        parentCategory: productData.categories?.parent_category
+      });
 
       if (productData.categories?.parent_category) {
-        // parent_category가 있으면 그것이 category1
+        // parent_category가 있으면 그것이 category1 (메인 카테고리)
         category1 = productData.categories.parent_category;
         // 현재 카테고리가 category2 (서브카테고리)
         category2 = productData.categories.name;
-      } else {
-        // parent_category가 없으면 현재 카테고리가 메인 카테고리
-        category1 = category2;
-        category2 = '';
+      } else if (productData.categories?.name) {
+        // parent_category가 없고 name만 있으면, 현재 카테고리가 메인인지 서브인지 확인
+        const categoryName = productData.categories.name;
+
+        // CATEGORIES에서 메인 카테고리인지 확인
+        if (CATEGORIES[categoryName]) {
+          // 메인 카테고리인 경우
+          category1 = categoryName;
+          category2 = '';
+        } else {
+          // 서브 카테고리인 경우 - 부모 카테고리 찾기
+          for (const [mainCat, subCats] of Object.entries(CATEGORIES)) {
+            if (subCats.includes(categoryName)) {
+              category1 = mainCat;
+              category2 = categoryName;
+              break;
+            }
+          }
+        }
       }
+
+      console.log('[Edit] Parsed categories:', { category1, category2 });
 
       // Set form data
       setFormData({
@@ -146,7 +168,9 @@ export default function EditProductPage() {
         setCities(INDONESIA_REGIONS[productData.provinces.province_name] || []);
       }
       if (category1) {
-        setSubcategories(getSubcategories(category1));
+        const subs = getSubcategories(category1);
+        console.log('[Edit] Setting subcategories for', category1, ':', subs);
+        setSubcategories(subs);
       }
 
     } catch (error) {

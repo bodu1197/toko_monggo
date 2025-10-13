@@ -290,34 +290,31 @@ export default function AdminPage() {
 
       console.log('[Admin] Found images to delete:', productImages);
 
-      // 2. 데이터베이스에서 이미지 레코드 삭제
-      const { error: imageError } = await supabase
-        .from('product_images')
-        .delete()
-        .eq('product_id', productId);
-
-      if (imageError) {
-        console.error('[Admin] Error deleting image records:', imageError);
-        throw imageError;
-      }
-
-      // 3. 상품 삭제 (CASCADE로 연결된 데이터도 자동 삭제)
-      const { data: deleteData, error } = await supabase
+      // 2. 상품을 먼저 삭제 (CASCADE 설정이 있으면 이미지도 자동 삭제)
+      const { data: deleteData, error: deleteError } = await supabase
         .from('products')
         .delete()
         .eq('id', productId)
         .select();
 
-      console.log('[Admin] Delete product result:', { deleteData, error });
+      console.log('[Admin] Delete product result:', { deleteData, deleteError });
 
-      if (error) {
-        console.error('[Admin] Error deleting product:', error);
-        throw error;
+      if (deleteError) {
+        console.error('[Admin] Error deleting product:', deleteError);
+        throw deleteError;
       }
 
-      if (!deleteData || deleteData.length === 0) {
-        console.warn('[Admin] Product delete returned no data - might indicate RLS issue');
-        throw new Error('삭제 작업이 실패했습니다. RLS 정책을 확인해주세요.');
+      // 3. CASCADE가 없는 경우를 대비해 이미지 레코드 명시적 삭제 시도
+      if (!deleteError) {
+        const { error: imageError } = await supabase
+          .from('product_images')
+          .delete()
+          .eq('product_id', productId);
+
+        if (imageError) {
+          // 이미 CASCADE로 삭제되었을 수 있으므로 에러 로그만 출력
+          console.log('[Admin] Image records delete (might already be deleted by CASCADE):', imageError);
+        }
       }
 
       // 4. 스토리지에서 이미지 파일 삭제
