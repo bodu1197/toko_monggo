@@ -63,7 +63,7 @@ export default function SignupPage() {
         email: formData.email,
         password: formData.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/login`,
+          emailRedirectTo: 'https://tokomonggo.com/login',
           data: {
             full_name: formData.name,
             avatar_url: avatarUrl,
@@ -119,7 +119,7 @@ export default function SignupPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: 'https://tokomonggo.com/',
         },
       });
 
@@ -135,7 +135,7 @@ export default function SignupPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: 'https://tokomonggo.com/',
         },
       });
 

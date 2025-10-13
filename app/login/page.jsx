@@ -45,7 +45,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: 'https://tokomonggo.com/',
         },
       });
       if (error) throw error;
@@ -60,7 +60,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: 'https://tokomonggo.com/',
         },
       });
       if (error) throw error;
