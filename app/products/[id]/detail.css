@@ -575,12 +575,14 @@
   }
 
   .product-title {
-    font-size: 18px; /* 22px → 18px */
-    margin-bottom: 12px;
+    font-size: 15px; /* 18px → 15px (모바일 현실적 크기) */
+    margin-bottom: 10px;
+    font-weight: 600;
   }
 
   .product-price {
-    font-size: 22px; /* 26px → 22px */
+    font-size: 17px; /* 22px → 17px (모바일 현실적 크기) */
+    font-weight: 700;
   }
 
   .negotiable-badge {
