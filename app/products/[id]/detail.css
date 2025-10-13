@@ -1005,7 +1005,7 @@
   }
 
   .empty-comments {
-    padding: 40px 20px; /* 60px → 40px */
+    padding: 10px 10px; /* 40px 20px → 10px 10px */
     font-size: 14px;
   }
 
