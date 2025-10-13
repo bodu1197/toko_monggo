@@ -547,6 +547,10 @@
   /* left-column 내부 섹션들의 순서 */
   .image-section {
     order: 1; /* 이미지 첫번째 */
+    width: 100vw;
+    margin-left: -12px;
+    margin-right: -12px;
+    padding: 0 12px;
   }
 
   .details-section {
