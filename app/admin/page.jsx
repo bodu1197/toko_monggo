@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Image } from 'next/image'; // Added for image optimization
 import { supabase } from '../lib/supabase/client';
 import './admin.css';
 
@@ -74,7 +75,7 @@ export default function AdminPage() {
         // 로그인하지 않음 (useAuth에서 이미 /login으로 리디렉션)
       }
     }
-  }, [loading, user, profile, activeTab]);
+  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, router]);
 
   // ... (fetchDashboardStats, fetchUsers, fetchProducts, fetchReports 등 기존 함수들은 유지) ...
 
@@ -804,7 +805,7 @@ export default function AdminPage() {
                           <div className="user-cell">
                             <div className="user-avatar">
                               {user.avatar_url ? (
-                                <img src={user.avatar_url} alt={user.full_name} />
+                                <Image src={user.avatar_url} alt={user.full_name} width={40} height={40} />
                               ) : (
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -876,7 +877,7 @@ export default function AdminPage() {
                             <div className="user-cell">
                               {firstImage && (
                                 <div className="user-avatar">
-                                  <img src={firstImage} alt={product.title} />
+                                  <Image src={firstImage} alt={product.title} width={40} height={40} />
                                 </div>
                               )}
                               <span>{product.title}</span>

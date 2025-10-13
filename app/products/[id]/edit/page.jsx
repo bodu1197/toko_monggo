@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { Image } from 'next/image'; // Added for image optimization
 import { createClientComponentClient } from '@supabase/ssr';
 import { INDONESIA_REGIONS } from '../../../data/regions';
 import { CATEGORIES, getSubcategories } from '../../../data/categories';
@@ -46,31 +47,7 @@ export default function EditProductPage() {
   const [newImageFiles, setNewImageFiles] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
 
-  useEffect(() => {
-    checkUserAndLoadProduct();
-    // 페이지 로드 시 사용자 위치 가져오기
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
-          console.log('📍 User location captured:', position.coords.latitude, position.coords.longitude);
-        },
-        (error) => {
-          console.log('위치 정보 거부됨 또는 에러:', error.message);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000
-        }
-      );
-    }
-  }, [params.id]);
-
-  const checkUserAndLoadProduct = async () => {
+  const checkUserAndLoadProduct = useCallback(async () => {
     try {
       // Check user
       const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -165,7 +142,31 @@ export default function EditProductPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, router, params.id, setUser, setProduct, setFormData, setExistingImages, setCities, setSubcategories, setLoading]);
+
+  useEffect(() => {
+    checkUserAndLoadProduct();
+    // 페이지 로드 시 사용자 위치 가져오기
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+          console.log('📍 User location captured:', position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.log('위치 정보 거부됨 또는 에러:', error.message);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000
+        }
+      );
+    }
+  }, [params.id, checkUserAndLoadProduct]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -428,9 +429,11 @@ export default function EditProductPage() {
               <div className="image-grid">
                 {allImages.map((item, index) => (
                   <div key={index} className="image-preview">
-                    <img
+                    <Image
                       src={item.type === 'existing' ? item.data.image_url : item.data.url}
                       alt={`Preview ${index + 1}`}
+                      width={100}
+                      height={100}
                     />
                     <button
                       type="button"

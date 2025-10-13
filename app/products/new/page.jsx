@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/ssr';
 import { INDONESIA_REGIONS } from '../../data/regions';
@@ -35,11 +36,7 @@ export default function NewProductPage() {
   const [images, setImages] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error || !user) {
@@ -52,7 +49,11 @@ export default function NewProductPage() {
       console.error('Error checking user:', error);
       router.push('/login');
     }
-  };
+  }, [supabase, router, setUser]);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -276,7 +277,7 @@ export default function NewProductPage() {
               <div className="image-grid">
                 {images.map((img, index) => (
                   <div key={index} className="image-preview">
-                    <img src={img} alt={`Preview ${index + 1}`} />
+                    <Image src={img} alt={`Preview ${index + 1}`} width={100} height={100} />
                     <button
                       type="button"
                       className="remove-image-btn"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { createClientComponentClient } from '@supabase/ssr';
@@ -37,14 +37,14 @@ export default function ProductDetailPage() {
     fetchComments();
 
     return () => window.removeEventListener('resize', checkMobile);
-  }, [params.id]);
+  }, [params.id, fetchComments, fetchCurrentUser, fetchProduct]);
 
-  const fetchCurrentUser = async () => {
+  const fetchCurrentUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
-  };
+  }, [supabase, setCurrentUser]);
 
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -99,7 +99,7 @@ export default function ProductDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, setLoading, setProduct, params.id]);
 
   const handleWhatsApp = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -156,7 +156,7 @@ export default function ProductDetailPage() {
     }
   };
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('product_comments')
@@ -193,7 +193,7 @@ export default function ProductDetailPage() {
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
-  };
+  }, [supabase, params.id, setComments]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();

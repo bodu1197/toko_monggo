@@ -1,39 +1,57 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { createClientComponentClient } from '@supabase/ssr';
+
+const getSessionId = () => {
+  let sessionId = localStorage.getItem('visitor_session_id');
+  if (!sessionId) {
+    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('visitor_session_id', sessionId);
+  }
+  return sessionId;
+};
+
+const hasLoggedToday = () => {
+  const lastLog = localStorage.getItem('last_access_log_date');
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  return lastLog === today;
+};
+
+const markLoggedToday = () => {
+  const today = new Date().toISOString().split('T')[0];
+  localStorage.setItem('last_access_log_date', today);
+};
 
 export default function LocationTracker() {
   const supabase = createClientComponentClient();
 
-  useEffect(() => {
-    trackAccess();
-  }, []);
+  const saveAccessWithoutLocation = useCallback(async (sessionId, userId, userAgent, pageUrl) => {
+    try {
+      const { error } = await supabase
+        .from('access_logs')
+        .upsert({
+          session_id: sessionId,
+          user_id: userId || null,
+          user_agent: userAgent,
+          page_url: pageUrl,
+          access_date: new Date().toISOString().split('T')[0],
+        }, {
+          onConflict: 'session_id,access_date'
+        });
 
-  // 브라우저별 고유 세션 ID 생성/가져오기
-  const getSessionId = () => {
-    let sessionId = localStorage.getItem('visitor_session_id');
-    if (!sessionId) {
-      sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('visitor_session_id', sessionId);
+      if (error) {
+        console.error('Error saving access log without location:', error);
+      } else {
+        console.log('✅ Access logged without location');
+        markLoggedToday();
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
-    return sessionId;
-  };
+  }, [supabase]); // supabase is a stable dependency
 
-  // 오늘 이미 기록했는지 확인
-  const hasLoggedToday = () => {
-    const lastLog = localStorage.getItem('last_access_log_date');
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    return lastLog === today;
-  };
-
-  // 오늘 기록했다고 표시
-  const markLoggedToday = () => {
-    const today = new Date().toISOString().split('T')[0];
-    localStorage.setItem('last_access_log_date', today);
-  };
-
-  const trackAccess = async () => {
+  const trackAccess = useCallback(async () => {
     try {
       // 오늘 이미 기록했으면 스킵
       if (hasLoggedToday()) {
@@ -99,32 +117,11 @@ export default function LocationTracker() {
     } catch (error) {
       console.error('Error tracking access:', error);
     }
-  };
+  }, [supabase, saveAccessWithoutLocation]);
 
-  const saveAccessWithoutLocation = async (sessionId, userId, userAgent, pageUrl) => {
-    try {
-      const { error } = await supabase
-        .from('access_logs')
-        .upsert({
-          session_id: sessionId,
-          user_id: userId || null,
-          user_agent: userAgent,
-          page_url: pageUrl,
-          access_date: new Date().toISOString().split('T')[0],
-        }, {
-          onConflict: 'session_id,access_date'
-        });
-
-      if (error) {
-        console.error('Error saving access log without location:', error);
-      } else {
-        console.log('✅ Access logged without location');
-        markLoggedToday();
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+  useEffect(() => {
+    trackAccess();
+  }, [trackAccess]);
 
   // This component doesn't render anything
   return null;
