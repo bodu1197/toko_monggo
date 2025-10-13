@@ -181,35 +181,60 @@ export default function AdminPage() {
 
   const fetchReports = useCallback(async () => {
     try {
-      const { data, error } = await supabase
+      // Fetch reports without joins first
+      const { data: reportsData, error: reportsError } = await supabase
         .from('reports')
-        .select(`
-          *,
-          reporter:profiles!reports_reporter_id_fkey (
-            full_name,
-            email
-          ),
-          reported_product:products!reports_reported_product_id_fkey (
-            title,
-            user_id,
-            seller:profiles!products_user_id_fkey (
-              full_name
-            )
-          ),
-          reported_user:profiles!reports_reported_user_id_fkey (
-            full_name,
-            email
-          ),
-          resolver:profiles!reports_resolved_by_fkey (
-            full_name
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (reportsError) throw reportsError;
 
-      setReports(data || []);
-      filterReports(reportFilter, data || []);
+      if (!reportsData || reportsData.length === 0) {
+        setReports([]);
+        filterReports(reportFilter, []);
+        return;
+      }
+
+      // Get unique IDs for related data
+      const reporterIds = [...new Set(reportsData.map(r => r.reporter_id).filter(Boolean))];
+      const productIds = [...new Set(reportsData.map(r => r.reported_product_id).filter(Boolean))];
+      const userIds = [...new Set(reportsData.map(r => r.reported_user_id).filter(Boolean))];
+      const resolverIds = [...new Set(reportsData.map(r => r.resolved_by).filter(Boolean))];
+
+      // Fetch all profiles
+      const allProfileIds = [...new Set([...reporterIds, ...userIds, ...resolverIds])];
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', allProfileIds);
+
+      // Fetch products with seller info
+      const { data: productsData } = await supabase
+        .from('products')
+        .select('id, title, user_id')
+        .in('id', productIds);
+
+      // Create maps
+      const profilesMap = {};
+      profilesData?.forEach(p => { profilesMap[p.id] = p; });
+
+      const productsMap = {};
+      productsData?.forEach(p => { productsMap[p.id] = p; });
+
+      // Enrich reports with related data
+      const enrichedReports = reportsData.map(report => ({
+        ...report,
+        reporter: profilesMap[report.reporter_id] || null,
+        reported_product: report.reported_product_id ? {
+          ...productsMap[report.reported_product_id],
+          seller: profilesMap[productsMap[report.reported_product_id]?.user_id] || null
+        } : null,
+        reported_user: profilesMap[report.reported_user_id] || null,
+        resolver: profilesMap[report.resolved_by] || null
+      }));
+
+      setReports(enrichedReports);
+      filterReports(reportFilter, enrichedReports);
     } catch (error) {
       console.error('Error fetching reports:', error);
       console.error('Error details:', error);
