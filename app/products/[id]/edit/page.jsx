@@ -107,17 +107,16 @@ export default function EditProductPage() {
       setProduct(productData);
 
       console.log('[Edit] 🔍 Starting category parsing...');
-      console.log('[Edit] Product data:', productData);
+      console.log('[Edit] Product ID:', productData.id);
+      console.log('[Edit] Product title:', productData.title);
 
       // Get category hierarchy
       let category1 = '';
       let category2 = '';
 
-      console.log('[Edit] Category from DB:', {
-        categoryName: productData.categories?.name,
-        parentCategory: productData.categories?.parent_category,
-        fullObject: productData.categories
-      });
+      console.log('[Edit] Category from DB - name:', productData.categories?.name);
+      console.log('[Edit] Category from DB - parent:', productData.categories?.parent_category);
+      console.log('[Edit] Category from DB - full:', JSON.stringify(productData.categories));
 
       if (productData.categories?.parent_category) {
         // parent_category가 있으면 그것이 category1 (메인 카테고리)
