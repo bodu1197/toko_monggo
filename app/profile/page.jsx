@@ -259,12 +259,6 @@ export default function ProfilePage() {
           {/* Profile Info Card */}
           <div className="profile-card">
             <div className="avatar-section">
-              {/* Debug: Show avatar URL */}
-              {profile?.avatar_url && (
-                <div style={{ fontSize: '10px', color: '#666', marginBottom: '8px', wordBreak: 'break-all', textAlign: 'center' }}>
-                  Avatar URL: {profile.avatar_url}
-                </div>
-              )}
               <div className="avatar-container">
                 {profile?.avatar_url ? (
                   <img
