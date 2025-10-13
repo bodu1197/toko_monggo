@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../lib/supabase/client';
+import getSupabaseClient from '../lib/supabase/client';
 
 /**
  * 사용자 인증 상태를 확인하고 사용자 정보를 반환하는 커스텀 훅
@@ -12,6 +12,7 @@ import { supabase } from '../lib/supabase/client';
  */
 export function useAuth({ redirectTo = '/login' } = {}) {
   const router = useRouter();
+  const supabase = getSupabaseClient(); // Get the client instance here
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
