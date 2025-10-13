@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/ssr';
 import '../login/login.css';
@@ -16,12 +16,7 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isValidToken, setIsValidToken] = useState(false);
 
-  useEffect(() => {
-    // Check if user has valid recovery token
-    checkRecoveryToken();
-  }, []);
-
-  const checkRecoveryToken = async () => {
+  const checkRecoveryToken = useCallback(async () => {
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
 
@@ -35,7 +30,12 @@ export default function ResetPasswordPage() {
       console.error('Token check error:', error);
       setError('Terjadi kesalahan. Silakan minta link reset baru.');
     }
-  };
+  }, [supabase, setError, setIsValidToken]);
+
+  useEffect(() => {
+    // Check if user has valid recovery token
+    checkRecoveryToken();
+  }, [checkRecoveryToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

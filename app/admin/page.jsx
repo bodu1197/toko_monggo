@@ -75,7 +75,7 @@ export default function AdminPage() {
         // 로그인하지 않음 (useAuth에서 이미 /login으로 리디렉션)
       }
     }
-  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, router]);
+  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, fetchRegionalStats, router]);
 
   // ... (fetchDashboardStats, fetchUsers, fetchProducts, fetchReports 등 기존 함수들은 유지) ...
 
@@ -198,7 +198,7 @@ export default function AdminPage() {
     }
   };
 
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('reports')
@@ -234,7 +234,7 @@ export default function AdminPage() {
       setReports([]);
       setFilteredReports([]);
     }
-  };
+  }, [supabase, setReports, filterReports, reportFilter, reports]);
 
   const filterReports = (filter, reportsData = reports) => {
     if (filter === 'all') {
@@ -355,7 +355,7 @@ export default function AdminPage() {
     }
   };
 
-  const fetchAccessStats = async () => {
+  const fetchAccessStats = useCallback(async () => {
     try {
       // Fetch access logs (assuming access_logs table exists)
       const { data, error } = await supabase
@@ -386,9 +386,9 @@ export default function AdminPage() {
       // Set empty data if table doesn't exist
       setAccessStats({ hourly: [], daily: [], monthly: [], yearly: [] });
     }
-  };
+  }, [supabase, setAccessStats, processHourlyStats, processDailyStats, processMonthlyStats, processYearlyStats]);
 
-  const fetchRegionalStats = async () => {
+  const fetchRegionalStats = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('access_logs')
@@ -423,7 +423,7 @@ export default function AdminPage() {
       console.error('Error fetching regional stats:', error);
       setRegionalStats([]);
     }
-  };
+  }, [supabase, setRegionalStats]);
 
   const processHourlyStats = (logs) => {
     const now = new Date();
