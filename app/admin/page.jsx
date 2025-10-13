@@ -94,16 +94,31 @@ export default function AdminPage() {
 
   const fetchUsers = useCallback(async () => {
     try {
+      console.log('[Admin] Fetching users with get_all_users_with_email RPC...');
+
       // Use RPC function to get users with email
       const { data, error } = await supabase
         .rpc('get_all_users_with_email');
 
-      if (error) throw error;
+      console.log('[Admin] RPC result:', { data, error });
 
+      if (error) {
+        console.error('[Admin] RPC Error details:', {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint
+        });
+        throw error;
+      }
+
+      console.log('[Admin] Successfully fetched', data?.length || 0, 'users');
       setUsers(data || []);
       setFilteredUsers(data || []);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('[Admin] Error fetching users:', error);
+      console.error('[Admin] Full error object:', JSON.stringify(error, null, 2));
+      alert(`회원 목록을 불러오는데 실패했습니다.\n\n에러: ${error.message || '알 수 없는 오류'}`);
       setUsers([]);
       setFilteredUsers([]);
     }
