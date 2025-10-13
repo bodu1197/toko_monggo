@@ -267,15 +267,10 @@ export default function ProfilePage() {
               )}
               <div className="avatar-container">
                 {profile?.avatar_url ? (
-                  <Image
+                  <img
                     src={profile.avatar_url}
                     alt="Avatar"
-                    fill
-                    sizes="150px"
                     className="avatar-image"
-                    priority
-                    placeholder="blur"
-                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzI4MjgyOCIvPjwvc3ZnPg=="
                     onError={(e) => {
                       console.error('Avatar image failed to load:', profile.avatar_url);
                       console.error('Error event:', e);
