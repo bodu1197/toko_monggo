@@ -87,8 +87,19 @@ export default function EditProductPage() {
 
       if (productError) throw productError;
 
-      // Check if user owns this product
-      if (productData.user_id !== user.id) {
+      // Check if user owns this product or is an admin
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      const isAdmin = profileData?.role === 'admin';
+      const isOwner = productData.user_id === user.id;
+
+      if (!isOwner && !isAdmin) {
         alert('Anda tidak memiliki izin untuk mengedit produk ini');
         router.push('/');
         return;

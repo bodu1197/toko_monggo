@@ -276,27 +276,79 @@ export default function AdminPage() {
     if (!confirm('이 상품을 완전히 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.')) return;
 
     try {
-      // 먼저 상품 이미지 삭제
+      console.log('[Admin] Deleting product:', productId);
+
+      // 1. 먼저 상품의 이미지 URL들을 가져옴
+      const { data: productImages, error: fetchError } = await supabase
+        .from('product_images')
+        .select('image_url')
+        .eq('product_id', productId);
+
+      if (fetchError) {
+        console.error('[Admin] Error fetching images:', fetchError);
+      }
+
+      console.log('[Admin] Found images to delete:', productImages);
+
+      // 2. 데이터베이스에서 이미지 레코드 삭제
       const { error: imageError } = await supabase
         .from('product_images')
         .delete()
         .eq('product_id', productId);
 
-      if (imageError) throw imageError;
+      if (imageError) {
+        console.error('[Admin] Error deleting image records:', imageError);
+        throw imageError;
+      }
 
-      // 상품 삭제
+      // 3. 상품 삭제 (CASCADE로 연결된 데이터도 자동 삭제)
       const { error } = await supabase
         .from('products')
         .delete()
         .eq('id', productId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('[Admin] Error deleting product:', error);
+        throw error;
+      }
 
-      alert('상품이 삭제되었습니다.');
+      // 4. 스토리지에서 이미지 파일 삭제
+      if (productImages && productImages.length > 0) {
+        for (const img of productImages) {
+          try {
+            // URL에서 파일 경로 추출
+            // URL 형식: https://xxx.supabase.co/storage/v1/object/public/product-images/products/filename.jpg
+            const urlParts = img.image_url.split('/product-images/');
+            if (urlParts.length > 1) {
+              const filePath = urlParts[1];
+
+              const { error: storageError } = await supabase.storage
+                .from('product-images')
+                .remove([filePath]);
+
+              if (storageError) {
+                console.error('[Admin] Error deleting image from storage:', storageError);
+              } else {
+                console.log('[Admin] Deleted image from storage:', filePath);
+              }
+            }
+          } catch (error) {
+            console.error('[Admin] Error processing image deletion:', error);
+          }
+        }
+      }
+
+      alert('상품과 모든 이미지가 삭제되었습니다.');
       await fetchProducts();
       await fetchDashboardStats();
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error('[Admin] Error deleting product:', error);
+      console.error('[Admin] Error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
       alert('삭제 실패: ' + error.message);
     }
   };
