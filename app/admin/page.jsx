@@ -302,14 +302,22 @@ export default function AdminPage() {
       }
 
       // 3. 상품 삭제 (CASCADE로 연결된 데이터도 자동 삭제)
-      const { error } = await supabase
+      const { data: deleteData, error } = await supabase
         .from('products')
         .delete()
-        .eq('id', productId);
+        .eq('id', productId)
+        .select();
+
+      console.log('[Admin] Delete product result:', { deleteData, error });
 
       if (error) {
         console.error('[Admin] Error deleting product:', error);
         throw error;
+      }
+
+      if (!deleteData || deleteData.length === 0) {
+        console.warn('[Admin] Product delete returned no data - might indicate RLS issue');
+        throw new Error('삭제 작업이 실패했습니다. RLS 정책을 확인해주세요.');
       }
 
       // 4. 스토리지에서 이미지 파일 삭제

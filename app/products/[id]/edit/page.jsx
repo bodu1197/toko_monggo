@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Image } from 'next/image'; // Added for image optimization
+import Image from 'next/image';
 import { createBrowserClient } from '@supabase/ssr';
 import { INDONESIA_REGIONS } from '../../../data/regions';
 import { CATEGORIES, getSubcategories } from '../../../data/categories';
