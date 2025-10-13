@@ -279,7 +279,7 @@ ORDER BY idx_scan DESC;
 ### Next.js에서 사용
 
 ```javascript
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@supabase/ssr';
 
 const supabase = createClientComponentClient();
 

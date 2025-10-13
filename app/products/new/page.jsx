@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@supabase/ssr';
 import { INDONESIA_REGIONS } from '../../data/regions';
 import { CATEGORIES, getSubcategories } from '../../data/categories';
 import { compressImages, formatFileSize } from '../../utils/imageCompression';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@supabase/ssr';
 
 export default function LocationTracker() {
   const supabase = createClientComponentClient();

@@ -1,4 +1,4 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@supabase/ssr';
 
 /**
  * Supabase 클라이언트 컴포넌트 클라이언트 인스턴스
