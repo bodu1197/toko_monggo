@@ -832,86 +832,9 @@
   border-color: #4b5563;
 }
 
-.product-image {
-  position: relative;
-  aspect-ratio: 1;
-  background: var(--bg-tertiary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
+/* ProductCard 컴포넌트 스타일은 ProductCard.css에서 관리 */
 .product-emoji {
   font-size: 80px;
-}
-
-.product-img {
-  object-fit: cover;
-}
-
-.favorite-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(0, 0, 0, 0.6);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  transition: all 0.3s;
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.favorite-btn svg {
-  width: 20px;
-  height: 20px;
-  color: white;
-}
-
-.favorite-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
-  transform: scale(1.1);
-}
-
-.product-info {
-  padding: 16px;
-}
-
-.product-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.product-price {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.product-location {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
-
-.product-condition {
-  display: inline-block;
-  padding: 4px 10px;
-  background: var(--bg-tertiary);
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
 }
 
 /* Loading State */
