@@ -77,7 +77,7 @@ export default function LoginPage() {
         <div className="auth-brand">
           <div className="brand-content">
             <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ TokoMonggo</h1>
+              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ Toko Monggo</h1>
             </Link>
             <h2 className="brand-title">Selamat Datang Kembali!</h2>
             <p className="brand-description">
