@@ -152,7 +152,9 @@ export default function SignupPage() {
         {/* Left Side - Branding (PC only) */}
         <div className="auth-brand">
           <div className="brand-content">
-            <h1 className="brand-logo">🛍️ TokoMonggo</h1>
+            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ TokoMonggo</h1>
+            </Link>
             <h2 className="brand-title">Bergabung Bersama Kami!</h2>
             <p className="brand-description">
               Mulai jual beli barang bekas dengan mudah dan aman. Dapatkan pengalaman terbaik di platform marketplace terpercaya Indonesia.

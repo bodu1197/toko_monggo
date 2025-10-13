@@ -76,7 +76,9 @@ export default function LoginPage() {
         {/* Left Side - Branding (PC only) */}
         <div className="auth-brand">
           <div className="brand-content">
-            <h1 className="brand-logo">🛍️ TokoMonggo</h1>
+            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ TokoMonggo</h1>
+            </Link>
             <h2 className="brand-title">Selamat Datang Kembali!</h2>
             <p className="brand-description">
               Platform marketplace terpercaya untuk jual beli barang bekas berkualitas di Indonesia

@@ -45,7 +45,9 @@ export default function RecoverPage() {
         {/* Left Side - Branding (PC only) */}
         <div className="auth-brand">
           <div className="brand-content">
-            <h1 className="brand-logo">🛍️ TokoMonggo</h1>
+            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ TokoMonggo</h1>
+            </Link>
             <h2 className="brand-title">Lupa Kata Sandi?</h2>
             <p className="brand-description">
               Jangan khawatir! Masukkan email Anda dan kami akan mengirimkan link untuk mereset kata sandi Anda.

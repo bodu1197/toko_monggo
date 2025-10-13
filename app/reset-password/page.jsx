@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr';
 import '../login/login.css';
 
@@ -117,7 +118,9 @@ export default function ResetPasswordPage() {
         {/* Left Side - Branding (PC only) */}
         <div className="auth-brand">
           <div className="brand-content">
-            <h1 className="brand-logo">🛍️ TokoMonggo</h1>
+            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ TokoMonggo</h1>
+            </Link>
             <h2 className="brand-title">Buat Kata Sandi Baru</h2>
             <p className="brand-description">
               Masukkan kata sandi baru untuk akun Anda. Pastikan kata sandi kuat dan mudah diingat.
