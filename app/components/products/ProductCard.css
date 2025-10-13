@@ -161,3 +161,10 @@
 .delete-btn {
     color: #ef4444; /* red-500 */
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .product-image {
+    height: 132px; /* 모바일에서 이미지 높이 40% 감소 (220px → 132px, 60% 유지) */
+  }
+}
