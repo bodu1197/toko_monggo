@@ -813,8 +813,8 @@
 }
 
 .product-grid.mobile {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 .product-card {

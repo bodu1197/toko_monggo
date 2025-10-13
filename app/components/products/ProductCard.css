@@ -167,4 +167,24 @@
   .product-image {
     height: 132px; /* 모바일에서 이미지 높이 40% 감소 (220px → 132px, 60% 유지) */
   }
+
+  .product-title {
+    font-size: 15px; /* 16px → 15px */
+  }
+
+  .product-price {
+    font-size: 17px; /* 18px → 17px */
+  }
+
+  .product-location {
+    font-size: 13px; /* 유지 */
+  }
+
+  .product-condition {
+    font-size: 12px; /* 유지 */
+  }
+
+  .product-info {
+    padding: 14px; /* 16px → 14px, 이미지가 작아져서 패딩도 약간 줄임 */
+  }
 }
