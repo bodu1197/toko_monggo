@@ -542,6 +542,7 @@
   .right-sidebar {
     position: static;
     order: 2; /* 이미지(1) 다음에 배치 */
+    width: 100%;
   }
 
   /* left-column 내부 섹션들의 순서 */
@@ -555,14 +556,17 @@
 
   .details-section {
     order: 3; /* 가격/지역 다음 */
+    width: 100%;
   }
 
   .description-section {
     order: 4; /* Detail 다음 */
+    width: 100%;
   }
 
   .comments-section {
     order: 5; /* 마지막 */
+    width: 100%;
   }
 
   /* Seller 섹션 숨기기 (모바일에서는 불필요) */
