@@ -52,34 +52,6 @@ export default function AdminPage() {
   // Regional statistics
   const [regionalStats, setRegionalStats] = useState([]);
 
-  useEffect(() => {
-    if (!loading) {
-      if (user && profile?.role === 'admin') {
-        setIsAuthorized(true);
-        // 초기 데이터 로드
-        fetchDashboardStats();
-        fetchAccessStats();
-        fetchRegionalStats();
-        // 활성 탭에 따른 데이터 로드
-        if (activeTab === 'users') {
-          fetchUsers();
-        } else if (activeTab === 'products') {
-          fetchProducts();
-        } else if (activeTab === 'reports') {
-          fetchReports();
-        }
-      } else if (user) {
-        // 로그인했지만 관리자가 아님
-        alert('접근 거부. 관리자 권한이 없습니다.\n\n현재 역할: ' + (profile?.role || 'undefined'));
-        router.push('/');
-      } else {
-        // 로그인하지 않음 (useAuth에서 이미 /login으로 리디렉션)
-      }
-    }
-  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, fetchRegionalStats, fetchDashboardStats, fetchUsers, fetchProducts, router]);
-
-  // ... (fetchDashboardStats, fetchUsers, fetchProducts, fetchReports 등 기존 함수들은 유지) ...
-
   const fetchDashboardStats = useCallback(async () => {
     try {
       // Total users
@@ -199,6 +171,14 @@ export default function AdminPage() {
     }
   }, [supabase, setProducts, setFilteredProducts]);
 
+  const filterReports = (filter, reportsData = reports) => {
+    if (filter === 'all') {
+      setFilteredReports(reportsData);
+    } else {
+      setFilteredReports(reportsData.filter(report => report.status === filter));
+    }
+  };
+
   const fetchReports = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -235,15 +215,8 @@ export default function AdminPage() {
       setReports([]);
       setFilteredReports([]);
     }
-  }, [supabase, setReports, filterReports, reportFilter]);
-
-  const filterReports = (filter, reportsData = reports) => {
-    if (filter === 'all') {
-      setFilteredReports(reportsData);
-    } else {
-      setFilteredReports(reportsData.filter(report => report.status === filter));
-    }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase, reportFilter]);
 
   const handleSuspendProduct = async (productId) => {
     if (!confirm('이 상품을 발행 중지하시겠습니까?')) return;
@@ -550,6 +523,32 @@ export default function AdminPage() {
       console.error('Error logging out:', error);
     }
   };
+
+  useEffect(() => {
+    if (!loading) {
+      if (user && profile?.role === 'admin') {
+        setIsAuthorized(true);
+        // 초기 데이터 로드
+        fetchDashboardStats();
+        fetchAccessStats();
+        fetchRegionalStats();
+        // 활성 탭에 따른 데이터 로드
+        if (activeTab === 'users') {
+          fetchUsers();
+        } else if (activeTab === 'products') {
+          fetchProducts();
+        } else if (activeTab === 'reports') {
+          fetchReports();
+        }
+      } else if (user) {
+        // 로그인했지만 관리자가 아님
+        alert('접근 거부. 관리자 권한이 없습니다.\n\n현재 역할: ' + (profile?.role || 'undefined'));
+        router.push('/');
+      } else {
+        // 로그인하지 않음 (useAuth에서 이미 /login으로 리디렉션)
+      }
+    }
+  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, fetchRegionalStats, fetchDashboardStats, fetchUsers, fetchProducts, router]);
 
   if (loading || !isAuthorized) {
     return (
