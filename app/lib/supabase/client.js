@@ -1,3 +1,4 @@
+'use client';
 import { createClientComponentClient } from '@supabase/ssr';
 
 /**
