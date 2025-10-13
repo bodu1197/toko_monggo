@@ -42,11 +42,6 @@ export default function HomePage() {
   const [subcategories, setSubcategories] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  useEffect(() => {
-    // 초기에는 일반 상품 로드
-    fetchProducts();
-  }, [fetchProducts]);
-
   const tryGetLocationAndFetch = useCallback(() => {
     if (!navigator.geolocation) {
       // Geolocation 미지원 - 일반 상품 로드
@@ -431,6 +426,11 @@ export default function HomePage() {
     setShowSuggestions(false);
     searchProducts(suggestion);
   };
+
+  useEffect(() => {
+    // 초기에는 일반 상품 로드
+    fetchProducts();
+  }, [fetchProducts]);
 
   return (
     <div className="home-page">
