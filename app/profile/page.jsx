@@ -259,6 +259,12 @@ export default function ProfilePage() {
           {/* Profile Info Card */}
           <div className="profile-card">
             <div className="avatar-section">
+              {/* Debug: Show avatar URL */}
+              {profile?.avatar_url && (
+                <div style={{ fontSize: '10px', color: '#666', marginBottom: '8px', wordBreak: 'break-all', textAlign: 'center' }}>
+                  Avatar URL: {profile.avatar_url}
+                </div>
+              )}
               <div className="avatar-container">
                 {profile?.avatar_url ? (
                   <Image
@@ -270,6 +276,10 @@ export default function ProfilePage() {
                     priority
                     placeholder="blur"
                     blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzI4MjgyOCIvPjwvc3ZnPg=="
+                    onError={(e) => {
+                      console.error('Avatar image failed to load:', profile.avatar_url);
+                      console.error('Error event:', e);
+                    }}
                   />
                 ) : (
                   <div className="avatar-placeholder">
