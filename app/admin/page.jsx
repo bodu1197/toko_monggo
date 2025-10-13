@@ -52,6 +52,11 @@ export default function AdminPage() {
   // Regional statistics
   const [regionalStats, setRegionalStats] = useState([]);
 
+  // Trash management
+  const [trashProducts, setTrashProducts] = useState([]);
+  const [filteredTrashProducts, setFilteredTrashProducts] = useState([]);
+  const [trashSearchQuery, setTrashSearchQuery] = useState('');
+
   const fetchDashboardStats = useCallback(async () => {
     try {
       // Total users
@@ -465,7 +470,10 @@ export default function AdminPage() {
   };
 
   const handleDeleteUser = async (userId) => {
-    if (!confirm('이 회원을 완전히 삭제하시겠습니까?\n\n⚠️ 경고: 이 작업은 되돌릴 수 없으며, 회원의 모든 상품, 댓글, 즐겨찾기 등이 함께 삭제됩니다.')) return;
+    const reason = prompt('회원 삭제 사유를 입력하세요 (증거 보관용):');
+    if (!reason) return;
+
+    if (!confirm('이 회원을 삭제하시겠습니까?\n\n📦 회원의 상품은 휴지통으로 이동됩니다.\n⚠️ 이 작업은 되돌릴 수 없습니다.')) return;
 
     const confirmText = prompt('정말로 삭제하시려면 "삭제확인"을 입력하세요:');
     if (confirmText !== '삭제확인') {
@@ -476,7 +484,23 @@ export default function AdminPage() {
     try {
       console.log('[Admin] Deleting user:', userId);
 
-      // Delete user's profile (CASCADE will delete related data)
+      // 1. Move user's products to trash (for evidence preservation)
+      const { data: movedResult, error: trashError } = await supabase
+        .rpc('move_user_products_to_trash', {
+          target_user_id: userId,
+          admin_user_id: user?.id,
+          reason: reason
+        });
+
+      if (trashError) {
+        console.error('[Admin] Error moving products to trash:', trashError);
+        throw trashError;
+      }
+
+      const movedCount = movedResult?.[0]?.moved_count || 0;
+      console.log('[Admin] Moved products to trash:', movedCount);
+
+      // 2. Delete user's profile (CASCADE will delete comments, favorites, etc.)
       const { error: profileError } = await supabase
         .from('profiles')
         .delete()
@@ -484,11 +508,7 @@ export default function AdminPage() {
 
       if (profileError) throw profileError;
 
-      // Note: auth.users deletion requires admin API
-      // For now, we only delete the profile
-      // The user can still login but will have no profile
-
-      alert('회원 프로필이 삭제되었습니다.\n\n참고: 인증 계정은 Supabase Dashboard에서 수동으로 삭제해야 합니다.');
+      alert(`회원이 삭제되었습니다.\n\n📦 ${movedCount}개의 상품이 휴지통으로 이동되었습니다.\n💡 휴지통 탭에서 증거를 확인하고 영구 삭제할 수 있습니다.\n\n참고: 인증 계정은 Supabase Dashboard에서 수동으로 삭제해야 합니다.`);
       await fetchUsers();
       await fetchDashboardStats();
     } catch (error) {
@@ -681,6 +701,89 @@ export default function AdminPage() {
     setFilteredProducts(filtered);
   };
 
+  const fetchTrashProducts = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('trash_products')
+        .select('*')
+        .order('deleted_at', { ascending: false });
+
+      if (error) throw error;
+
+      setTrashProducts(data || []);
+      setFilteredTrashProducts(data || []);
+    } catch (error) {
+      console.error('Error fetching trash products:', error);
+      setTrashProducts([]);
+      setFilteredTrashProducts([]);
+    }
+  }, [supabase, setTrashProducts, setFilteredTrashProducts]);
+
+  const handleTrashSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setTrashSearchQuery(query);
+
+    if (!query) {
+      setFilteredTrashProducts(trashProducts);
+      return;
+    }
+
+    const filtered = trashProducts.filter(product =>
+      product.title?.toLowerCase().includes(query) ||
+      product.user_full_name?.toLowerCase().includes(query) ||
+      product.user_email?.toLowerCase().includes(query)
+    );
+
+    setFilteredTrashProducts(filtered);
+  };
+
+  const handleRestoreProduct = async (trashId) => {
+    if (!confirm('이 상품을 복구하시겠습니까?\n\n복구된 상품은 "숨김" 상태로 복구됩니다.')) return;
+
+    try {
+      const { data, error } = await supabase
+        .rpc('restore_product_from_trash', {
+          trash_id: trashId,
+          admin_user_id: user?.id
+        });
+
+      if (error) throw error;
+
+      alert('상품이 복구되었습니다.\n\n상품은 "숨김" 상태로 복구되었습니다.');
+      await fetchTrashProducts();
+      await fetchProducts();
+      await fetchDashboardStats();
+    } catch (error) {
+      console.error('[Admin] Error restoring product:', error);
+      alert('복구 실패: ' + error.message);
+    }
+  };
+
+  const handlePermanentDeleteProduct = async (trashId, productTitle) => {
+    if (!confirm(`"${productTitle}" 상품을 영구적으로 삭제하시겠습니까?\n\n⚠️ 이 작업은 되돌릴 수 없으며, 모든 증거가 사라집니다.`)) return;
+
+    const confirmText = prompt('정말로 영구 삭제하시려면 "영구삭제"를 입력하세요:');
+    if (confirmText !== '영구삭제') {
+      alert('삭제가 취소되었습니다.');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('trash_products')
+        .delete()
+        .eq('id', trashId);
+
+      if (error) throw error;
+
+      alert('상품이 영구적으로 삭제되었습니다.');
+      await fetchTrashProducts();
+    } catch (error) {
+      console.error('[Admin] Error permanently deleting product:', error);
+      alert('영구 삭제 실패: ' + error.message);
+    }
+  };
+
   const handleLogout = async () => {
     if (!confirm('Yakin ingin keluar?')) return;
 
@@ -707,6 +810,8 @@ export default function AdminPage() {
           fetchProducts();
         } else if (activeTab === 'reports') {
           fetchReports();
+        } else if (activeTab === 'trash') {
+          fetchTrashProducts();
         }
       } else if (user) {
         // 로그인했지만 관리자가 아님
@@ -826,6 +931,18 @@ export default function AdminPage() {
                 </svg>
                 지역별 통계
               </button>
+              <button
+                className={`nav-item ${activeTab === 'trash' ? 'active' : ''}`}
+                onClick={() => setActiveTab('trash')}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  <line x1="10" y1="11" x2="10" y2="17"/>
+                  <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
+                휴지통
+              </button>
             </nav>
           </aside>
         )}
@@ -870,6 +987,12 @@ export default function AdminPage() {
                 onClick={() => setActiveTab('regional')}
               >
                 지역
+              </button>
+              <button
+                className={`tab ${activeTab === 'trash' ? 'active' : ''}`}
+                onClick={() => setActiveTab('trash')}
+              >
+                휴지통
               </button>
             </div>
           )}
@@ -1427,6 +1550,120 @@ export default function AdminPage() {
                 {regionalStats.length === 0 && (
                   <div className="empty-state">
                     <p>지역 데이터가 없습니다</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Trash Tab */}
+          {activeTab === 'trash' && (
+            <div className="trash-section">
+              <div className="section-header">
+                <h2 className="section-title">휴지통 (삭제된 상품)</h2>
+                <div className="search-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="상품 검색..."
+                    value={trashSearchQuery}
+                    onChange={handleTrashSearch}
+                  />
+                </div>
+              </div>
+
+              <div className="info-banner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="16" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                <div>
+                  <strong>증거 보관소:</strong> 삭제된 회원의 상품들이 증거로 보관됩니다. 복구하거나 영구 삭제할 수 있습니다.
+                </div>
+              </div>
+
+              <div className="users-table-container">
+                <table className="users-table">
+                  <thead>
+                    <tr>
+                      <th>상품명</th>
+                      <th>원소유자</th>
+                      <th>가격</th>
+                      <th>상태</th>
+                      <th>삭제일</th>
+                      <th>삭제 사유</th>
+                      <th>액션</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredTrashProducts.map(product => {
+                      const images = product.images || [];
+                      const firstImage = images[0]?.image_url;
+                      return (
+                        <tr key={product.id}>
+                          <td>
+                            <div className="user-cell">
+                              {firstImage && (
+                                <div className="user-avatar">
+                                  <Image src={firstImage} alt={product.title} width={40} height={40} />
+                                </div>
+                              )}
+                              <span>{product.title}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="user-info">
+                              <div>{product.user_full_name || '-'}</div>
+                              <small>{product.user_email || '-'}</small>
+                            </div>
+                          </td>
+                          <td>Rp {product.price?.toLocaleString('id-ID')}</td>
+                          <td>
+                            <span className={`status-badge ${product.status === 'active' ? 'active' : product.status === 'suspended' ? 'suspended' : ''}`}>
+                              {product.status === 'active' ? '활성' : product.status === 'suspended' ? '중지' : product.status === 'sold' ? '판매완료' : '숨김'}
+                            </span>
+                          </td>
+                          <td>{new Date(product.deleted_at).toLocaleDateString('ko-KR')}</td>
+                          <td>
+                            <span className="reason-text" title={product.deletion_reason}>
+                              {product.deletion_reason ?
+                                (product.deletion_reason.length > 20 ?
+                                  product.deletion_reason.substring(0, 20) + '...' :
+                                  product.deletion_reason)
+                                : '-'}
+                            </span>
+                          </td>
+                          <td>
+                            <div className="action-buttons">
+                              <button
+                                className="btn-activate"
+                                onClick={() => handleRestoreProduct(product.id)}
+                                title="상품 복구"
+                              >
+                                복구
+                              </button>
+                              <button
+                                className="btn-delete"
+                                onClick={() => handlePermanentDeleteProduct(product.id, product.title)}
+                                title="영구 삭제"
+                              >
+                                영구삭제
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+
+                {filteredTrashProducts.length === 0 && (
+                  <div className="empty-state">
+                    <p>휴지통이 비어 있습니다</p>
                   </div>
                 )}
               </div>
