@@ -27,21 +27,6 @@ export default function ProductDetailPage() {
   const [replyTo, setReplyTo] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    fetchProduct();
-    fetchCurrentUser();
-    fetchComments();
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, [params.id, fetchComments, fetchCurrentUser, fetchProduct]);
-
   const fetchCurrentUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
@@ -197,6 +182,20 @@ export default function ProductDetailPage() {
       console.error('Error fetching comments:', error);
     }
   }, [supabase, params.id, setComments]);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    fetchProduct();
+    fetchCurrentUser();
+    fetchComments();
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [params.id, fetchComments, fetchCurrentUser, fetchProduct]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
