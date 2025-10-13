@@ -188,7 +188,7 @@
 
 .thumbnail {
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 4/3; /* 1:1에서 4:3으로 변경 (높이 25% 감소) */
   background: var(--bg-secondary);
   border: 2px solid var(--border-color);
   border-radius: 12px;
