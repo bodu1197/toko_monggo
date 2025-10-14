@@ -17,10 +17,11 @@ export default function ProfilePage() {
   const supabaseClient = useSupabaseClient(); // Get client from context
 
     const [userProducts, setUserProducts] = useState([]);
+    const [favoriteProducts, setFavoriteProducts] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const isMobile = useScreenSize();
     const [activeTab, setActiveTab] = useState('products'); // products, sold, favorites
-  
+
     const [editForm, setEditForm] = useState({
       full_name: '',
       bio: '',
@@ -42,14 +43,47 @@ export default function ProfilePage() {
           `)
           .eq('user_id', userId)
           .order('created_at', { ascending: false });
-  
+
         if (error) throw error;
-  
+
         setUserProducts(data || []);
       } catch (error) {
         console.error('Error fetching products:', error);
       }
     }, [supabaseClient, setUserProducts]);
+
+    const fetchFavoriteProducts = useCallback(async (userId) => {
+      try {
+        const { data, error } = await supabaseClient
+          .from('favorites')
+          .select(`
+            product_id,
+            products (
+              id,
+              title,
+              price,
+              status,
+              product_images (
+                image_url,
+                order
+              ),
+              regencies (
+                regency_name
+              )
+            )
+          `)
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Transform data to match ProductCard format
+        const favorites = (data || []).map(fav => fav.products).filter(Boolean);
+        setFavoriteProducts(favorites);
+      } catch (error) {
+        console.error('Error fetching favorites:', error);
+      }
+    }, [supabaseClient, setFavoriteProducts]);
   
     const handleAvatarUpload = useCallback(async (e) => {
       const file = e.target.files[0];
@@ -212,8 +246,9 @@ export default function ProfilePage() {
     useEffect(() => {
       if (user) {
         fetchUserProducts(user.id);
+        fetchFavoriteProducts(user.id);
       }
-    }, [user, fetchUserProducts]);
+    }, [user, fetchUserProducts, fetchFavoriteProducts]);
 
     useEffect(() => {
       if (profile) {
@@ -351,7 +386,7 @@ export default function ProfilePage() {
                 <span className="stat-label">Terjual</span>
               </div>
               <div className="stat-item">
-                <span className="stat-number">0</span>
+                <span className="stat-number">{favoriteProducts.length}</span>
                 <span className="stat-label">Favorit</span>
               </div>
             </div>
@@ -376,7 +411,7 @@ export default function ProfilePage() {
                 className={`tab ${activeTab === 'favorites' ? 'active' : ''}`}
                 onClick={() => setActiveTab('favorites')}
               >
-                Favorit (0)
+                Favorit ({favoriteProducts.length})
               </button>
             </div>
           </div>
@@ -428,10 +463,37 @@ export default function ProfilePage() {
           )}
   
           {activeTab === 'favorites' && (
-            <div className="empty-state">
-              <div className="empty-icon">❤️</div>
-              <h3>Belum ada favorit</h3>
-              <p>Simpan iklan favorit Anda di sini</p>
+            <div className="products-section">
+              {favoriteProducts.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">❤️</div>
+                  <h3>Belum ada favorit</h3>
+                  <p>Simpan iklan favorit Anda di sini</p>
+                  <button className="btn btn-primary" onClick={() => router.push('/')}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    </svg>
+                    Jelajahi Produk
+                  </button>
+                </div>
+              ) : (
+                <div className={`products-grid ${isMobile ? 'mobile' : 'desktop'}`}>
+                  {favoriteProducts.map(product => (
+                    <ProductCard
+                      key={product.id}
+                      product={{
+                        id: product.id,
+                        title: product.title,
+                        price: product.price,
+                        city: product.regencies?.regency_name,
+                        image: product.product_images?.[0]?.image_url,
+                        status: product.status
+                      }}
+                      context="home"
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
