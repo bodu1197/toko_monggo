@@ -255,7 +255,8 @@ export default function ProfilePage() {
         alert(successMessage);
       } catch (error) {
         console.error('Error changing product status:', error);
-        alert('Gagal mengubah status produk');
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        alert(`Gagal mengubah status produk: ${error.message || 'Unknown error'}`);
       }
     }, [supabaseClient, user, fetchUserProducts]);
   
