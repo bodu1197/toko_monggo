@@ -84,7 +84,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
     e.stopPropagation();
 
     if (!currentUser) {
-      const goToLogin = confirm('좋아요를 하려면 로그인이 필요합니다.\n\n로그인 페이지로 이동하시겠습니까?');
+      const goToLogin = confirm('Anda harus login untuk menyukai produk.\n\nApakah Anda ingin pergi ke halaman login?');
       if (goToLogin) {
         router.push('/login');
       }
@@ -120,7 +120,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      alert('좋아요 처리 중 오류가 발생했습니다.');
+      alert('Terjadi kesalahan saat memproses favorit.');
     } finally {
       setFavoriteLoading(false);
     }
@@ -141,7 +141,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
             blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
           />
         ) : (
-          <div className="product-no-image">이미지 없음</div>
+          <div className="product-no-image">Tidak ada gambar</div>
         )}
 
         {context === 'home' && (
@@ -149,7 +149,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
             className={`favorite-btn ${isFavorite ? 'favorite-active' : ''}`}
             onClick={handleFavoriteClick}
             disabled={favoriteLoading}
-            title={isFavorite ? '찜 취소' : '찜하기'}
+            title={isFavorite ? 'Hapus favorit' : 'Tambah ke favorit'}
           >
             <svg viewBox="0 0 24 24" fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -158,8 +158,8 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
         )}
 
         {context === 'profile' && product.status && (
-            <div className={`product-status ${product.status === 'active' ? 'active' : ''}`}>
-                {product.status === 'active' ? '판매중' : '판매완료'}
+            <div className={`product-status ${product.status === 'active' ? 'active' : product.status === 'paused' ? 'paused' : ''}`}>
+                {product.status === 'active' ? 'Dijual' : product.status === 'paused' ? 'Dijeda' : 'Terjual'}
             </div>
         )}
       </div>
@@ -176,7 +176,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
             <button
               className={`action-btn pause-btn ${product.status === 'paused' ? 'paused' : ''}`}
               onClick={handleStatusChange}
-              title={product.status === 'paused' ? '판매 재개' : '판매 일시중지'}
+              title={product.status === 'paused' ? 'Lanjutkan penjualan' : 'Jeda penjualan'}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 {product.status === 'paused' ? (
@@ -188,21 +188,21 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
                   </>
                 )}
               </svg>
-              {product.status === 'paused' ? '재개' : '중지'}
+              {product.status === 'paused' ? 'Lanjutkan' : 'Jeda'}
             </button>
             <button className="action-btn edit-btn" onClick={handleEditClick}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
               </svg>
-              수정
+              Edit
             </button>
             <button className="action-btn delete-btn" onClick={handleDeleteClick}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="3 6 5 6 21 6" />
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
               </svg>
-              삭제
+              Hapus
             </button>
           </div>
         )}

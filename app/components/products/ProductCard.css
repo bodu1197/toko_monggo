@@ -99,6 +99,10 @@
     background-color: #10b981; /* emerald-500 */
 }
 
+.product-status.paused {
+    background-color: #f59e0b; /* amber-500 */
+}
+
 .product-info {
   padding: 16px;
   display: flex;
