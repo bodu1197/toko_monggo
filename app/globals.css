@@ -118,13 +118,6 @@ input::placeholder, textarea::placeholder {
   color: var(--text-muted);
 }
 
-/* 카드 스타일 */
-.card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-}
 
 /* 반응형 컨테이너 */
 .container {
@@ -267,25 +260,6 @@ input::placeholder, textarea::placeholder {
   height: 20px;
 }
 
-.btn-icon-lg {
-  width: 44px;
-  height: 44px;
-}
-
-.btn-icon-lg svg {
-  width: 22px;
-  height: 22px;
-}
-
-.btn-icon-circle {
-  border-radius: 50%;
-}
-
-/* ========== BUTTON SIZES ========== */
-.btn-lg {
-  padding: 16px 32px;
-  font-size: 16px;
-}
 
 /* ========== FORM COMPONENTS ========== */
 .form-group {

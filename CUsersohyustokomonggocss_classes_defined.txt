@@ -1,0 +1,374 @@
+.access-section
+.action-buttons
+.action-buttons button
+.admin-badge
+.admin-content
+.admin-header
+.admin-header .container
+.admin-layout
+.admin-page
+.admin-sidebar
+.admin-title
+.auth-brand
+.auth-container
+.auth-form
+.auth-form-container
+.auth-form-wrapper
+.auth-page
+.autocomplete-dropdown
+.autocomplete-dropdown.mobile
+.autocomplete-item
+.autocomplete-item span
+.autocomplete-item svg
+.autocomplete-item:hover
+.autocomplete-item:last-child
+.avatar-container
+.avatar-image
+.avatar-image,
+.avatar-placeholder
+.avatar-placeholder svg
+.avatar-section
+.avatar-upload-btn
+.avatar-upload-btn svg
+.avatar-upload-btn:hover
+.back-btn
+.back-btn svg
+.back-btn:hover
+.bar
+.bar-label
+.bar-value
+.bottom-nav
+.brand-content
+.brand-description
+.brand-features
+.brand-logo
+.brand-title
+.btn
+.btn svg
+.btn.loading
+.btn-activate
+.btn-activate:hover
+.btn-delete
+.btn-delete:hover
+.btn-edit
+.btn-edit svg
+.btn-edit:hover
+.btn-full
+.btn-icon
+.btn-icon svg
+.btn-icon:hover
+.btn-icon-circle
+.btn-icon-lg
+.btn-icon-lg svg
+.btn-icon-md
+.btn-icon-md svg
+.btn-icon-sm
+.btn-icon-sm svg
+.btn-lg
+.btn-nearby
+.btn-nearby svg
+.btn-nearby:hover
+.btn-nearby-active-mobile
+.btn-nearby-active-mobile svg
+.btn-nearby-active-mobile:hover
+.btn-nearby-inline
+.btn-nearby-inline svg
+.btn-nearby-inline:hover
+.btn-nearby-mobile
+.btn-nearby-mobile svg,
+.btn-nearby-mobile,
+.btn-nearby-mobile:hover
+.btn-primary
+.btn-primary:hover
+.btn-refresh-inline
+.btn-refresh-inline svg
+.btn-refresh-inline:hover
+.btn-refresh-nearby
+.btn-refresh-nearby svg
+.btn-refresh-nearby:hover
+.btn-resolve
+.btn-resolve:hover
+.btn-secondary
+.btn-secondary:hover
+.btn-social
+.btn-social.apple .social-icon
+.btn-social.google .social-icon
+.btn-social:hover
+.btn-suspend
+.btn-suspend:hover
+.card
+.categories
+.category-card
+.category-card:hover
+.category-grid
+.category-grid.desktop
+.category-grid.mobile
+.category-icon
+.category-name
+.char-count
+.chart
+.chart-bar
+.chart-bar:hover .bar
+.chart-bar:hover .bar-value
+.chart-container
+.chart-title
+.checkbox-wrapper
+.checkbox-wrapper input
+.close-filter-btn
+.close-filter-btn svg
+.close-filter-btn:hover
+.container
+.delete-btn
+.delete-btn:hover
+.divider
+.divider span
+.divider::before
+.edit-btn
+.edit-btn:hover
+.edit-form
+.empty-icon
+.empty-state
+.empty-state h3
+.empty-state p
+.feature-icon
+.feature-item
+.filter-bar
+.filter-btn
+.filter-btn.active
+.filter-btn:hover
+.filter-buttons
+.filter-group
+.filter-input
+.filter-input::placeholder
+.filter-input:focus
+.filter-overlay
+.filter-popup-bottom
+.filter-popup-content
+.filter-popup-header
+.filter-popup-header h3
+.filter-reset-btn
+.filter-reset-btn:hover
+.filter-reset-btn-mobile
+.filter-reset-btn-mobile svg,
+.filter-reset-btn-mobile,
+.filter-reset-btn-mobile:hover
+.filter-results
+.filter-section
+.filter-select
+.filter-select,
+.filter-select:focus,
+.footer
+.footer-bottom
+.footer-content
+.footer-section a,
+.footer-section a:hover
+.footer-section h4
+.footer-section p
+.form-actions
+.form-group
+.form-header
+.form-input
+.form-input:focus
+.form-label
+.form-options
+.form-subtitle
+.form-title
+.header
+.header.mobile
+.header.mobile .btn-icon
+.header.mobile .btn-icon svg
+.header-center
+.header-content
+.header-left
+.header-right
+.hero
+.hero-buttons
+.hero-content
+.hero-stats
+.hero-subtitle
+.hero-title
+.home-page
+.info-banner
+.info-banner div
+.info-banner strong
+.info-banner svg
+.link-primary
+.link-primary:hover
+.loading-container
+.loading-container p
+.loading-state
+.loading-state p
+.logo
+.logout-btn
+.logout-btn svg
+.logout-btn:hover
+.mobile-action-buttons
+.mobile-search
+.mobile-search input
+.mobile-search-inline
+.mobile-search-inline .search-btn
+.mobile-search-inline input
+.mobile-search-inline input::placeholder
+.mobile-tabs
+.mobile-tabs .tab
+.mobile-tabs .tab.active
+.nav-icon
+.nav-item
+.nav-item .badge
+.nav-item.active
+.nav-label
+.nav-links
+.nav-links a
+.nav-links a:hover
+.nearby-active-mobile
+.nearby-active-mobile span
+.nearby-active-mobile svg:first-child
+.nearby-banner
+.nearby-banner-mobile
+.nearby-info
+.nearby-info svg
+.nearby-inline
+.nearby-inline span
+.nearby-inline svg:first-child
+.no-products
+.no-products h3
+.no-products p
+.no-products-icon
+.password-input-wrapper
+.password-toggle
+.password-toggle:hover
+.percentage-bar
+.percentage-cell
+.percentage-cell span
+.percentage-fill
+.product-grid
+.product-grid.desktop
+.product-grid.mobile
+.products
+.products-grid
+.products-grid.desktop
+.products-grid.mobile
+.products-section
+.profile-bio
+.profile-card
+.profile-content
+.profile-email
+.profile-header
+.profile-header .container
+.profile-header h1
+.profile-info
+.profile-name
+.profile-page
+.profile-phone
+.profile-stats
+.reason-badge
+.reason-text
+.reason-text:hover
+.regional-section
+.regional-table
+.regional-table tbody tr
+.regional-table tbody tr:hover
+.regional-table td
+.regional-table th
+.regional-table thead
+.regional-table-container
+.report-description
+.reporter-info
+.reporter-info div
+.reporter-info small
+.reports-section
+.reports-table
+.reports-table tbody tr
+.reports-table tbody tr:hover
+.reports-table td
+.reports-table th
+.reports-table thead
+.reports-table-container
+.report-target
+.report-target div
+.report-target small
+.reset-icon
+.results-count
+.search-bar
+.search-bar input
+.search-box
+.search-box input
+.search-box input::placeholder
+.search-box svg
+.search-box:focus-within
+.search-btn
+.search-btn svg
+.search-btn:hover
+.search-input-wrapper
+.search-input-wrapper-mobile
+.section-header
+.section-title
+.section-title-lg
+.section-title-md
+.section-title-sm
+.section-title-xl
+.sidebar-nav
+.sidebar-nav .nav-item
+.sidebar-nav .nav-item svg
+.sidebar-nav .nav-item.active
+.sidebar-nav .nav-item:hover
+.social-icon
+.social-login
+.spinner
+.spinner-lg
+.spinner-md
+.spinner-sm
+.stat-card
+.stat-card:hover
+.stat-icon
+.stat-icon svg
+.stat-icon.active
+.stat-icon.products
+.stat-icon.reports
+.stat-icon.users
+.stat-info
+.stat-item
+.stat-label
+.stat-label-lg
+.stat-label-md
+.stat-label-sm
+.stat-number
+.stat-number-lg
+.stat-number-md
+.stat-number-xl
+.stats-grid
+.status-badge
+.status-badge.active
+.status-badge.inactive
+.status-badge.pending
+.status-badge.rejected
+.status-badge.resolved
+.status-badge.reviewing
+.status-badge.suspended
+.sticky-top-wrapper.desktop
+.sticky-top-wrapper.mobile
+.tab
+.tab.active
+.tab:hover
+.tabs
+.tabs-container
+.trash-section
+.type-badge
+.type-badge.product
+.type-badge.user
+.user-avatar
+.user-avatar img
+.user-avatar svg
+.user-cell
+.user-info
+.user-info div
+.user-info small
+.users-section
+.users-table
+.users-table tbody tr
+.users-table tbody tr:hover
+.users-table td
+.users-table th
+.users-table thead
+.users-table-container
+.view-all

@@ -139,17 +139,6 @@
   margin: 0;
 }
 
-.product-condition {
-    display: inline-block;
-    /* background-color: #4b5563; */ /* 배경색 제거 */
-    color: #fff; /* 흰색 텍스트 */
-    /* padding: 3px 8px; */ /* 패딩 제거 */
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 500;
-    margin-top: auto; /* Pushes it to the bottom */
-}
-
 .product-actions {
     margin-top: auto;
     display: flex;
@@ -221,9 +210,5 @@
 
   .product-location {
     font-size: 13px; /* 유지 */
-  }
-
-  .product-condition {
-    font-size: 12px; /* 유지 */
   }
 }
