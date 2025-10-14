@@ -523,9 +523,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-width: 40px;
   flex: 1;
+  position: relative;
+}
+
+.bar-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--accent-primary);
+  color: white;
+  padding: 4px 6px;
+  border-radius: 6px;
+  min-width: 28px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .bar {
@@ -534,11 +548,17 @@
   border-radius: 4px 4px 0 0;
   transition: all 0.3s;
   min-height: 5px;
+  position: relative;
 }
 
 .chart-bar:hover .bar {
   background: linear-gradient(180deg, var(--accent-hover) 0%, #8b5dba 100%);
   transform: scaleY(1.05);
+}
+
+.chart-bar:hover .bar-value {
+  background: var(--accent-hover);
+  transform: scale(1.1);
 }
 
 .bar-label {
@@ -547,15 +567,6 @@
   white-space: nowrap;
   transform: rotate(-45deg);
   margin-top: 8px;
-}
-
-.bar-value {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent-primary);
-  position: absolute;
-  bottom: 100%;
-  margin-bottom: 4px;
 }
 
 /* Regional Statistics */

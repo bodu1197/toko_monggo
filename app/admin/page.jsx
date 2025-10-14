@@ -537,15 +537,17 @@ export default function AdminPage() {
       const now = new Date();
       const hourlyData = [];
 
-      for (let i = 23; i >= 0; i--) {
-        const hour = new Date(now);
-        hour.setHours(hour.getHours() - i);
-        const hourStr = hour.getHours().toString().padStart(2, '0') + ':00';
+      // 24시간 고정: 00:00 ~ 23:00
+      for (let hour = 0; hour < 24; hour++) {
+        const hourStr = hour.toString().padStart(2, '0') + ':00';
 
+        // 오늘 해당 시간대의 접속 수 계산
         const count = logs.filter(log => {
           const logDate = new Date(log.created_at);
-          return logDate.getHours() === hour.getHours() &&
-                 logDate.getDate() === hour.getDate();
+          const isToday = logDate.getDate() === now.getDate() &&
+                          logDate.getMonth() === now.getMonth() &&
+                          logDate.getFullYear() === now.getFullYear();
+          return isToday && logDate.getHours() === hour;
         }).length;
 
         hourlyData.push({ label: hourStr, count });
