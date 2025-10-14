@@ -883,25 +883,7 @@
   gap: 16px;
 }
 
-.product-card {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  border-color: #4b5563;
-}
-
 /* ProductCard 컴포넌트 스타일은 ProductCard.css에서 관리 */
-.product-emoji {
-  font-size: 80px;
-}
 
 /* Loading State */
 .loading-state {
