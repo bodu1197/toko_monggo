@@ -139,3 +139,282 @@ input::placeholder, textarea::placeholder {
     padding: 0 16px;
   }
 }
+
+/* ========== LOADING STATES ========== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.loading-container p {
+  margin-top: 16px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+/* Spinner variants */
+.spinner {
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+}
+
+.spinner-md {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--accent-primary);
+}
+
+.spinner-lg {
+  width: 64px;
+  height: 64px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--accent-primary);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========== SECTION TITLES ========== */
+.section-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+.section-title-xl { font-size: 32px; }
+.section-title-lg { font-size: 28px; }
+.section-title-md { font-size: 20px; }
+.section-title-sm { font-size: 18px; }
+
+/* ========== BACK BUTTON ========== */
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.back-btn:hover {
+  background: var(--bg-secondary);
+}
+
+.back-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ========== ICON BUTTONS ========== */
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-icon:hover {
+  background: var(--bg-primary);
+  border-color: #4b5563;
+  transform: translateY(-2px);
+}
+
+.btn-icon svg {
+  color: var(--text-primary);
+}
+
+.btn-icon-sm {
+  width: 36px;
+  height: 36px;
+}
+
+.btn-icon-sm svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-icon-md {
+  width: 40px;
+  height: 40px;
+}
+
+.btn-icon-md svg {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-icon-lg {
+  width: 44px;
+  height: 44px;
+}
+
+.btn-icon-lg svg {
+  width: 22px;
+  height: 22px;
+}
+
+.btn-icon-circle {
+  border-radius: 50%;
+}
+
+/* ========== BUTTON SIZES ========== */
+.btn-lg {
+  padding: 16px 32px;
+  font-size: 16px;
+}
+
+/* ========== FORM COMPONENTS ========== */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s;
+  outline: none;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.1);
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.char-count {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* ========== STATS ========== */
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.stat-number-xl { font-size: 48px; }
+.stat-number-lg { font-size: 32px; }
+.stat-number-md { font-size: 28px; }
+
+.stat-label {
+  display: block;
+  color: var(--text-secondary);
+}
+
+.stat-label-lg { font-size: 16px; }
+.stat-label-md { font-size: 14px; }
+.stat-label-sm { font-size: 13px; }
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.empty-state p {
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+
+/* ========== SECTION HEADER ========== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+/* ========== LOGOUT BUTTON ========== */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background: var(--error-color);
+  border-color: var(--error-color);
+  color: white;
+}
+
+.logout-btn svg {
+  width: 18px;
+  height: 18px;
+}

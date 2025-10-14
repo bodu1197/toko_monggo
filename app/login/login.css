@@ -118,24 +118,9 @@
 }
 
 /* ========== FORM ELEMENTS ========== */
+/* Using global form styles from globals.css (.form-group, .form-label, .form-input) */
 .auth-form {
   margin-bottom: 32px;
-}
-
-.form-group {
-  margin-bottom: 24px;
-}
-
-.form-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
-
-.form-input {
-  width: 100%;
 }
 
 .password-input-wrapper {
@@ -188,24 +173,10 @@
   font-weight: 600;
 }
 
+/* Using global .spinner-sm from globals.css */
 .btn.loading {
   opacity: 0.7;
   cursor: not-allowed;
-}
-
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-right: 8px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 
 /* ========== DIVIDER ========== */

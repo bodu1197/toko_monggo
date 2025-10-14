@@ -39,55 +39,7 @@
   gap: 12px;
 }
 
-.btn-icon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-icon:hover {
-  background: var(--bg-primary);
-  border-color: var(--accent-primary);
-}
-
-.btn-icon svg {
-  width: 20px;
-  height: 20px;
-  color: var(--text-primary);
-}
-
-.logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-primary);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.logout-btn:hover {
-  background: var(--error-color);
-  border-color: var(--error-color);
-  color: white;
-}
-
-.logout-btn svg {
-  width: 18px;
-  height: 18px;
-}
+/* Using global .btn-icon-md and .logout-btn from globals.css */
 
 /* Layout */
 .admin-layout {
@@ -177,12 +129,7 @@
   overflow-x: hidden;
 }
 
-.section-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 24px;
-}
+/* Using global .section-title-xl from globals.css */
 
 /* Dashboard Stats Grid */
 .stats-grid {
@@ -247,30 +194,14 @@
   gap: 4px;
 }
 
-.stat-number {
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
+/* Using global .stat-number-xl and .stat-label-md from globals.css */
 
 /* Users Section */
 .users-section {
   min-height: 600px;
 }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  gap: 20px;
-}
+/* Using global .section-header from globals.css */
 
 .search-box {
   display: flex;
@@ -644,49 +575,9 @@
   text-align: right;
 }
 
-/* Empty State */
-.empty-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 20px;
-  color: var(--text-secondary);
-  text-align: center;
-}
+/* Using global .empty-state from globals.css */
 
-.empty-state p {
-  font-size: 16px;
-}
-
-/* Loading State */
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.spinner-large {
-  width: 64px;
-  height: 64px;
-  border: 4px solid var(--border-color);
-  border-top-color: var(--accent-primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-bottom: 24px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-container p {
-  font-size: 16px;
-  color: var(--text-secondary);
-}
+/* Using global .loading-container and .spinner-lg from globals.css */
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
@@ -702,10 +593,7 @@
     padding: 20px 16px;
   }
 
-  .section-title {
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
+  /* Using global section-title variants from globals.css */
 
   .stats-grid {
     grid-template-columns: 1fr;

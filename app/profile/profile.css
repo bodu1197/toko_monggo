@@ -28,55 +28,9 @@
   color: var(--text-primary);
 }
 
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: all 0.3s;
-}
+/* Using global .back-btn from globals.css */
 
-.back-btn:hover {
-  background: var(--bg-tertiary);
-}
-
-.back-btn svg {
-  width: 20px;
-  height: 20px;
-}
-
-.logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 8px;
-  transition: all 0.3s;
-}
-
-.logout-btn:hover {
-  background: var(--error-color);
-  border-color: var(--error-color);
-  color: white;
-}
-
-.logout-btn svg {
-  width: 18px;
-  height: 18px;
-}
+/* Using global .logout-btn from globals.css */
 
 /* Content */
 .profile-content {
@@ -227,45 +181,10 @@
   margin: 0 auto;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
-
-.form-input {
-  width: 100%;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s;
-  outline: none;
-  font-family: inherit;
-}
-
-.form-input:focus {
-  border-color: #4b5563;
-  box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.1);
-}
+/* Using global form styles from globals.css (.form-group, .form-label, .form-input, .form-actions) */
 
 textarea.form-input {
   resize: vertical;
-}
-
-.form-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 24px;
 }
 
 /* Profile Stats */
@@ -277,23 +196,7 @@ textarea.form-input {
   border-top: 1px solid var(--border-color);
 }
 
-.stat-item {
-  text-align: center;
-}
-
-.stat-number {
-  display: block;
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  display: block;
-  font-size: 13px;
-  color: var(--text-secondary);
-}
+/* Using global stat styles from globals.css (.stat-item, .stat-number-lg, .stat-label-sm) */
 
 /* Tabs */
 .tabs-container {
@@ -371,29 +274,7 @@ textarea.form-input {
   color: white;
 }
 
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 80px 20px;
-  color: var(--text-secondary);
-}
-
-.empty-icon {
-  font-size: 80px;
-  margin-bottom: 24px;
-  opacity: 0.5;
-}
-
-.empty-state h3 {
-  font-size: 22px;
-  margin-bottom: 12px;
-  color: var(--text-primary);
-}
-
-.empty-state p {
-  font-size: 15px;
-  margin-bottom: 24px;
-}
+/* Using global .empty-state and .empty-icon from globals.css */
 
 /* Loading styles are in detail.css */
 

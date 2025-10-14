@@ -23,22 +23,7 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-.back-btn {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  padding: 10px 16px;
-  border-radius: 8px;
-  color: var(--text-primary);
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.back-btn:hover {
-  background: var(--bg-secondary);
-  transform: translateX(-2px);
-}
+/* Using global .back-btn from globals.css */
 
 .page-title {
   font-size: 28px;
@@ -61,12 +46,7 @@
   padding: 28px;
 }
 
-.section-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: var(--text-primary);
-}
+/* Using global .section-title-lg from globals.css */
 
 .section-description {
   font-size: 14px;
@@ -154,52 +134,7 @@
 }
 
 /* ========== FORM ELEMENTS ========== */
-.form-group {
-  margin-bottom: 24px;
-  position: relative;
-}
-
-.form-label {
-  display: block;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 10px;
-}
-
-.form-input {
-  width: 100%;
-  background: var(--bg-primary);
-  border: 1.5px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 14px 16px;
-  border-radius: 10px;
-  font-size: 15px;
-  transition: all 0.3s;
-  outline: none;
-  font-family: inherit;
-}
-
-.form-input:focus {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-.form-input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: var(--bg-tertiary);
-}
-
-/* 브라우저 autofill 스타일 제거 */
-.form-input:-webkit-autofill,
-.form-input:-webkit-autofill:hover,
-.form-input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px var(--bg-primary) inset;
-  -webkit-text-fill-color: var(--text-primary);
-  border-color: var(--border-color);
-  transition: background-color 5000s ease-in-out 0s;
-}
+/* Using global form styles from globals.css (.form-group, .form-label, .form-input, .char-count) */
 
 /* Number input 스타일 */
 input[type="number"].form-input {
@@ -224,14 +159,6 @@ select.form-input {
   background-repeat: no-repeat;
   background-position: right 16px center;
   padding-right: 40px;
-}
-
-.char-count {
-  position: absolute;
-  right: 12px;
-  bottom: -20px;
-  font-size: 12px;
-  color: var(--text-muted);
 }
 
 .form-help {
@@ -272,38 +199,7 @@ select.form-input {
 }
 
 /* ========== FORM ACTIONS ========== */
-.form-actions {
-  display: flex;
-  gap: 16px;
-  justify-content: flex-end;
-  margin-top: 16px;
-  padding-top: 32px;
-  border-top: 1px solid var(--border-color);
-}
-
-.btn-lg {
-  padding: 16px 32px;
-  font-size: 16px;
-  font-weight: 600;
-  min-width: 160px;
-}
-
-/* Loading spinner */
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+/* Using global .form-actions, .btn-lg, .spinner-sm from globals.css */
 
 .btn.loading {
   opacity: 0.7;
@@ -338,9 +234,7 @@ select.form-input {
     padding: 20px 16px;
   }
 
-  .section-title {
-    font-size: 18px;
-  }
+  /* Using global section-title variants from globals.css */
 
   .image-grid {
     grid-template-columns: repeat(3, 1fr);
