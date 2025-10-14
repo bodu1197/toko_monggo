@@ -27,6 +27,12 @@ export default function ProductDetailPage() {
   const [replyTo, setReplyTo] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
+  // 신고 상태
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [reportDescription, setReportDescription] = useState('');
+  const [submittingReport, setSubmittingReport] = useState(false);
+
   const fetchCurrentUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
@@ -258,6 +264,60 @@ export default function ProductDetailPage() {
     setCommentText('');
   };
 
+  const handleReport = async () => {
+    if (!currentUser) {
+      const goToLogin = confirm('Anda harus login untuk melaporkan produk.\n\nApakah Anda ingin pergi ke halaman login?');
+      if (goToLogin) {
+        router.push('/login');
+      }
+      return;
+    }
+
+    setShowReportModal(true);
+  };
+
+  const handleSubmitReport = async (e) => {
+    e.preventDefault();
+
+    if (!reportReason) {
+      alert('Silakan pilih alasan pelaporan');
+      return;
+    }
+
+    try {
+      setSubmittingReport(true);
+
+      const { error } = await supabase
+        .from('reports')
+        .insert({
+          reporter_id: currentUser.id,
+          report_type: 'product',
+          reported_product_id: params.id,
+          reason: reportReason,
+          description: reportDescription.trim() || null,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      alert('Laporan berhasil dikirim!\n\nTerima kasih atas laporan Anda. Tim kami akan meninjau laporan ini sesegera mungkin.');
+      setShowReportModal(false);
+      setReportReason('');
+      setReportDescription('');
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      alert('Gagal mengirim laporan. Silakan coba lagi.');
+    } finally {
+      setSubmittingReport(false);
+    }
+  };
+
+  const closeReportModal = () => {
+    setShowReportModal(false);
+    setReportReason('');
+    setReportDescription('');
+  };
+
   if (loading) {
     return (
       <div className="detail-page">
@@ -394,6 +454,28 @@ export default function ProductDetailPage() {
             <div className="description-section">
               <h3 className="section-title">Deskripsi</h3>
               <p className="product-description">{product.description}</p>
+
+              {/* Share & Report Actions */}
+              <div className="product-actions">
+                <button className="action-btn share-btn" onClick={handleShare}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="18" cy="5" r="3"/>
+                    <circle cx="6" cy="12" r="3"/>
+                    <circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                  </svg>
+                  Bagikan
+                </button>
+                <button className="action-btn report-btn" onClick={handleReport}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  Laporkan Produk
+                </button>
+              </div>
             </div>
 
             {/* Comments/Reviews Section */}
@@ -646,6 +728,79 @@ export default function ProductDetailPage() {
           </div>
         );
       })()}
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="modal-overlay" onClick={closeReportModal}>
+          <div className="modal-content report-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Laporkan Produk</h3>
+              <button className="close-btn" onClick={closeReportModal}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitReport}>
+              <div className="modal-body">
+                <p className="report-info">
+                  Jika Anda menemukan masalah dengan produk ini, silakan laporkan kepada kami.
+                  Laporan Anda akan membantu kami menjaga keamanan marketplace.
+                </p>
+
+                <div className="form-group">
+                  <label>Alasan Pelaporan *</label>
+                  <select
+                    value={reportReason}
+                    onChange={(e) => setReportReason(e.target.value)}
+                    required
+                  >
+                    <option value="">Pilih alasan...</option>
+                    <option value="fraud">Penipuan / Scam</option>
+                    <option value="fake">Produk Palsu</option>
+                    <option value="spam">Spam</option>
+                    <option value="inappropriate">Konten Tidak Pantas</option>
+                    <option value="duplicate">Duplikat</option>
+                    <option value="other">Lainnya</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Keterangan (Opsional)</label>
+                  <textarea
+                    value={reportDescription}
+                    onChange={(e) => setReportDescription(e.target.value)}
+                    placeholder="Jelaskan masalah yang Anda temukan..."
+                    rows={4}
+                    maxLength={500}
+                  />
+                  <span className="char-count">{reportDescription.length}/500</span>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={closeReportModal}
+                  disabled={submittingReport}
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-danger"
+                  disabled={submittingReport || !reportReason}
+                >
+                  {submittingReport ? 'Mengirim...' : 'Kirim Laporan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
