@@ -36,6 +36,10 @@ export default function ProductDetailPage() {
   // SNS 공유 모달 상태
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // 좋아요 상태
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+
   const fetchCurrentUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
@@ -206,6 +210,71 @@ export default function ProductDetailPage() {
     }
   }, [supabase, params.id, setComments]);
 
+  const checkFavoriteStatus = useCallback(async () => {
+    if (!currentUser) {
+      setIsFavorite(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('favorites')
+        .select('id')
+        .eq('user_id', currentUser.id)
+        .eq('product_id', params.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      setIsFavorite(!!data);
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+    }
+  }, [supabase, currentUser, params.id]);
+
+  const toggleFavorite = async () => {
+    if (!currentUser) {
+      const goToLogin = confirm('좋아요를 하려면 로그인이 필요합니다.\n\n로그인 페이지로 이동하시겠습니까?');
+      if (goToLogin) {
+        router.push('/login');
+      }
+      return;
+    }
+
+    if (favoriteLoading) return;
+
+    try {
+      setFavoriteLoading(true);
+
+      if (isFavorite) {
+        // 좋아요 취소
+        const { error } = await supabase
+          .from('favorites')
+          .delete()
+          .eq('user_id', currentUser.id)
+          .eq('product_id', params.id);
+
+        if (error) throw error;
+        setIsFavorite(false);
+      } else {
+        // 좋아요 추가
+        const { error } = await supabase
+          .from('favorites')
+          .insert({
+            user_id: currentUser.id,
+            product_id: params.id
+          });
+
+        if (error) throw error;
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      alert('좋아요 처리 중 오류가 발생했습니다.');
+    } finally {
+      setFavoriteLoading(false);
+    }
+  };
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -219,6 +288,12 @@ export default function ProductDetailPage() {
 
     return () => window.removeEventListener('resize', checkMobile);
   }, [params.id, fetchComments, fetchCurrentUser, fetchProduct]);
+
+  useEffect(() => {
+    if (currentUser) {
+      checkFavoriteStatus();
+    }
+  }, [currentUser, checkFavoriteStatus]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
@@ -383,8 +458,13 @@ export default function ProductDetailPage() {
                 <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
               </svg>
             </button>
-            <button className="icon-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <button
+              className={`icon-btn ${isFavorite ? 'favorite-active' : ''}`}
+              onClick={toggleFavorite}
+              disabled={favoriteLoading}
+              title={isFavorite ? '찜 취소' : '찜하기'}
+            >
+              <svg viewBox="0 0 24 24" fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
               </svg>
             </button>
