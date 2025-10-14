@@ -1067,6 +1067,7 @@
 /* ========== PRODUCT ACTIONS (Share & Report) ========== */
 .product-actions {
   display: flex;
+  align-items: center;
   gap: 12px;
   margin-top: 24px;
   padding-top: 24px;
@@ -1105,14 +1106,35 @@
   border-color: var(--accent-primary);
 }
 
-.report-btn {
-  color: var(--error-color);
-  border-color: rgba(239, 68, 68, 0.3);
+/* Icon Report Button (Small, Neutral) */
+.icon-report-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  flex-shrink: 0;
 }
 
-.report-btn:hover {
-  background: rgba(239, 68, 68, 0.05);
-  border-color: var(--error-color);
+.icon-report-btn:hover {
+  background: var(--bg-primary);
+  border-color: var(--text-secondary);
+  transform: translateY(-2px);
+}
+
+.icon-report-btn svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+}
+
+.icon-report-btn:hover svg {
+  color: var(--text-primary);
 }
 
 /* ========== REPORT MODAL ========== */
@@ -1481,7 +1503,6 @@
   }
 
   .product-actions {
-    flex-direction: column;
     margin-top: 20px;
     padding-top: 20px;
   }
@@ -1489,5 +1510,15 @@
   .action-btn {
     padding: 14px 20px;
     font-size: 14px;
+  }
+
+  .icon-report-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon-report-btn svg {
+    width: 16px;
+    height: 16px;
   }
 }
