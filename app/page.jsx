@@ -1004,11 +1004,12 @@ export default function HomePage() {
             </svg>
             <span className="nav-label">Jual</span>
           </button>
-          <button className="nav-item" onClick={() => router.push('/favorites')}>
+          <button className="nav-item" onClick={handleNearbyClick}>
             <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              <circle cx="12" cy="10" r="3"/>
+              <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
             </svg>
-            <span className="nav-label">Favorit</span>
+            <span className="nav-label">Sekitar</span>
           </button>
           <button className="nav-item" onClick={() => router.push('/profile')}>
             <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
