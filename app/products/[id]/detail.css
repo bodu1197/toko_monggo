@@ -1404,17 +1404,17 @@
   color: #1877F2;
 }
 
-.share-option.twitter {
-  border-color: rgba(29, 161, 242, 0.3);
+.share-option.x {
+  border-color: rgba(0, 0, 0, 0.3);
 }
 
-.share-option.twitter:hover {
-  background: rgba(29, 161, 242, 0.1);
-  border-color: #1DA1F2;
+.share-option.x:hover {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: #000000;
 }
 
-.share-option.twitter svg {
-  color: #1DA1F2;
+.share-option.x svg {
+  color: #000000;
 }
 
 .share-option.copy-link {
