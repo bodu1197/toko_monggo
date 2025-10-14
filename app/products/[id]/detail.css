@@ -240,11 +240,14 @@
 }
 
 .product-title {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 16px;
-  line-height: 1.3;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .price-section {
@@ -254,7 +257,7 @@
 }
 
 .product-price {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--accent-primary);
 }
@@ -575,17 +578,13 @@
   }
 
   .product-title {
-    font-size: 15px; /* 18px → 15px (모바일 현실적 크기) */
+    font-size: 15px;
     margin-bottom: 10px;
     font-weight: 600;
-    line-height: 1.4;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
   }
 
   .product-price {
-    font-size: 17px; /* 22px → 17px (모바일 현실적 크기) */
+    font-size: 17px;
     font-weight: 700;
   }
 
