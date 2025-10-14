@@ -1073,6 +1073,88 @@
   border-top: 1px solid var(--border-color);
 }
 
+/* Inline Share Icons */
+.share-icons-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.share-icon-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.share-icon-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.share-icon-btn.whatsapp {
+  border-color: rgba(37, 211, 102, 0.3);
+}
+
+.share-icon-btn.whatsapp:hover {
+  background: rgba(37, 211, 102, 0.1);
+  border-color: #25D366;
+  transform: translateY(-2px);
+}
+
+.share-icon-btn.whatsapp svg {
+  color: #25D366;
+}
+
+.share-icon-btn.facebook {
+  border-color: rgba(24, 119, 242, 0.3);
+}
+
+.share-icon-btn.facebook:hover {
+  background: rgba(24, 119, 242, 0.1);
+  border-color: #1877F2;
+  transform: translateY(-2px);
+}
+
+.share-icon-btn.facebook svg {
+  color: #1877F2;
+}
+
+.share-icon-btn.x {
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.share-icon-btn.x:hover {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: #000000;
+  transform: translateY(-2px);
+}
+
+.share-icon-btn.x svg {
+  color: #000000;
+}
+
+.share-icon-btn.copy-link {
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.share-icon-btn.copy-link:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.share-icon-btn.copy-link svg {
+  color: var(--accent-primary);
+}
+
 .action-btn {
   flex: 1;
   display: flex;
@@ -1504,6 +1586,20 @@
   .product-actions {
     margin-top: 20px;
     padding-top: 20px;
+  }
+
+  .share-icons-inline {
+    gap: 8px;
+  }
+
+  .share-icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .share-icon-btn svg {
+    width: 20px;
+    height: 20px;
   }
 
   .action-btn {
