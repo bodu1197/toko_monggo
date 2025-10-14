@@ -1169,6 +1169,34 @@
   color: var(--accent-primary);
 }
 
+.share-icon-btn.favorite {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.share-icon-btn.favorite:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+  transform: translateY(-2px);
+}
+
+.share-icon-btn.favorite svg {
+  color: #ef4444;
+}
+
+.share-icon-btn.favorite.favorite-active {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
+.share-icon-btn.favorite.favorite-active svg {
+  color: #ef4444;
+}
+
+.share-icon-btn.favorite:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .action-btn {
   flex: 1;
   display: flex;
