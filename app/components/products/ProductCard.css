@@ -84,33 +84,37 @@
 
 .product-info {
   padding: 16px;
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
   background-color: #1f2937; /* 원래 배경색으로 변경 */
+  min-height: 120px; /* 최소 높이 설정으로 일관성 유지 */
 }
 
 .product-title {
   font-size: 16px;
   font-weight: 600;
   color: #fff; /* 흰색으로 변경 */
-  margin: 0 0 8px;
-  white-space: nowrap;
+  margin: 0 0 auto; /* auto로 아래 컨텐츠를 하단으로 푸시 */
+  height: 48px; /* 2줄 고정 높이 (16px * 1.5 line-height * 2) */
+  line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 2줄로 제한 */
+  -webkit-box-orient: vertical;
 }
 
 .product-price {
   font-size: 18px;
   font-weight: 700;
   color: #10b981; /* emerald-500 - 유지 */
-  margin: 0 0 8px;
+  margin: 8px 0 4px;
 }
 
 .product-location {
   font-size: 13px;
   color: #d1d5db; /* 밝은 회색으로 변경 */
-  margin: 0 0 12px;
+  margin: 0;
 }
 
 .product-condition {
@@ -169,12 +173,19 @@
     height: 152px !important; /* 모바일 이미지 높이 (132px에서 15% 증가) */
   }
 
+  .product-info {
+    padding: 14px; /* 16px → 14px, 이미지가 작아져서 패딩도 약간 줄임 */
+    min-height: 110px; /* 모바일 최소 높이 */
+  }
+
   .product-title {
     font-size: 15px; /* 16px → 15px */
+    height: 45px; /* 모바일 2줄 고정 (15px * 1.5 * 2) */
   }
 
   .product-price {
     font-size: 17px; /* 18px → 17px */
+    margin: 6px 0 4px; /* 마진 약간 줄임 */
   }
 
   .product-location {
@@ -183,9 +194,5 @@
 
   .product-condition {
     font-size: 12px; /* 유지 */
-  }
-
-  .product-info {
-    padding: 14px; /* 16px → 14px, 이미지가 작아져서 패딩도 약간 줄임 */
   }
 }
