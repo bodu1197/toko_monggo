@@ -595,6 +595,8 @@
     font-size: 15px;
     margin-bottom: 10px;
     font-weight: 600;
+    line-height: 1.5; /* 줄 간격 추가 */
+    padding-bottom: 4px; /* 하단 패딩 추가 */
   }
 
   .product-price {
