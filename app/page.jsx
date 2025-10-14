@@ -41,7 +41,6 @@ export default function HomePage() {
   const [mainCategories, setMainCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [showBottomMenu, setShowBottomMenu] = useState(false);
 
   // Load provinces from DB
   const loadProvinces = useCallback(async () => {
@@ -585,16 +584,7 @@ export default function HomePage() {
             )}
 
             <div className="header-right">
-              {isMobile === true ? (
-                <button className="btn-icon" onClick={() => setShowMobileFilters(!showMobileFilters)}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="4" y1="6" x2="20" y2="6"/>
-                    <line x1="4" y1="12" x2="20" y2="12"/>
-                    <line x1="4" y1="18" x2="14" y2="18"/>
-                    <circle cx="18" cy="18" r="2"/>
-                  </svg>
-                </button>
-              ) : (
+              {isMobile === false && (
                 <>
                   <button className="btn-icon" onClick={() => router.push('/profile')}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -974,55 +964,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Bottom Menu Popup - Mobile only */}
-      {isMobile && showBottomMenu && (
-        <>
-          <div className="bottom-menu-overlay" onClick={() => setShowBottomMenu(false)} />
-          <div className="bottom-menu-popup">
-            <div className="bottom-menu-header">
-              <h3>Menu</h3>
-              <button className="close-menu-btn" onClick={() => setShowBottomMenu(false)}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            </div>
-            <div className="bottom-menu-content">
-              <button className="menu-option" onClick={() => { router.push('/search'); setShowBottomMenu(false); }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8"/>
-                  <path d="m21 21-4.35-4.35"/>
-                </svg>
-                <span>Cari Produk</span>
-              </button>
-              <button className="menu-option" onClick={() => { router.push('/favorites'); setShowBottomMenu(false); }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-                <span>Favorit Saya</span>
-              </button>
-              <button className="menu-option" onClick={() => { setShowMobileFilters(!showMobileFilters); setShowBottomMenu(false); }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="4" y1="6" x2="20" y2="6"/>
-                  <line x1="4" y1="12" x2="20" y2="12"/>
-                  <line x1="4" y1="18" x2="14" y2="18"/>
-                  <circle cx="18" cy="18" r="2"/>
-                </svg>
-                <span>Filter Produk</span>
-              </button>
-              <button className="menu-option" onClick={() => { handleNearbyClick(); setShowBottomMenu(false); }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="10" r="3"/>
-                  <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
-                </svg>
-                <span>Sekitar Saya</span>
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-
       {/* Mobile Bottom Nav */}
       {isMobile && (
         <nav className="bottom-nav">
@@ -1033,13 +974,14 @@ export default function HomePage() {
             </svg>
             <span className="nav-label">Beranda</span>
           </button>
-          <button className="nav-item" onClick={() => setShowBottomMenu(true)}>
+          <button className="nav-item" onClick={() => setShowMobileFilters(!showMobileFilters)}>
             <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <line x1="3" y1="12" x2="21" y2="12"/>
-              <line x1="3" y1="18" x2="21" y2="18"/>
+              <line x1="4" y1="6" x2="20" y2="6"/>
+              <line x1="4" y1="12" x2="20" y2="12"/>
+              <line x1="4" y1="18" x2="14" y2="18"/>
+              <circle cx="18" cy="18" r="2"/>
             </svg>
-            <span className="nav-label">Menu</span>
+            <span className="nav-label">Filter</span>
           </button>
           <button className="nav-item" onClick={() => router.push('/products/new')}>
             <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
