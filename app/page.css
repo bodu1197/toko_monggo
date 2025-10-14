@@ -32,21 +32,87 @@
   z-index: 1;
 }
 
-.filter-section.mobile {
-  padding: 0;
-  border-top: 1px solid var(--border-color);
+/* Mobile Filter Popup - Bottom Slide-up */
+.filter-overlay {
   position: fixed;
-  top: 0; /* 헤더와 겹치지 않도록 상단에 고정 */
+  top: 0;
   left: 0;
   right: 0;
-  z-index: 999;
-  background: var(--bg-secondary);
-  padding-top: 70px; /* 헤더 높이만큼 패딩 추가 */
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1500;
+  animation: fadeIn 0.3s ease-out;
 }
 
-.filter-section.mobile .container {
-  padding-top: 0;
-  padding-bottom: 0;
+.filter-popup-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  z-index: 1501;
+  animation: slideUpFromBottom 0.3s ease-out;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes slideUpFromBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.filter-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.filter-popup-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.close-filter-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.close-filter-btn:hover {
+  background: var(--bg-primary);
+  border-color: var(--text-secondary);
+}
+
+.close-filter-btn svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+}
+
+.filter-popup-content {
+  padding: 20px 0;
 }
 
 /* Mobile 검색창 인라인 */

@@ -785,12 +785,24 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Mobile Filter - wrapper 밖에 별도로 */}
+      {/* Mobile Filter - Bottom Slide-up Popup */}
       {isMobile && showMobileFilters && (
-        <section className="filter-section mobile">
-        <div className="container">
-          {/* Mobile: 검색창도 필터 안에 */}
-          <form className="mobile-search-inline" onSubmit={handleSearch}>
+        <>
+          <div className="filter-overlay" onClick={() => setShowMobileFilters(false)} />
+          <div className="filter-popup-bottom">
+            <div className="filter-popup-header">
+              <h3>Filter & Pencarian</h3>
+              <button className="close-filter-btn" onClick={() => setShowMobileFilters(false)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <div className="filter-popup-content">
+              <div className="container">
+                {/* Mobile: 검색창도 필터 안에 */}
+                <form className="mobile-search-inline" onSubmit={handleSearch}>
             <div className="search-input-wrapper-mobile">
               <input
                 type="text"
@@ -931,9 +943,11 @@ export default function HomePage() {
                 Sekitar 50km
               </button>
             )}
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+        </>
       )}
 
       {/* Products Grid */}
