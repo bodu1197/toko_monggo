@@ -180,26 +180,26 @@ export default function ProfilePage() {
   
     const handleDeleteProduct = useCallback(async (productId) => {
       if (!confirm('Yakin ingin menghapus produk ini?')) return;
-  
+
       try {
         // 1. Get product images first
         const { data: productImages, error: fetchError } = await supabaseClient
           .from('product_images')
           .select('image_url')
           .eq('product_id', productId);
-  
+
         if (fetchError) {
           console.error('Error fetching product images:', fetchError);
         }
-  
+
         // 2. Delete product (will cascade delete product_images due to FK)
         const { error: deleteError } = await supabaseClient
           .from('products')
           .delete()
           .eq('id', productId);
-  
+
         if (deleteError) throw deleteError;
-  
+
         // 3. Delete images from storage
         if (productImages && productImages.length > 0) {
           for (const img of productImages) {
@@ -209,11 +209,11 @@ export default function ProfilePage() {
               const urlParts = img.image_url.split('/product-images/');
               if (urlParts.length > 1) {
                 const filePath = urlParts[1];
-  
+
                 const { error: storageError } = await supabaseClient.storage
                   .from('product-images')
                   .remove([filePath]);
-  
+
                 if (storageError) {
                   console.error('Error deleting image from storage:', storageError);
                 }
@@ -223,12 +223,39 @@ export default function ProfilePage() {
             }
           }
         }
-  
+
         await fetchUserProducts(user.id);
         alert('Produk dan semua gambar berhasil dihapus!');
       } catch (error) {
         console.error('Error deleting product:', error);
         alert('Gagal menghapus produk');
+      }
+    }, [supabaseClient, user, fetchUserProducts]);
+
+    const handleStatusChange = useCallback(async (productId, currentStatus) => {
+      const newStatus = currentStatus === 'paused' ? 'active' : 'paused';
+      const confirmMessage = newStatus === 'paused'
+        ? 'Apakah Anda ingin menghentikan sementara penjualan produk ini?'
+        : 'Apakah Anda ingin melanjutkan penjualan produk ini?';
+
+      if (!confirm(confirmMessage)) return;
+
+      try {
+        const { error } = await supabaseClient
+          .from('products')
+          .update({ status: newStatus })
+          .eq('id', productId);
+
+        if (error) throw error;
+
+        await fetchUserProducts(user.id);
+        const successMessage = newStatus === 'paused'
+          ? 'Produk berhasil dihentikan sementara'
+          : 'Produk berhasil dilanjutkan';
+        alert(successMessage);
+      } catch (error) {
+        console.error('Error changing product status:', error);
+        alert('Gagal mengubah status produk');
       }
     }, [supabaseClient, user, fetchUserProducts]);
   
@@ -435,8 +462,8 @@ export default function ProfilePage() {
               ) : (
                 <div className={`products-grid ${isMobile ? 'mobile' : 'desktop'}`}>
                   {userProducts.map(product => (
-                    <ProductCard 
-                      key={product.id} 
+                    <ProductCard
+                      key={product.id}
                       product={{
                         id: product.id,
                         title: product.title,
@@ -445,8 +472,9 @@ export default function ProfilePage() {
                         image: product.product_images?.[0]?.image_url,
                         status: product.status
                       }}
-                      context="profile" 
-                      onDelete={handleDeleteProduct} 
+                      context="profile"
+                      onDelete={handleDeleteProduct}
+                      onStatusChange={handleStatusChange}
                     />
                   ))}
                 </div>

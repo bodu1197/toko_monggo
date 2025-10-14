@@ -12,8 +12,9 @@ import './ProductCard.css';
  * @param {object} props.product - 상품 정보 객체
  * @param {'home' | 'profile'} [props.context='home'] - 카드가 사용되는 컨텍스트 (UI 분기용)
  * @param {function} [props.onDelete] - 삭제 버튼 클릭 시 호출될 함수 (profile 컨텍스트용)
+ * @param {function} [props.onStatusChange] - 상태 변경 버튼 클릭 시 호출될 함수 (profile 컨텍스트용)
  */
-export default function ProductCard({ product, context = 'home', onDelete }) {
+export default function ProductCard({ product, context = 'home', onDelete, onStatusChange }) {
   const router = useRouter();
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
@@ -69,6 +70,13 @@ export default function ProductCard({ product, context = 'home', onDelete }) {
     e.stopPropagation();
     if (onDelete) {
       onDelete(product.id);
+    }
+  };
+
+  const handleStatusChange = (e) => {
+    e.stopPropagation();
+    if (onStatusChange) {
+      onStatusChange(product.id, product.status);
     }
   };
 
@@ -165,6 +173,23 @@ export default function ProductCard({ product, context = 'home', onDelete }) {
 
         {context === 'profile' && (
           <div className="product-actions">
+            <button
+              className={`action-btn pause-btn ${product.status === 'paused' ? 'paused' : ''}`}
+              onClick={handleStatusChange}
+              title={product.status === 'paused' ? '판매 재개' : '판매 일시중지'}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                {product.status === 'paused' ? (
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                ) : (
+                  <>
+                    <rect x="6" y="4" width="4" height="16"/>
+                    <rect x="14" y="4" width="4" height="16"/>
+                  </>
+                )}
+              </svg>
+              {product.status === 'paused' ? '재개' : '중지'}
+            </button>
             <button className="action-btn edit-btn" onClick={handleEditClick}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
