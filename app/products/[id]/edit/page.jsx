@@ -397,7 +397,7 @@ export default function EditProductPage() {
 
       if (categoryError) {
         console.error('[Edit] ❌ Category lookup failed:', categoryError);
-        throw new Error(`카테고리를 찾을 수 없습니다: ${formData.category2} (${formData.category1})`);
+        throw new Error(`Kategori tidak ditemukan: ${formData.category2} (${formData.category1})`);
       }
 
       // 2. Update product (지역 변경 시 해당 regency의 위도/경도로 업데이트)
@@ -575,7 +575,7 @@ export default function EditProductPage() {
                         borderRadius: '4px',
                         fontSize: '11px'
                       }}>
-                        기존
+                        Ada
                       </span>
                     )}
                   </div>

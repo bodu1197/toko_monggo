@@ -137,7 +137,7 @@ export default function NewProductPage() {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error || !user) {
-        alert('로그인이 필요합니다.');
+        alert('Silakan login terlebih dahulu');
         router.push('/login');
         return;
       }
@@ -212,7 +212,7 @@ export default function NewProductPage() {
       setImages(newImages);
     } catch (error) {
       console.error('이미지 압축 오류:', error);
-      alert('이미지 처리 중 오류가 발생했습니다.');
+      alert('Terjadi kesalahan saat memproses gambar');
     } finally {
       setLoading(false);
     }
@@ -227,7 +227,7 @@ export default function NewProductPage() {
     e.preventDefault();
 
     if (!user) {
-      alert('로그인이 필요합니다.');
+      alert('Silakan login terlebih dahulu');
       router.push('/login');
       return;
     }
@@ -285,7 +285,7 @@ export default function NewProductPage() {
 
       if (categoryError) {
         console.error('[New] ❌ Category lookup failed:', categoryError);
-        throw new Error(`카테고리를 찾을 수 없습니다: ${formData.category2} (${formData.category1})`);
+        throw new Error(`Kategori tidak ditemukan: ${formData.category2} (${formData.category1})`);
       }
 
       // 3. Create product (위치 정보 및 연락처 포함)

@@ -257,7 +257,7 @@ export default function ProductDetailPage() {
 
           return {
             ...comment,
-            user_name: profileData?.full_name || '사용자',
+            user_name: profileData?.full_name || 'Pengguna',
             user_avatar: profileData?.avatar_url,
             reply_count: count || 0
           };
@@ -293,7 +293,7 @@ export default function ProductDetailPage() {
 
   const toggleFavorite = async () => {
     if (!currentUser) {
-      const goToLogin = confirm('좋아요를 하려면 로그인이 필요합니다.\n\n로그인 페이지로 이동하시겠습니까?');
+      const goToLogin = confirm('Anda harus login untuk menyukai produk.\n\nApakah Anda ingin pergi ke halaman login?');
       if (goToLogin) {
         router.push('/login');
       }
@@ -327,7 +327,7 @@ export default function ProductDetailPage() {
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      alert('좋아요 처리 중 오류가 발생했습니다.');
+      alert('Terjadi kesalahan saat memproses favorit.');
     } finally {
       setFavoriteLoading(false);
     }
@@ -704,7 +704,7 @@ export default function ProductDetailPage() {
                     } ${favoriteLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                     onClick={toggleFavorite}
                     disabled={favoriteLoading}
-                    title={isFavorite ? '찜 취소' : '찜하기'}
+                    title={isFavorite ? 'Hapus Favorit' : 'Tambah Favorit'}
                   >
                     <svg viewBox="0 0 24 24" fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" className="w-5 lg:w-[22px] h-5 lg:h-[22px] text-[#ef4444]">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>

@@ -113,7 +113,7 @@ export default function ProfilePage() {
         maxSizeMB: 0.5,
       });
 
-      console.log(`Avatar - 원본: ${(file.size / 1024).toFixed(2)}KB → 압축: ${(compressedFile.size / 1024).toFixed(2)}KB`);
+      console.log(`Avatar - Asli: ${(file.size / 1024).toFixed(2)}KB → Terkompresi: ${(compressedFile.size / 1024).toFixed(2)}KB`);
 
       const fileName = `${user.id}_${Date.now()}.jpg`;
       const filePath = `avatars/${fileName}`;
