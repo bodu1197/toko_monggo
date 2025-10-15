@@ -857,14 +857,20 @@ export default function AdminPage() {
               <h1 className="text-2xl max-md:text-xl font-bold text-[#f9fafb]">🛡️ 관리자 대시보드</h1>
             </div>
             <div className="flex items-center gap-3">
-              <button className="btn-icon btn-icon-md" onClick={() => router.push('/')}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button
+                className="flex items-center justify-center w-10 h-10 bg-[#374151] border border-[#374151] rounded-lg cursor-pointer transition-all hover:bg-[#111827] hover:border-[#4b5563] hover:-translate-y-0.5"
+                onClick={() => router.push('/')}
+              >
+                <svg className="w-5 h-5 text-[#f9fafb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                   <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
               </button>
-              <button className="logout-btn max-md:px-3.5 max-md:py-2.5" onClick={handleLogout}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button
+                className="flex items-center gap-2 bg-[#374151] border border-[#374151] text-[#f9fafb] text-sm font-medium cursor-pointer px-5 py-2.5 rounded-lg transition-all hover:bg-[#ef4444] hover:border-[#ef4444] hover:text-white max-md:px-3.5 max-md:py-2.5"
+                onClick={handleLogout}
+              >
+                <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                   <polyline points="16 17 21 12 16 7"/>
                   <line x1="21" y1="12" x2="9" y2="12"/>
@@ -1046,7 +1052,7 @@ export default function AdminPage() {
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
             <div>
-              <h2 className="section-title section-title-lg">대시보드 통계</h2>
+              <h2 className="text-[1.75rem] font-bold text-[#f9fafb] mb-6">대시보드 통계</h2>
 
               <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6 mb-10 max-md:grid-cols-1 max-md:gap-4">
                 <div className="flex items-center gap-5 p-6 bg-[#1f2937] border border-[#374151] rounded-2xl transition-all hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:border-[#6366f1] max-md:p-5 max-md:gap-4">
@@ -1108,8 +1114,8 @@ export default function AdminPage() {
           {/* Users Tab */}
           {activeTab === 'users' && (
             <div className="min-h-[600px]">
-              <div className="section-header">
-                <h2 className="section-title section-title-lg">회원 관리</h2>
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-[1.75rem] font-bold text-[#f9fafb]">회원 관리</h2>
                 <div className="flex items-center gap-3 py-2.5 px-4 bg-[#1f2937] border border-[#374151] rounded-lg min-w-[300px] transition-all focus-within:border-[#6366f1] focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] max-md:min-w-full">
                   <svg className="w-[18px] h-[18px] text-[#6b7280] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"/>
@@ -1237,7 +1243,7 @@ export default function AdminPage() {
           {activeTab === 'products' && (
             <div className="min-h-[600px]">
               <div className="flex justify-between items-center mb-8 max-md:flex-col max-md:gap-4 max-md:items-stretch">
-                <h2 className="section-title section-title-lg">상품 관리</h2>
+                <h2 className="text-[1.75rem] font-bold text-[#f9fafb] mb-6">상품 관리</h2>
                 <div className="flex items-center gap-3 py-2.5 px-4 bg-[#1f2937] border border-[#374151] rounded-lg min-w-[300px] transition-all focus-within:border-[#6366f1] focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] max-md:min-w-full">
                   <svg className="w-[18px] h-[18px] text-[#6b7280] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"/>
@@ -1350,7 +1356,7 @@ export default function AdminPage() {
           {activeTab === 'reports' && (
             <div className="min-h-[600px]">
               <div className="flex justify-between items-center mb-8 max-md:flex-col max-md:gap-4 max-md:items-stretch">
-                <h2 className="section-title section-title-lg">신고 관리</h2>
+                <h2 className="text-[1.75rem] font-bold text-[#f9fafb] mb-6">신고 관리</h2>
                 <div className="flex gap-2 flex-wrap max-md:justify-center">
                   <button
                     className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
@@ -1500,7 +1506,7 @@ export default function AdminPage() {
           {/* Access Statistics Tab */}
           {activeTab === 'access' && (
             <div className="min-h-[600px]">
-              <h2 className="section-title section-title-lg">접속 통계</h2>
+              <h2 className="text-[1.75rem] font-bold text-[#f9fafb] mb-6">접속 통계</h2>
 
               {/* Hourly */}
               <div className="mb-8 p-6 bg-[#1f2937] border border-[#374151] rounded-xl max-md:p-4">
@@ -1583,7 +1589,7 @@ export default function AdminPage() {
           {/* Regional Statistics Tab */}
           {activeTab === 'regional' && (
             <div className="min-h-[600px]">
-              <h2 className="section-title section-title-lg">지역별 방문자 통계 (GPS 위치 기반)</h2>
+              <h2 className="text-[1.75rem] font-bold text-[#f9fafb] mb-6">지역별 방문자 통계 (GPS 위치 기반)</h2>
 
               <div className="bg-[#1f2937] border border-[#374151] rounded-xl overflow-hidden max-md:overflow-x-auto">
                 <table className="w-full border-collapse max-md:min-w-[600px]">
@@ -1634,7 +1640,7 @@ export default function AdminPage() {
           {activeTab === 'trash' && (
             <div className="min-h-[600px]">
               <div className="flex justify-between items-center mb-8 max-md:flex-col max-md:gap-4 max-md:items-stretch">
-                <h2 className="section-title section-title-lg">휴지통 (삭제된 상품)</h2>
+                <h2 className="text-[1.75rem] font-bold text-[#f9fafb] mb-6">휴지통 (삭제된 상품)</h2>
                 <div className="flex items-center gap-3 py-2.5 px-4 bg-[#1f2937] border border-[#374151] rounded-lg min-w-[300px] transition-all focus-within:border-[#6366f1] focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] max-md:min-w-full">
                   <svg className="w-[18px] h-[18px] text-[#6b7280] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"/>
