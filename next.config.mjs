@@ -16,6 +16,9 @@ const nextConfig = {
     },
   },
 
+  // Transpile only for modern browsers (ES2020+)
+  transpilePackages: [],
+
   // CSS optimization
   experimental: {
     optimizeCss: true, // Enable CSS optimization (requires critters)
