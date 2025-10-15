@@ -51,8 +51,17 @@ export function preloadImages(imagePaths) {
  * @returns {string} Optimized image URL
  */
 export function imageLoader({ src, width, quality = 75 }) {
-  // For Supabase storage images
+  // For Supabase storage images with transform API
   if (src.includes('supabase')) {
+    const url = new URL(src);
+
+    // Use Supabase's image transformation API if available
+    if (url.pathname.includes('/storage/v1/object/public/')) {
+      // Convert to render endpoint for transformations
+      const renderUrl = src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
+      return `${renderUrl}?width=${width}&quality=${quality}&format=webp`;
+    }
+
     return `${src}?width=${width}&quality=${quality}`;
   }
 

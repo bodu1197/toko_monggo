@@ -46,8 +46,8 @@ export default function OptimizedImage({
         return index === 0;
 
       case 'product-card':
-        // First 4 product cards on home page are likely LCP
-        return index < 4;
+        // First 2 product cards on home page are likely LCP (mobile) or first 4 (desktop)
+        return index < 2;
 
       case 'home':
         // Above fold images on home page
@@ -70,7 +70,8 @@ export default function OptimizedImage({
       case 'product-detail':
         return "(max-width: 768px) 100vw, 70vw";
       case 'product-card':
-        return "(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw";
+        // More precise sizing for product cards to reduce bandwidth
+        return "(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 220px";
       case 'thumbnail':
         return "100px";
       default:
@@ -107,7 +108,7 @@ export default function OptimizedImage({
       priority={isPriority}
       loading={isPriority ? undefined : "lazy"}
       fetchPriority={isPriority ? "high" : undefined}
-      quality={isPriority ? 85 : 75}
+      quality={isPriority ? 80 : 65}
       placeholder="blur"
       blurDataURL={generateBlurPlaceholder(placeholderWidth, placeholderHeight)}
       // Error handling
