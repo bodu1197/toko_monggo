@@ -445,7 +445,7 @@ export default function ProductDetailPage() {
           {/* Left Column */}
           <div className="flex flex-col gap-6 lg:contents">
             {/* Image Gallery */}
-            <div className="flex flex-col gap-4 order-1 w-screen -mx-3 px-3 lg:w-auto lg:mx-0 lg:px-0">
+            <div className="flex flex-col gap-4 order-1 lg:order-1 w-screen -mx-3 px-3 lg:w-auto lg:mx-0 lg:px-0">
               <div className="relative w-full aspect-video bg-[#1f2937] border border-[#374151] rounded-2xl lg:rounded-2xl overflow-hidden flex items-center justify-center">
                 {currentImage ? (
                   <Image
@@ -505,7 +505,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Details Section */}
-            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-3">
+            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-2 lg:order-3">
               <h3 className="section-title section-title-md">Detail</h3>
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center pb-4 border-b border-[#374151] last:border-b-0 last:pb-0">
@@ -520,7 +520,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Description Section */}
-            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-4">
+            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-3 lg:order-4">
               <h3 className="section-title section-title-md">Deskripsi</h3>
               <p className="text-sm lg:text-[15px] leading-relaxed text-[#9ca3af] whitespace-pre-wrap">{product.description}</p>
 
@@ -599,7 +599,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Comments Section */}
-            <div className="p-4 lg:p-8 bg-[#1f2937] border border-[#374151] rounded-xl lg:rounded-2xl order-5 mt-4 lg:mt-0">
+            <div className="p-4 lg:p-8 bg-[#1f2937] border border-[#374151] rounded-xl lg:rounded-2xl order-4 lg:order-5 mt-4 lg:mt-0">
               <h3 className="section-title section-title-md">Ulasan & Komentar ({comments.length})</h3>
 
               {/* Comment Form */}
@@ -733,7 +733,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Right Sidebar */}
-          <div className="sticky top-[90px] flex flex-col gap-5 order-6">
+          <div className="sticky top-[90px] flex flex-col gap-5 order-5 lg:order-2">
             {/* Price & Title */}
             <div className="pb-4 lg:pb-6 border-b border-[#374151]">
               <h1 className="text-[15px] lg:text-[22px] font-semibold lg:font-bold text-[#f9fafb] mb-2.5 lg:mb-4 leading-normal lg:leading-snug break-words">
