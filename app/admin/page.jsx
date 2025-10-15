@@ -1235,11 +1235,11 @@ export default function AdminPage() {
 
           {/* Products Tab */}
           {activeTab === 'products' && (
-            <div>
-              <div className="section-header">
+            <div className="min-h-[600px]">
+              <div className="flex justify-between items-center mb-8 max-md:flex-col max-md:gap-4 max-md:items-stretch">
                 <h2 className="section-title section-title-lg">상품 관리</h2>
                 <div className="flex items-center gap-3 py-2.5 px-4 bg-[#1f2937] border border-[#374151] rounded-lg min-w-[300px] transition-all focus-within:border-[#6366f1] focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] max-md:min-w-full">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="w-[18px] h-[18px] text-[#6b7280] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"/>
                     <path d="m21 21-4.35-4.35"/>
                   </svg>
@@ -1248,51 +1248,58 @@ export default function AdminPage() {
                     placeholder="상품 검색..."
                     value={productSearchQuery}
                     onChange={handleProductSearch}
+                    className="flex-1 bg-transparent border-none outline-none text-[#f9fafb] text-sm placeholder:text-[#6b7280]"
                   />
                 </div>
               </div>
 
-              <div className="users-table-container">
-                <table className="users-table">
-                  <thead>
+              <div className="bg-[#1f2937] border border-[#374151] rounded-xl overflow-hidden max-md:overflow-x-auto">
+                <table className="w-full border-collapse max-md:min-w-[600px]">
+                  <thead className="bg-[#374151]">
                     <tr>
-                      <th>상품명</th>
-                      <th>판매자</th>
-                      <th>가격</th>
-                      <th>지역</th>
-                      <th>등록일</th>
-                      <th>상태</th>
-                      <th>액션</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">상품명</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">판매자</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">가격</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">지역</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">등록일</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">상태</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">액션</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredProducts.map(product => {
                       const firstImage = product.product_images?.sort((a, b) => a.order - b.order)?.[0]?.image_url;
                       return (
-                        <tr key={product.id}>
-                          <td>
-                            <div className="user-cell">
+                        <tr key={product.id} className="transition-colors hover:bg-[#374151]">
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                            <div className="flex items-center gap-3">
                               {firstImage && (
-                                <div className="user-avatar">
-                                  <Image src={firstImage} alt={product.title} width={40} height={40} />
+                                <div className="w-10 h-10 rounded-lg bg-[#374151] border-2 border-[#374151] flex items-center justify-center overflow-hidden shrink-0">
+                                  <Image src={firstImage} alt={product.title} width={40} height={40} className="w-full h-full object-cover" />
                                 </div>
                               )}
                               <span>{product.title}</span>
                             </div>
                           </td>
-                          <td>{product.profiles?.full_name || '-'}</td>
-                          <td>Rp {product.price?.toLocaleString('id-ID')}</td>
-                          <td>{product.regencies?.regency_name || '-'}</td>
-                          <td>{new Date(product.created_at).toLocaleDateString('ko-KR')}</td>
-                          <td>
-                            <span className={`status-badge ${product.status === 'active' ? 'active' : product.status === 'suspended' ? 'suspended' : ''}`}>
-                              {product.status === 'active' ? '활성' : product.status === 'suspended' ? '중지' : product.status === 'sold' ? '판매완료' : '숨김'}
-                            </span>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">{product.profiles?.full_name || '-'}</td>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">Rp {product.price?.toLocaleString('id-ID')}</td>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">{product.regencies?.regency_name || '-'}</td>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">{new Date(product.created_at).toLocaleDateString('ko-KR')}</td>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                            {product.status === 'active' ? (
+                              <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(16,185,129,0.1)] text-[#10b981]">활성</span>
+                            ) : product.status === 'suspended' ? (
+                              <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(251,191,36,0.1)] text-[#f59e0b]">중지</span>
+                            ) : product.status === 'sold' ? (
+                              <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(99,102,241,0.1)] text-[#6366f1]">판매완료</span>
+                            ) : (
+                              <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(107,114,128,0.1)] text-[#6b7280]">숨김</span>
+                            )}
                           </td>
-                          <td>
-                            <div className="action-buttons">
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <button
-                                className="btn-edit"
+                                className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#6366f1] text-white hover:bg-[#4f46e5] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(99,102,241,0.4)]"
                                 onClick={() => handleEditProduct(product.id)}
                                 title="상품 수정"
                               >
@@ -1300,7 +1307,7 @@ export default function AdminPage() {
                               </button>
                               {product.status === 'active' ? (
                                 <button
-                                  className="btn-suspend"
+                                  className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#f59e0b] text-white hover:bg-[#d97706] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(245,158,11,0.4)]"
                                   onClick={() => handleSuspendProduct(product.id)}
                                   title="상품 발행중지"
                                 >
@@ -1308,7 +1315,7 @@ export default function AdminPage() {
                                 </button>
                               ) : product.status === 'suspended' ? (
                                 <button
-                                  className="btn-activate"
+                                  className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#10b981] text-white hover:bg-[#059669] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(16,185,129,0.4)]"
                                   onClick={() => handleActivateProduct(product.id)}
                                   title="상품 활성화"
                                 >
@@ -1316,7 +1323,7 @@ export default function AdminPage() {
                                 </button>
                               ) : null}
                               <button
-                                className="btn-delete"
+                                className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#ef4444] text-white hover:bg-[#dc2626] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(239,68,68,0.4)]"
                                 onClick={() => handleDeleteProduct(product.id)}
                                 title="상품 삭제"
                               >
@@ -1341,30 +1348,46 @@ export default function AdminPage() {
 
           {/* Reports Tab */}
           {activeTab === 'reports' && (
-            <div className="reports-section">
-              <div className="section-header">
-                <h2 className="section-title">신고 관리</h2>
-                <div className="filter-buttons">
+            <div className="min-h-[600px]">
+              <div className="flex justify-between items-center mb-8 max-md:flex-col max-md:gap-4 max-md:items-stretch">
+                <h2 className="section-title section-title-lg">신고 관리</h2>
+                <div className="flex gap-2 flex-wrap max-md:justify-center">
                   <button
-                    className={`filter-btn ${reportFilter === 'all' ? 'active' : ''}`}
+                    className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                      reportFilter === 'all'
+                        ? 'bg-[#6366f1] text-white'
+                        : 'bg-[#1f2937] text-[#9ca3af] border border-[#374151] hover:bg-[#374151] hover:text-[#f9fafb]'
+                    }`}
                     onClick={() => { setReportFilter('all'); filterReports('all'); }}
                   >
                     전체
                   </button>
                   <button
-                    className={`filter-btn ${reportFilter === 'pending' ? 'active' : ''}`}
+                    className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                      reportFilter === 'pending'
+                        ? 'bg-[#6366f1] text-white'
+                        : 'bg-[#1f2937] text-[#9ca3af] border border-[#374151] hover:bg-[#374151] hover:text-[#f9fafb]'
+                    }`}
                     onClick={() => { setReportFilter('pending'); filterReports('pending'); }}
                   >
                     대기중
                   </button>
                   <button
-                    className={`filter-btn ${reportFilter === 'reviewing' ? 'active' : ''}`}
+                    className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                      reportFilter === 'reviewing'
+                        ? 'bg-[#6366f1] text-white'
+                        : 'bg-[#1f2937] text-[#9ca3af] border border-[#374151] hover:bg-[#374151] hover:text-[#f9fafb]'
+                    }`}
                     onClick={() => { setReportFilter('reviewing'); filterReports('reviewing'); }}
                   >
                     검토중
                   </button>
                   <button
-                    className={`filter-btn ${reportFilter === 'resolved' ? 'active' : ''}`}
+                    className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                      reportFilter === 'resolved'
+                        ? 'bg-[#6366f1] text-white'
+                        : 'bg-[#1f2937] text-[#9ca3af] border border-[#374151] hover:bg-[#374151] hover:text-[#f9fafb]'
+                    }`}
                     onClick={() => { setReportFilter('resolved'); filterReports('resolved'); }}
                   >
                     처리완료
@@ -1372,8 +1395,8 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="reports-table-container">
-                <table className="reports-table">
+              <div className="bg-[#1f2937] border border-[#374151] rounded-xl overflow-hidden max-md:overflow-x-auto">
+                <table className="w-full border-collapse max-md:min-w-[800px]">
                   <thead>
                     <tr>
                       <th>신고 유형</th>
