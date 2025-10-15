@@ -618,19 +618,6 @@ export default function HomePage() {
         {isMobile === false && (
         <section className="bg-[#1f2937] border-b border-[#374151] py-5 relative z-[1]">
         <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
-          {/* Mobile: 검색창도 필터 안에 */}
-          {isMobile === true && (
-            <div className="flex gap-2 mb-3 pt-4">
-              <input type="text" placeholder="Cari barang bekas..." className="w-[293px] min-w-[293px] max-w-[293px] h-[42px] px-4 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none placeholder:text-[#6b7280]" />
-              <button className="w-[42px] h-[42px] p-0 flex items-center justify-center py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 hover:bg-[#374151]">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8"/>
-                  <path d="m21 21-4.35-4.35"/>
-                </svg>
-              </button>
-            </div>
-          )}
-
           <div className="flex gap-3 items-center flex-wrap">
             <div className="flex-1 min-w-[150px]">
               <select
@@ -740,49 +727,6 @@ export default function HomePage() {
               </button>
             )}
           </div>
-
-          {/* Mobile: Reset + 내주변 버튼을 2열 그리드로 */}
-          {isMobile === true && (
-            <div className="grid grid-cols-2 gap-3 mt-3 pb-4">
-              <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#374151] border border-[#374151] text-[#9ca3af] hover:bg-[#111827] hover:text-[#f9fafb]" onClick={resetFilters}>
-                <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M1 4v6h6M23 20v-6h-6"/>
-                  <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
-                </svg>
-                Reset
-              </button>
-
-              {locationStatus === 'denied' && (
-                <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]" onClick={handleNearbyClick}>
-                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="10" r="3"/>
-                    <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
-                  </svg>
-                  Sekitar Saya
-                </button>
-              )}
-
-              {locationStatus === 'idle' && (
-                <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]" onClick={handleNearbyClick}>
-                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="10" r="3"/>
-                    <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
-                  </svg>
-                  Sekitar Saya
-                </button>
-              )}
-
-              {locationStatus === 'success' && (
-                <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#111827] border border-[#374151] text-[#9ca3af] hover:bg-[#374151]" onClick={handleNearbyClick}>
-                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                  Sekitar 50km
-                </button>
-              )}
-            </div>
-          )}
         </div>
       </section>
         )}
