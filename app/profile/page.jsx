@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { compressImage } from '../utils/imageCompression';
-import './profile.css';
 import { useAuth } from '../hooks/useAuth';
 import { useScreenSize } from '../hooks/useScreenSize';
 import LoadingState from '../components/common/LoadingState';
@@ -14,25 +13,55 @@ import { useSupabaseClient } from '../components/SupabaseClientProvider';
 export default function ProfilePage() {
   const router = useRouter();
   const { user, profile, loading, setProfile } = useAuth();
-  const supabaseClient = useSupabaseClient(); // Get client from context
+  const supabaseClient = useSupabaseClient();
 
-    const [userProducts, setUserProducts] = useState([]);
-    const [favoriteProducts, setFavoriteProducts] = useState([]);
-    const [isEditing, setIsEditing] = useState(false);
-    const isMobile = useScreenSize();
-    const [activeTab, setActiveTab] = useState('products'); // products, sold, favorites
+  const [userProducts, setUserProducts] = useState([]);
+  const [favoriteProducts, setFavoriteProducts] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const isMobile = useScreenSize();
+  const [activeTab, setActiveTab] = useState('products');
 
-    const [editForm, setEditForm] = useState({
-      full_name: '',
-      bio: '',
-    });
+  const [editForm, setEditForm] = useState({
+    full_name: '',
+    bio: '',
+  });
 
-    const fetchUserProducts = useCallback(async (userId) => {
-      try {
-        const { data, error } = await supabaseClient
-          .from('products')
-          .select(`
-            *,
+  const fetchUserProducts = useCallback(async (userId) => {
+    try {
+      const { data, error } = await supabaseClient
+        .from('products')
+        .select(`
+          *,
+          product_images (
+            image_url,
+            order
+          ),
+          regencies (
+            regency_name
+          )
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setUserProducts(data || []);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  }, [supabaseClient]);
+
+  const fetchFavoriteProducts = useCallback(async (userId) => {
+    try {
+      const { data, error } = await supabaseClient
+        .from('favorites')
+        .select(`
+          product_id,
+          products (
+            id,
+            title,
+            price,
+            status,
             product_images (
               image_url,
               order
@@ -40,492 +69,466 @@ export default function ProfilePage() {
             regencies (
               regency_name
             )
-          `)
-          .eq('user_id', userId)
-          .order('created_at', { ascending: false });
+          )
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        setUserProducts(data || []);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    }, [supabaseClient, setUserProducts]);
-
-    const fetchFavoriteProducts = useCallback(async (userId) => {
-      try {
-        const { data, error } = await supabaseClient
-          .from('favorites')
-          .select(`
-            product_id,
-            products (
-              id,
-              title,
-              price,
-              status,
-              product_images (
-                image_url,
-                order
-              ),
-              regencies (
-                regency_name
-              )
-            )
-          `)
-          .eq('user_id', userId)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-
-        // Transform data to match ProductCard format
-        const favorites = (data || []).map(fav => fav.products).filter(Boolean);
-        setFavoriteProducts(favorites);
-      } catch (error) {
-        console.error('Error fetching favorites:', error);
-      }
-    }, [supabaseClient, setFavoriteProducts]);
-  
-    const handleAvatarUpload = useCallback(async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-  
-      try {
-        // Compress avatar image (500x500, quality 0.85, max 500KB)
-        const compressedFile = await compressImage(file, {
-          maxWidth: 500,
-          maxHeight: 500,
-          quality: 0.85,
-          maxSizeMB: 0.5,
-        });
-  
-        console.log(`Avatar - 원본: ${(file.size / 1024).toFixed(2)}KB → 압축: ${(compressedFile.size / 1024).toFixed(2)}KB`);
-  
-        const fileName = `${user.id}_${Date.now()}.jpg`;
-        const filePath = `avatars/${fileName}`;
-  
-        // Delete old avatar if exists
-        if (profile?.avatar_url) {
-          const oldUrlParts = profile.avatar_url.split('/avatars/');
-          if (oldUrlParts.length > 1) {
-            const oldFilePath = oldUrlParts[1];
-            await supabaseClient.storage
-              .from('avatars')
-              .remove([oldFilePath]);
-            console.log('Old avatar deleted:', oldFilePath);
-          }
-        }
-  
-        // Upload new avatar
-        const { error: uploadError } = await supabaseClient.storage
-          .from('avatars')
-          .upload(filePath, compressedFile);
-  
-        if (uploadError) throw uploadError;
-  
-        const { data: { publicUrl } } = supabaseClient.storage
-          .from('avatars')
-          .getPublicUrl(filePath);
-  
-        const { error: updateError } = await supabaseClient
-          .from('profiles')
-          .update({ avatar_url: publicUrl })
-          .eq('id', user.id);
-  
-        if (updateError) throw updateError;
-  
-        // Re-fetch profile data to update UI
-        const { data: updatedProfile, error: fetchError } = await supabaseClient
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        if(fetchError) throw fetchError;
-        setProfile(updatedProfile);
-  
-        alert('Avatar berhasil diperbarui!');
-      } catch (error) {
-        console.error('Error uploading avatar:', error);
-        alert('Gagal mengunggah avatar');
-      }
-    }, [supabaseClient, user, profile, setProfile]);
-  
-    const handleSaveProfile = useCallback(async () => {
-      try {
-        const { error } = await supabaseClient
-          .from('profiles')
-          .update({
-            full_name: editForm.full_name,
-            bio: editForm.bio,
-          })
-          .eq('id', user.id);
-  
-        if (error) throw error;
-  
-        // Re-fetch profile data to update UI
-        const { data: updatedProfile, error: fetchError } = await supabaseClient
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        if(fetchError) throw fetchError;
-        setProfile(updatedProfile);
-  
-        setIsEditing(false);
-        alert('Profil berhasil diperbarui!');
-      } catch (error) {
-        console.error('Error updating profile:', error);
-        alert('Gagal memperbarui profil');
-      }
-    }, [supabaseClient, user, setProfile, setIsEditing, editForm]);
-  
-    const handleDeleteProduct = useCallback(async (productId) => {
-      if (!confirm('Yakin ingin menghapus produk ini?')) return;
-
-      try {
-        // 1. Get product images first
-        const { data: productImages, error: fetchError } = await supabaseClient
-          .from('product_images')
-          .select('image_url')
-          .eq('product_id', productId);
-
-        if (fetchError) {
-          console.error('Error fetching product images:', fetchError);
-        }
-
-        // 2. Delete product (will cascade delete product_images due to FK)
-        const { error: deleteError } = await supabaseClient
-          .from('products')
-          .delete()
-          .eq('id', productId);
-
-        if (deleteError) throw deleteError;
-
-        // 3. Delete images from storage
-        if (productImages && productImages.length > 0) {
-          for (const img of productImages) {
-            try {
-              // Extract file path from URL
-              // URL format: https://xxx.supabase.co/storage/v1/object/public/product-images/products/filename.jpg
-              const urlParts = img.image_url.split('/product-images/');
-              if (urlParts.length > 1) {
-                const filePath = urlParts[1];
-
-                const { error: storageError } = await supabaseClient.storage
-                  .from('product-images')
-                  .remove([filePath]);
-
-                if (storageError) {
-                  console.error('Error deleting image from storage:', storageError);
-                }
-              }
-            } catch (error) {
-              console.error('Error processing image deletion:', error);
-            }
-          }
-        }
-
-        await fetchUserProducts(user.id);
-        alert('Produk dan semua gambar berhasil dihapus!');
-      } catch (error) {
-        console.error('Error deleting product:', error);
-        alert('Gagal menghapus produk');
-      }
-    }, [supabaseClient, user, fetchUserProducts]);
-
-    const handleStatusChange = useCallback(async (productId, currentStatus) => {
-      const newStatus = currentStatus === 'paused' ? 'active' : 'paused';
-      const confirmMessage = newStatus === 'paused'
-        ? 'Apakah Anda ingin menghentikan sementara penjualan produk ini?'
-        : 'Apakah Anda ingin melanjutkan penjualan produk ini?';
-
-      if (!confirm(confirmMessage)) return;
-
-      try {
-        const { error } = await supabaseClient
-          .from('products')
-          .update({ status: newStatus })
-          .eq('id', productId);
-
-        if (error) throw error;
-
-        await fetchUserProducts(user.id);
-        const successMessage = newStatus === 'paused'
-          ? 'Produk berhasil dihentikan sementara'
-          : 'Produk berhasil dilanjutkan';
-        alert(successMessage);
-      } catch (error) {
-        console.error('Error changing product status:', error);
-        console.error('Error details:', JSON.stringify(error, null, 2));
-        alert(`Gagal mengubah status produk: ${error.message || 'Unknown error'}`);
-      }
-    }, [supabaseClient, user, fetchUserProducts]);
-  
-    const handleLogout = useCallback(async () => {
-      if (!confirm('Yakin ingin keluar?')) return;
-  
-      try {
-        await supabaseClient.auth.signOut();
-        router.push('/login');
-      } catch (error) {
-        console.error('Error logging out:', error);
-      } 
-    }, [supabaseClient, router]);
-
-    useEffect(() => {
-      if (user) {
-        fetchUserProducts(user.id);
-        fetchFavoriteProducts(user.id);
-      }
-    }, [user, fetchUserProducts, fetchFavoriteProducts]);
-
-    useEffect(() => {
-      if (profile) {
-        setEditForm({
-          full_name: profile.full_name || '',
-          bio: profile.bio || '',
-        });
-      }
-    }, [profile]);
-
-    if (loading) {
-      return (
-        <div className="profile-page">
-          <LoadingState message="Memuat profil..." />
-        </div>
-      );
+      const favorites = (data || []).map(fav => fav.products).filter(Boolean);
+      setFavoriteProducts(favorites);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
     }
-  
+  }, [supabaseClient]);
+
+  const handleAvatarUpload = useCallback(async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const compressedFile = await compressImage(file, {
+        maxWidth: 500,
+        maxHeight: 500,
+        quality: 0.85,
+        maxSizeMB: 0.5,
+      });
+
+      console.log(`Avatar - 원본: ${(file.size / 1024).toFixed(2)}KB → 압축: ${(compressedFile.size / 1024).toFixed(2)}KB`);
+
+      const fileName = `${user.id}_${Date.now()}.jpg`;
+      const filePath = `avatars/${fileName}`;
+
+      if (profile?.avatar_url) {
+        const oldUrlParts = profile.avatar_url.split('/avatars/');
+        if (oldUrlParts.length > 1) {
+          const oldFilePath = oldUrlParts[1];
+          await supabaseClient.storage
+            .from('avatars')
+            .remove([oldFilePath]);
+          console.log('Old avatar deleted:', oldFilePath);
+        }
+      }
+
+      const { error: uploadError } = await supabaseClient.storage
+        .from('avatars')
+        .upload(filePath, compressedFile);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabaseClient.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      const { error: updateError } = await supabaseClient
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      const { data: updatedProfile, error: fetchError } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      if(fetchError) throw fetchError;
+      setProfile(updatedProfile);
+
+      alert('Avatar berhasil diperbarui!');
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      alert('Gagal mengunggah avatar');
+    }
+  }, [supabaseClient, user, profile, setProfile]);
+
+  const handleSaveProfile = useCallback(async () => {
+    try {
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({
+          full_name: editForm.full_name,
+          bio: editForm.bio,
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      const { data: updatedProfile, error: fetchError } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      if(fetchError) throw fetchError;
+      setProfile(updatedProfile);
+
+      setIsEditing(false);
+      alert('Profil berhasil diperbarui!');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Gagal memperbarui profil');
+    }
+  }, [supabaseClient, user, setProfile, editForm]);
+
+  const handleDeleteProduct = useCallback(async (productId) => {
+    if (!confirm('Yakin ingin menghapus produk ini?')) return;
+
+    try {
+      const { data: productImages, error: fetchError } = await supabaseClient
+        .from('product_images')
+        .select('image_url')
+        .eq('product_id', productId);
+
+      if (fetchError) {
+        console.error('Error fetching product images:', fetchError);
+      }
+
+      const { error: deleteError } = await supabaseClient
+        .from('products')
+        .delete()
+        .eq('id', productId);
+
+      if (deleteError) throw deleteError;
+
+      if (productImages && productImages.length > 0) {
+        for (const img of productImages) {
+          try {
+            const urlParts = img.image_url.split('/product-images/');
+            if (urlParts.length > 1) {
+              const filePath = urlParts[1];
+
+              const { error: storageError } = await supabaseClient.storage
+                .from('product-images')
+                .remove([filePath]);
+
+              if (storageError) {
+                console.error('Error deleting image from storage:', storageError);
+              }
+            }
+          } catch (error) {
+            console.error('Error processing image deletion:', error);
+          }
+        }
+      }
+
+      await fetchUserProducts(user.id);
+      alert('Produk dan semua gambar berhasil dihapus!');
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Gagal menghapus produk');
+    }
+  }, [supabaseClient, user, fetchUserProducts]);
+
+  const handleStatusChange = useCallback(async (productId, currentStatus) => {
+    const newStatus = currentStatus === 'paused' ? 'active' : 'paused';
+    const confirmMessage = newStatus === 'paused'
+      ? 'Apakah Anda ingin menghentikan sementara penjualan produk ini?'
+      : 'Apakah Anda ingin melanjutkan penjualan produk ini?';
+
+    if (!confirm(confirmMessage)) return;
+
+    try {
+      const { error } = await supabaseClient
+        .from('products')
+        .update({ status: newStatus })
+        .eq('id', productId);
+
+      if (error) throw error;
+
+      await fetchUserProducts(user.id);
+      const successMessage = newStatus === 'paused'
+        ? 'Produk berhasil dihentikan sementara'
+        : 'Produk berhasil dilanjutkan';
+      alert(successMessage);
+    } catch (error) {
+      console.error('Error changing product status:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      alert(`Gagal mengubah status produk: ${error.message || 'Unknown error'}`);
+    }
+  }, [supabaseClient, user, fetchUserProducts]);
+
+  const handleLogout = useCallback(async () => {
+    if (!confirm('Yakin ingin keluar?')) return;
+
+    try {
+      await supabaseClient.auth.signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  }, [supabaseClient, router]);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserProducts(user.id);
+      fetchFavoriteProducts(user.id);
+    }
+  }, [user, fetchUserProducts, fetchFavoriteProducts]);
+
+  useEffect(() => {
+    if (profile) {
+      setEditForm({
+        full_name: profile.full_name || '',
+        bio: profile.bio || '',
+      });
+    }
+  }, [profile]);
+
+  if (loading) {
     return (
-      <div className="profile-page">
-        {/* Header */}
-        <header className="profile-header">
-          <div className="container">
-            <button className="back-btn" onClick={() => router.back()}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
-              Kembali
-            </button>
-            <h1>Profil Saya</h1>
-            <button className="logout-btn" onClick={handleLogout}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                <polyline points="16 17 21 12 16 7"/>
-                <line x1="21" y1="12" x2="9" y2="12"/>
-              </svg>
-              Keluar
-            </button>
-          </div>
-        </header>
-  
-        <div className="profile-content container">
-          {/* Profile Info Card */}
-          <div className="profile-card">
-            <div className="avatar-section">
-              <div className="avatar-container">
-                {profile?.avatar_url ? (
-                  <img
-                    src={profile.avatar_url}
-                    alt="Avatar"
-                    className="avatar-image"
-                    onError={(e) => {
-                      console.error('Avatar image failed to load:', profile.avatar_url);
-                      console.error('Error event:', e);
-                    }}
-                  />
-                ) : (
-                  <div className="avatar-placeholder">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                      <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                  </div>
-                )}
-                <label className="avatar-upload-btn">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleAvatarUpload}
-                    style={{ display: 'none' }}
-                  />
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                    <circle cx="12" cy="13" r="4"/>
-                  </svg>
-                </label>
-              </div>
-            </div>
-  
-            <div className="profile-info">
-              {isEditing ? (
-                <div className="edit-form">
-                  <div className="form-group">
-                    <label>Nama Lengkap</label>
-                    <input
-                      type="text"
-                      value={editForm.full_name}
-                      onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                      className="form-input"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Bio</label>
-                    <textarea
-                      value={editForm.bio}
-                      onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                      className="form-input"
-                      rows="3"
-                    />
-                  </div>
-                  <div className="form-actions">
-                    <button className="btn btn-secondary" onClick={() => setIsEditing(false)}>
-                      Batal
-                    </button>
-                    <button className="btn btn-primary" onClick={handleSaveProfile}>
-                      Simpan
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <h2 className="profile-name">{profile?.full_name || 'Pengguna'}</h2>
-                  <p className="profile-email">{user?.email}</p>
-                  {profile?.bio && (
-                    <p className="profile-bio">{profile.bio}</p>
-                  )}
-                  <button className="btn btn-edit" onClick={() => setIsEditing(true)}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                    </svg>
-                    Edit Profil
-                  </button>
-                </>
-              )}
-            </div>
-  
-            <div className="profile-stats">
-              <div className="stat-item">
-                <span className="stat-number">{userProducts.length}</span>
-                <span className="stat-label">Iklan</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">0</span>
-                <span className="stat-label">Terjual</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">{favoriteProducts.length}</span>
-                <span className="stat-label">Favorit</span>
-              </div>
-            </div>
-          </div>
-  
-          {/* Tabs */}
-          <div className="tabs-container">
-            <div className="tabs">
-              <button
-                className={`tab ${activeTab === 'products' ? 'active' : ''}`}
-                onClick={() => setActiveTab('products')}
-              >
-                Iklan Saya ({userProducts.length})
-              </button>
-              <button
-                className={`tab ${activeTab === 'sold' ? 'active' : ''}`}
-                onClick={() => setActiveTab('sold')}
-              >
-                Terjual (0)
-              </button>
-              <button
-                className={`tab ${activeTab === 'favorites' ? 'active' : ''}`}
-                onClick={() => setActiveTab('favorites')}
-              >
-                Favorit ({favoriteProducts.length})
-              </button>
-            </div>
-          </div>
-  
-          {/* Products Grid */}
-          {activeTab === 'products' && (
-            <div className="products-section">
-              {userProducts.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon">📦</div>
-                  <h3>Belum ada iklan</h3>
-                  <p>Mulai jual barang bekas Anda sekarang</p>
-                  <button className="btn btn-primary" onClick={() => router.push('/products/new')}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="12" y1="5" x2="12" y2="19"/>
-                      <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Pasang Iklan
-                  </button>
-                </div>
-              ) : (
-                <div className={`products-grid ${isMobile ? 'mobile' : 'desktop'}`}>
-                  {userProducts.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      product={{
-                        id: product.id,
-                        title: product.title,
-                        price: product.price,
-                        city: product.regencies?.regency_name,
-                        image: product.product_images?.[0]?.image_url,
-                        status: product.status
-                      }}
-                      context="profile"
-                      onDelete={handleDeleteProduct}
-                      onStatusChange={handleStatusChange}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-  
-          {activeTab === 'sold' && (
-            <div className="empty-state">
-              <div className="empty-icon">💰</div>
-              <h3>Belum ada barang terjual</h3>
-              <p>Produk yang sudah terjual akan muncul di sini</p>
-            </div>
-          )}
-  
-          {activeTab === 'favorites' && (
-            <div className="products-section">
-              {favoriteProducts.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon">❤️</div>
-                  <h3>Belum ada favorit</h3>
-                  <p>Simpan iklan favorit Anda di sini</p>
-                  <button className="btn btn-primary" onClick={() => router.push('/')}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    </svg>
-                    Jelajahi Produk
-                  </button>
-                </div>
-              ) : (
-                <div className={`products-grid ${isMobile ? 'mobile' : 'desktop'}`}>
-                  {favoriteProducts.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      product={{
-                        id: product.id,
-                        title: product.title,
-                        price: product.price,
-                        city: product.regencies?.regency_name,
-                        image: product.product_images?.[0]?.image_url,
-                        status: product.status
-                      }}
-                      context="home"
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+      <div className="min-h-screen bg-[#111827] pb-10">
+        <LoadingState message="Memuat profil..." />
       </div>
     );
   }
+
+  return (
+    <div className="min-h-screen bg-[#111827] pb-10">
+      {/* Header */}
+      <header className="bg-[#1f2937] border-b border-[#374151] py-4 sticky top-0 z-[100]">
+        <div className="container flex items-center justify-between">
+          <button className="back-btn" onClick={() => router.back()}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Kembali
+          </button>
+          <h1 className="text-xl font-semibold text-[#f9fafb]">Profil Saya</h1>
+          <button className="logout-btn" onClick={handleLogout}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <span className="md:inline hidden">Keluar</span>
+          </button>
+        </div>
+      </header>
+
+      <div className="container max-w-[1200px] mx-auto px-5 md:px-4 py-8 md:py-5">
+        {/* Profile Info Card */}
+        <div className="bg-[#1f2937] border border-[#374151] rounded-2xl p-8 md:p-6 mb-8">
+          <div className="flex justify-center mb-6">
+            <div className="relative w-[120px] h-[120px]">
+              {profile?.avatar_url ? (
+                <Image
+                  src={profile.avatar_url}
+                  alt="Avatar"
+                  width={120}
+                  height={120}
+                  className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] object-cover object-center"
+                  priority
+                  onError={(e) => {
+                    console.error('Avatar image failed to load:', profile.avatar_url);
+                    console.error('Error event:', e);
+                  }}
+                />
+              ) : (
+                <div className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] bg-[#374151] flex items-center justify-center">
+                  <svg className="w-[60px] h-[60px] text-[#6b7280]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+              )}
+              <label className="absolute bottom-[5px] right-[5px] w-9 h-9 bg-[#4b5563] border-[3px] border-[#1f2937] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-[#374151] hover:scale-110">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                />
+                <svg className="w-[18px] h-[18px] text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+              </label>
+            </div>
+          </div>
+
+          <div className="text-center mb-6">
+            {isEditing ? (
+              <div className="max-w-[500px] mx-auto">
+                <div className="form-group">
+                  <label className="form-label">Nama Lengkap</label>
+                  <input
+                    type="text"
+                    value={editForm.full_name}
+                    onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Bio</label>
+                  <textarea
+                    value={editForm.bio}
+                    onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
+                    className="form-input resize-y"
+                    rows="3"
+                  />
+                </div>
+                <div className="form-actions">
+                  <button className="btn btn-secondary" onClick={() => setIsEditing(false)}>
+                    Batal
+                  </button>
+                  <button className="btn btn-primary" onClick={handleSaveProfile}>
+                    Simpan
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h2 className="text-2xl md:text-xl font-bold text-[#f9fafb] mb-2">{profile?.full_name || 'Pengguna'}</h2>
+                <p className="text-sm text-[#9ca3af] mb-1">{user?.email}</p>
+                {profile?.bio && (
+                  <p className="text-sm text-[#9ca3af] leading-relaxed mb-4 max-w-[500px] mx-auto">{profile.bio}</p>
+                )}
+                <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#374151] border border-[#4b5563] text-[#f9fafb] rounded-lg text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-[#111827] hover:border-[#4b5563]" onClick={() => setIsEditing(true)}>
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  Edit Profil
+                </button>
+              </>
+            )}
+          </div>
+
+          <div className="grid grid-cols-3 gap-6 md:gap-4 pt-6 border-t border-[#374151]">
+            <div className="stat-item">
+              <span className="stat-number stat-number-lg">{userProducts.length}</span>
+              <span className="stat-label stat-label-sm">Iklan</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number stat-number-lg">0</span>
+              <span className="stat-label stat-label-sm">Terjual</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number stat-number-lg">{favoriteProducts.length}</span>
+              <span className="stat-label stat-label-sm">Favorit</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="mb-6">
+          <div className="flex gap-2 border-b border-[#374151] overflow-x-auto [-webkit-overflow-scrolling:touch]">
+            <button
+              className={`py-3 px-5 md:px-4 bg-transparent border-none font-medium text-[15px] md:text-sm cursor-pointer border-b-2 transition-all duration-300 whitespace-nowrap ${
+                activeTab === 'products'
+                  ? 'text-[#f9fafb] border-[#f9fafb]'
+                  : 'text-[#9ca3af] border-transparent hover:text-[#f9fafb]'
+              }`}
+              onClick={() => setActiveTab('products')}
+            >
+              Iklan Saya ({userProducts.length})
+            </button>
+            <button
+              className={`py-3 px-5 md:px-4 bg-transparent border-none font-medium text-[15px] md:text-sm cursor-pointer border-b-2 transition-all duration-300 whitespace-nowrap ${
+                activeTab === 'sold'
+                  ? 'text-[#f9fafb] border-[#f9fafb]'
+                  : 'text-[#9ca3af] border-transparent hover:text-[#f9fafb]'
+              }`}
+              onClick={() => setActiveTab('sold')}
+            >
+              Terjual (0)
+            </button>
+            <button
+              className={`py-3 px-5 md:px-4 bg-transparent border-none font-medium text-[15px] md:text-sm cursor-pointer border-b-2 transition-all duration-300 whitespace-nowrap ${
+                activeTab === 'favorites'
+                  ? 'text-[#f9fafb] border-[#f9fafb]'
+                  : 'text-[#9ca3af] border-transparent hover:text-[#f9fafb]'
+              }`}
+              onClick={() => setActiveTab('favorites')}
+            >
+              Favorit ({favoriteProducts.length})
+            </button>
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        {activeTab === 'products' && (
+          <div className="min-h-[400px]">
+            {userProducts.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">📦</div>
+                <h3>Belum ada iklan</h3>
+                <p>Mulai jual barang bekas Anda sekarang</p>
+                <button className="btn btn-primary" onClick={() => router.push('/products/new')}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  Pasang Iklan
+                </button>
+              </div>
+            ) : (
+              <div className={`grid gap-5 md:gap-3 ${isMobile ? 'grid-cols-2' : 'grid-cols-4 md:grid-cols-2'}`}>
+                {userProducts.map(product => (
+                  <ProductCard
+                    key={product.id}
+                    product={{
+                      id: product.id,
+                      title: product.title,
+                      price: product.price,
+                      city: product.regencies?.regency_name,
+                      image: product.product_images?.[0]?.image_url,
+                      status: product.status
+                    }}
+                    context="profile"
+                    onDelete={handleDeleteProduct}
+                    onStatusChange={handleStatusChange}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'sold' && (
+          <div className="empty-state">
+            <div className="empty-icon">💰</div>
+            <h3>Belum ada barang terjual</h3>
+            <p>Produk yang sudah terjual akan muncul di sini</p>
+          </div>
+        )}
+
+        {activeTab === 'favorites' && (
+          <div className="min-h-[400px]">
+            {favoriteProducts.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">❤️</div>
+                <h3>Belum ada favorit</h3>
+                <p>Simpan iklan favorit Anda di sini</p>
+                <button className="btn btn-primary" onClick={() => router.push('/')}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  </svg>
+                  Jelajahi Produk
+                </button>
+              </div>
+            ) : (
+              <div className={`grid gap-5 md:gap-3 ${isMobile ? 'grid-cols-2' : 'grid-cols-4 md:grid-cols-2'}`}>
+                {favoriteProducts.map(product => (
+                  <ProductCard
+                    key={product.id}
+                    product={{
+                      id: product.id,
+                      title: product.title,
+                      price: product.price,
+                      city: product.regencies?.regency_name,
+                      image: product.product_images?.[0]?.image_url,
+                      status: product.status
+                    }}
+                    context="home"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

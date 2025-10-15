@@ -1,5 +1,4 @@
 import { Inter } from 'next/font/google';
-import './critical.css'; // Critical CSS 먼저 로드
 import './globals.css';
 import LocationTracker from './components/LocationTracker';
 import { SupabaseClientProvider } from './components/SupabaseClientProvider';

@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Footer from './components/Footer';
-import './page.css';
 
 import { useScreenSize } from './hooks/useScreenSize';
 import LoadingState from './components/common/LoadingState';
@@ -187,7 +186,7 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase, setLoading, setProducts, setFilteredProducts]);
+  }, [supabase]); // ✅ FIXED: Remove setter functions from dependencies
 
   const fetchNearbyProducts = useCallback(async (lat, lng) => {
     try {
@@ -257,7 +256,7 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase, setLoading, setProducts, setFilteredProducts, setFilters, fetchProducts]);
+  }, [supabase, fetchProducts]); // ✅ FIXED: Remove setter functions
 
   const tryGetLocationAndFetch = useCallback(() => {
     if (!navigator.geolocation) {
@@ -464,7 +463,7 @@ export default function HomePage() {
     } finally {
       setIsSearching(false);
     }
-  }, [supabase, userLocation, fetchNearbyProducts, fetchProducts, setIsSearching, setProducts, setFilteredProducts]);
+  }, [supabase, userLocation, fetchNearbyProducts, fetchProducts]); // ✅ FIXED: Remove setter functions
 
   // 자동완성 함수
   const fetchAutocompleteSuggestions = useCallback(async (query) => {
@@ -491,7 +490,7 @@ export default function HomePage() {
       console.error('Autocomplete error:', error);
       setSearchSuggestions([]);
     }
-  }, [supabase, setSearchSuggestions, setShowSuggestions]);
+  }, [supabase]); // ✅ FIXED: Remove setter functions
 
   // 검색 입력 핸들러 (debouncing)
   useEffect(() => {
@@ -529,20 +528,20 @@ export default function HomePage() {
   }, [loadProvinces, loadMainCategories, fetchProducts]);
 
   return (
-    <div className="home-page">
+    <div className="min-h-screen pb-20">
       {/* Sticky Header + Filter Wrapper - PC only */}
-      <div className={`sticky-top-wrapper ${isMobile ? 'mobile' : 'desktop'}`}>
+      <div className={`${isMobile ? 'sticky top-0 z-[1000] bg-[#1f2937]' : 'sticky top-0 z-[1000] bg-[#1f2937] will-change-transform transform-gpu backface-hidden'}`}>
         {/* Header - PC와 모바일 다른 레이아웃 */}
-        <header className={`header ${isMobile ? 'mobile' : 'desktop'}`}>
-          <div className="header-content container">
-            <div className="header-left">
-              <h1 className="logo" onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>🛍️ Toko Monggo</h1>
+        <header className={`${isMobile ? 'sticky top-0 z-[1000]' : ''} bg-[#1f2937] border-b border-[#374151] relative z-[1] ${isMobile ? 'py-3' : 'py-4'}`}>
+          <div className="container flex items-center justify-between gap-8">
+            <div className="flex items-center gap-12">
+              <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold whitespace-nowrap cursor-pointer`} onClick={() => router.push('/')}>🛍️ Toko Monggo</h1>
             </div>
 
             {isMobile === false && (
-              <div className="header-center">
-                <form className="search-bar" onSubmit={handleSearch}>
-                  <div className="search-input-wrapper">
+              <div className="flex-1 max-w-[600px]">
+                <form className="flex gap-5 relative" onSubmit={handleSearch}>
+                  <div className="flex-1 relative">
                     <input
                       type="text"
                       placeholder="Cari barang bekas..."
@@ -550,30 +549,31 @@ export default function HomePage() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onFocus={() => searchSuggestions.length > 0 && setShowSuggestions(true)}
                       onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                      className="form-input w-full py-3 px-4"
                     />
                     {showSuggestions && searchSuggestions.length > 0 && (
-                      <div className="autocomplete-dropdown">
+                      <div className="absolute top-full left-0 right-0 bg-[#1f2937] border border-[#374151] border-t-0 rounded-b-lg max-h-[300px] overflow-y-auto z-[1001] shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
                         {searchSuggestions.map((suggestion, index) => (
                           <div
                             key={index}
-                            className="autocomplete-item"
+                            className="flex items-center gap-3 py-3 px-4 cursor-pointer transition-colors duration-200 border-b border-[#374151] last:border-b-0 hover:bg-[#374151]"
                             onClick={() => handleSuggestionClick(suggestion.title)}
                           >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <svg className="w-4 h-4 text-[#9ca3af] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <circle cx="11" cy="11" r="8"/>
                               <path d="m21 21-4.35-4.35"/>
                             </svg>
-                            <span>{suggestion.title}</span>
+                            <span className="text-[#f9fafb] text-sm whitespace-nowrap overflow-hidden text-ellipsis">{suggestion.title}</span>
                           </div>
                         ))}
                       </div>
                     )}
                   </div>
-                  <button type="submit" className="search-btn" disabled={isSearching}>
+                  <button type="submit" className="py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 flex items-center justify-center hover:bg-[#374151]" disabled={isSearching}>
                     {isSearching ? (
-                      <div className="spinner-small"></div>
+                      <div className="spinner-sm"></div>
                     ) : (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="11" cy="11" r="8"/>
                         <path d="m21 21-4.35-4.35"/>
                       </svg>
@@ -583,16 +583,16 @@ export default function HomePage() {
               </div>
             )}
 
-            <div className="header-right">
+            <div className="flex items-center gap-4">
               {isMobile === false && (
                 <>
-                  <button className="btn-icon" onClick={() => router.push('/profile')}>
+                  <button className="btn-icon btn-icon-md" onClick={() => router.push('/profile')}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                       <circle cx="12" cy="7" r="4"/>
                     </svg>
                   </button>
-                  <button className="btn-icon">
+                  <button className="btn-icon btn-icon-md">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                     </svg>
@@ -613,13 +613,13 @@ export default function HomePage() {
 
         {/* Filter Bar - PC는 wrapper 안, 모바일은 wrapper 밖 */}
         {isMobile === false && (
-        <section className="filter-section">
+        <section className="bg-[#1f2937] border-b border-[#374151] py-5 relative z-[1]">
         <div className="container">
           {/* Mobile: 검색창도 필터 안에 */}
           {isMobile === true && (
-            <div className="mobile-search-inline">
-              <input type="text" placeholder="Cari barang bekas..." />
-              <button className="search-btn">
+            <div className="flex gap-2 mb-3 pt-4">
+              <input type="text" placeholder="Cari barang bekas..." className="w-[293px] min-w-[293px] max-w-[293px] h-[42px] px-4 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none placeholder:text-[#6b7280]" />
+              <button className="w-[42px] h-[42px] p-0 flex items-center justify-center py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 hover:bg-[#374151]">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8"/>
                   <path d="m21 21-4.35-4.35"/>
@@ -628,13 +628,13 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="filter-bar">
-            <div className="filter-group">
+          <div className="flex gap-3 items-center flex-wrap">
+            <div className="flex-1 min-w-[150px]">
               <select
                 name="province"
                 value={filters.province}
                 onChange={handleFilterChange}
-                className="filter-select"
+                className="w-full h-[42px] px-3 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none transition-all duration-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2010%2010%27%3E%3Cpath%20fill=%27%23a0a0a0%27%20d=%27M5%208L1%203h8z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_12px_center] pr-8 focus:border-[#4b5563] focus:shadow-[0_0_0_2px_rgba(75,85,99,0.1)]"
               >
                 <option value="">Semua Provinsi</option>
                 {provinces.map(province => (
@@ -643,13 +643,13 @@ export default function HomePage() {
               </select>
             </div>
 
-            <div className="filter-group">
+            <div className="flex-1 min-w-[150px]">
               <select
                 name="city"
                 value={filters.city}
                 onChange={handleFilterChange}
                 disabled={!filters.province}
-                className="filter-select"
+                className="w-full h-[42px] px-3 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none transition-all duration-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2010%2010%27%3E%3Cpath%20fill=%27%23a0a0a0%27%20d=%27M5%208L1%203h8z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_12px_center] pr-8 focus:border-[#4b5563] focus:shadow-[0_0_0_2px_rgba(75,85,99,0.1)]"
               >
                 <option value="">Semua Kota</option>
                 {cities.map(city => (
@@ -658,12 +658,12 @@ export default function HomePage() {
               </select>
             </div>
 
-            <div className="filter-group">
+            <div className="flex-1 min-w-[150px]">
               <select
                 name="category"
                 value={filters.category}
                 onChange={handleFilterChange}
-                className="filter-select"
+                className="w-full h-[42px] px-3 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none transition-all duration-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2010%2010%27%3E%3Cpath%20fill=%27%23a0a0a0%27%20d=%27M5%208L1%203h8z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_12px_center] pr-8 focus:border-[#4b5563] focus:shadow-[0_0_0_2px_rgba(75,85,99,0.1)]"
               >
                 <option value="">Semua Kategori</option>
                 {mainCategories.map(category => (
@@ -674,13 +674,13 @@ export default function HomePage() {
               </select>
             </div>
 
-            <div className="filter-group">
+            <div className="flex-1 min-w-[150px]">
               <select
                 name="subcategory"
                 value={filters.subcategory}
                 onChange={handleFilterChange}
                 disabled={!filters.category}
-                className="filter-select"
+                className="w-full h-[42px] px-3 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none transition-all duration-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2010%2010%27%3E%3Cpath%20fill=%27%23a0a0a0%27%20d=%27M5%208L1%203h8z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_12px_center] pr-8 focus:border-[#4b5563] focus:shadow-[0_0_0_2px_rgba(75,85,99,0.1)]"
               >
                 <option value="">Semua Sub Kategori</option>
                 {subcategories.map(sub => (
@@ -691,14 +691,14 @@ export default function HomePage() {
 
             {/* PC: Nearby 위치 표시 인라인 */}
             {isMobile === false && locationStatus === 'success' && (
-              <div className="nearby-inline">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <div className="flex items-center gap-2 h-[42px] px-4 bg-[#111827] border border-[#374151] rounded-lg text-[#9ca3af] text-sm font-medium whitespace-nowrap">
+                <svg className="w-[18px] h-[18px] text-[#9ca3af] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                   <circle cx="12" cy="10" r="3"/>
                 </svg>
-                <span>50km</span>
-                <button className="btn-refresh-inline" onClick={handleNearbyClick} title="Refresh">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <span className="font-medium text-[#9ca3af]">50km</span>
+                <button className="w-8 h-8 flex items-center justify-center bg-[#374151] border border-[#374151] rounded-md text-[#9ca3af] cursor-pointer transition-all duration-300 flex-shrink-0 ml-1 hover:bg-[#4b5563] hover:text-[#f9fafb] hover:rotate-180" onClick={handleNearbyClick} title="Refresh">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M1 4v6h6M23 20v-6h-6"/>
                     <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
                   </svg>
@@ -708,8 +708,8 @@ export default function HomePage() {
 
             {/* PC: 위치 거부시 인라인 표시 */}
             {isMobile === false && locationStatus === 'denied' && (
-              <button className="btn-nearby-inline" onClick={handleNearbyClick}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button className="flex items-center justify-center gap-2 h-[42px] px-4 bg-[#4b5563] border-none rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap hover:bg-[#374151] hover:-translate-y-0.5" onClick={handleNearbyClick}>
+                <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="10" r="3"/>
                   <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
                 </svg>
@@ -728,8 +728,8 @@ export default function HomePage() {
             )}
 
             {isMobile === false && (
-              <button className="filter-reset-btn" onClick={resetFilters}>
-                <svg className="reset-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button className="h-[42px] px-5 bg-[#374151] border border-[#374151] rounded-lg text-[#9ca3af] text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 hover:bg-[#111827] hover:text-[#f9fafb] hover:border-[#4b5563]" onClick={resetFilters}>
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M1 4v6h6M23 20v-6h-6"/>
                   <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
                 </svg>
@@ -740,9 +740,9 @@ export default function HomePage() {
 
           {/* Mobile: Reset + 내주변 버튼을 2열 그리드로 */}
           {isMobile === true && (
-            <div className="mobile-action-buttons">
-              <button className="filter-reset-btn-mobile" onClick={resetFilters}>
-                <svg className="reset-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="grid grid-cols-2 gap-3 mt-3 pb-4">
+              <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#374151] border border-[#374151] text-[#9ca3af] hover:bg-[#111827] hover:text-[#f9fafb]" onClick={resetFilters}>
+                <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M1 4v6h6M23 20v-6h-6"/>
                   <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
                 </svg>
@@ -750,8 +750,8 @@ export default function HomePage() {
               </button>
 
               {locationStatus === 'denied' && (
-                <button className="btn-nearby-mobile" onClick={handleNearbyClick}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]" onClick={handleNearbyClick}>
+                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="10" r="3"/>
                     <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
                   </svg>
@@ -760,8 +760,8 @@ export default function HomePage() {
               )}
 
               {locationStatus === 'idle' && (
-                <button className="btn-nearby-mobile" onClick={handleNearbyClick}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]" onClick={handleNearbyClick}>
+                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="10" r="3"/>
                     <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
                   </svg>
@@ -770,8 +770,8 @@ export default function HomePage() {
               )}
 
               {locationStatus === 'success' && (
-                <button className="btn-nearby-active-mobile" onClick={handleNearbyClick}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#111827] border border-[#374151] text-[#9ca3af] hover:bg-[#374151]" onClick={handleNearbyClick}>
+                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                     <circle cx="12" cy="10" r="3"/>
                   </svg>
@@ -788,22 +788,22 @@ export default function HomePage() {
       {/* Mobile Filter - Bottom Slide-up Popup */}
       {isMobile && showMobileFilters && (
         <>
-          <div className="filter-overlay" onClick={() => setShowMobileFilters(false)} />
-          <div className="filter-popup-bottom">
-            <div className="filter-popup-header">
-              <h3>Filter & Pencarian</h3>
-              <button className="close-filter-btn" onClick={() => setShowMobileFilters(false)}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/70 z-[1500] animate-[fadeIn_0.3s_ease-out]" onClick={() => setShowMobileFilters(false)} />
+          <div className="fixed bottom-0 left-0 right-0 bg-[#1f2937] rounded-t-[20px] z-[1501] animate-[slideUpFromBottom_0.3s_ease-out] max-h-[85vh] overflow-y-auto shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+            <div className="flex items-center justify-between py-5 px-6 border-b border-[#374151] bg-[#1f2937] sticky top-0 z-10">
+              <h3 className="text-xl font-bold text-[#f9fafb] m-0">Filter & Pencarian</h3>
+              <button className="w-9 h-9 flex items-center justify-center bg-[#374151] border border-[#374151] rounded-full cursor-pointer transition-all duration-300 hover:bg-[#111827] hover:border-[#9ca3af]" onClick={() => setShowMobileFilters(false)}>
+                <svg className="w-[18px] h-[18px] text-[#9ca3af]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="18" y1="6" x2="6" y2="18"/>
                   <line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
               </button>
             </div>
-            <div className="filter-popup-content">
+            <div className="py-5">
               <div className="container">
                 {/* Mobile: 검색창도 필터 안에 */}
-                <form className="mobile-search-inline" onSubmit={handleSearch}>
-            <div className="search-input-wrapper-mobile">
+                <form className="flex gap-2 mb-3 pt-4" onSubmit={handleSearch}>
+            <div className="flex-1 relative min-w-[293px] max-w-[293px]">
               <input
                 type="text"
                 placeholder="Cari barang bekas..."
@@ -811,30 +811,31 @@ export default function HomePage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchSuggestions.length > 0 && setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                className="w-[293px] min-w-[293px] max-w-[293px] h-[42px] px-4 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none placeholder:text-[#6b7280]"
               />
               {showSuggestions && searchSuggestions.length > 0 && (
-                <div className="autocomplete-dropdown mobile">
+                <div className="absolute top-full left-0 right-0 bg-[#1f2937] border border-[#374151] border-t-0 rounded-b-lg max-h-[250px] overflow-y-auto z-[1001] shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
                   {searchSuggestions.map((suggestion, index) => (
                     <div
                       key={index}
-                      className="autocomplete-item"
+                      className="flex items-center gap-3 py-3 px-4 cursor-pointer transition-colors duration-200 border-b border-[#374151] last:border-b-0 hover:bg-[#374151]"
                       onClick={() => handleSuggestionClick(suggestion.title)}
                     >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg className="w-4 h-4 text-[#9ca3af] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="11" cy="11" r="8"/>
                         <path d="m21 21-4.35-4.35"/>
                       </svg>
-                      <span>{suggestion.title}</span>
+                      <span className="text-[#f9fafb] text-sm whitespace-nowrap overflow-hidden text-ellipsis">{suggestion.title}</span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-            <button type="submit" className="search-btn" disabled={isSearching}>
+            <button type="submit" className="w-[42px] h-[42px] p-0 flex items-center justify-center py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 hover:bg-[#374151]" disabled={isSearching}>
               {isSearching ? (
-                <div className="spinner-small"></div>
+                <div className="spinner-sm"></div>
               ) : (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8"/>
                   <path d="m21 21-4.35-4.35"/>
                 </svg>
@@ -842,13 +843,13 @@ export default function HomePage() {
             </button>
           </form>
 
-          <div className="filter-bar">
-            <div className="filter-group">
+          <div className="flex gap-3 items-center flex-wrap">
+            <div className="flex-1 min-w-[150px]">
               <select
                 name="province"
                 value={filters.province}
                 onChange={handleFilterChange}
-                className="filter-select"
+                className="w-full h-[42px] px-3 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none transition-all duration-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2010%2010%27%3E%3Cpath%20fill=%27%23a0a0a0%27%20d=%27M5%208L1%203h8z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_12px_center] pr-8 focus:border-[#4b5563] focus:shadow-[0_0_0_2px_rgba(75,85,99,0.1)]"
               >
                 <option value="">Semua Provinsi</option>
                 {provinces.map(province => (
@@ -857,13 +858,13 @@ export default function HomePage() {
               </select>
             </div>
 
-            <div className="filter-group">
+            <div className="flex-1 min-w-[150px]">
               <select
                 name="city"
                 value={filters.city}
                 onChange={handleFilterChange}
                 disabled={!filters.province}
-                className="filter-select"
+                className="w-full h-[42px] px-3 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none transition-all duration-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2010%2010%27%3E%3Cpath%20fill=%27%23a0a0a0%27%20d=%27M5%208L1%203h8z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_12px_center] pr-8 focus:border-[#4b5563] focus:shadow-[0_0_0_2px_rgba(75,85,99,0.1)]"
               >
                 <option value="">Semua Kota</option>
                 {cities.map(city => (
@@ -872,12 +873,12 @@ export default function HomePage() {
               </select>
             </div>
 
-            <div className="filter-group">
+            <div className="flex-1 min-w-[150px]">
               <select
                 name="category"
                 value={filters.category}
                 onChange={handleFilterChange}
-                className="filter-select"
+                className="w-full h-[42px] px-3 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none transition-all duration-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2010%2010%27%3E%3Cpath%20fill=%27%23a0a0a0%27%20d=%27M5%208L1%203h8z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_12px_center] pr-8 focus:border-[#4b5563] focus:shadow-[0_0_0_2px_rgba(75,85,99,0.1)]"
               >
                 <option value="">Semua Kategori</option>
                 {mainCategories.map(category => (
@@ -888,13 +889,13 @@ export default function HomePage() {
               </select>
             </div>
 
-            <div className="filter-group">
+            <div className="flex-1 min-w-[150px]">
               <select
                 name="subcategory"
                 value={filters.subcategory}
                 onChange={handleFilterChange}
                 disabled={!filters.category}
-                className="filter-select"
+                className="w-full h-[42px] px-3 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none transition-all duration-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2010%2010%27%3E%3Cpath%20fill=%27%23a0a0a0%27%20d=%27M5%208L1%203h8z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_12px_center] pr-8 focus:border-[#4b5563] focus:shadow-[0_0_0_2px_rgba(75,85,99,0.1)]"
               >
                 <option value="">Semua Sub Kategori</option>
                 {subcategories.map(sub => (
@@ -905,9 +906,9 @@ export default function HomePage() {
           </div>
 
           {/* Mobile: Reset + 내주변 버튼을 2열 그리드로 */}
-          <div className="mobile-action-buttons">
-            <button className="filter-reset-btn-mobile" onClick={resetFilters}>
-              <svg className="reset-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <div className="grid grid-cols-2 gap-3 mt-3 pb-4">
+            <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#374151] border border-[#374151] text-[#9ca3af] hover:bg-[#111827] hover:text-[#f9fafb]" onClick={resetFilters}>
+              <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M1 4v6h6M23 20v-6h-6"/>
                 <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
               </svg>
@@ -915,8 +916,8 @@ export default function HomePage() {
             </button>
 
             {locationStatus === 'idle' && (
-              <button className="btn-nearby-mobile" onClick={handleNearbyClick}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]" onClick={handleNearbyClick}>
+                <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="10" r="3"/>
                   <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
                 </svg>
@@ -925,8 +926,8 @@ export default function HomePage() {
             )}
 
             {locationStatus === 'denied' && (
-              <button className="btn-nearby-mobile" onClick={handleNearbyClick}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]" onClick={handleNearbyClick}>
+                <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="10" r="3"/>
                   <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
                 </svg>
@@ -935,8 +936,8 @@ export default function HomePage() {
             )}
 
             {locationStatus === 'success' && (
-              <button className="btn-nearby-active-mobile" onClick={handleNearbyClick}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#111827] border border-[#374151] text-[#9ca3af] hover:bg-[#374151]" onClick={handleNearbyClick}>
+                <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                   <circle cx="12" cy="10" r="3"/>
                 </svg>
@@ -951,13 +952,13 @@ export default function HomePage() {
       )}
 
       {/* Products Grid */}
-      <section className="products">
+      <section className="py-[60px] bg-[#111827]">
         <div className="container">
           <div className="section-header">
             <h3 className="section-title">Produk Terbaru</h3>
           </div>
 
-          <div className={`product-grid ${isMobile ? 'mobile' : 'desktop'}`}>
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-4 gap-6'}`}>
             {loading ? (
               <LoadingState message="Memuat produk..." />
             ) : filteredProducts.length > 0 ? (
@@ -965,10 +966,10 @@ export default function HomePage() {
                 <ProductCard key={product.id} product={product} context="home" />
               ))
             ) : (
-              <div className="no-products">
-                <div className="no-products-icon">🔍</div>
-                <h3>Produk Tidak Ditemukan</h3>
-                <p>Coba ubah filter atau reset pencarian</p>
+              <div className="col-span-full text-center py-20 px-5 text-[#9ca3af]">
+                <div className="text-[80px] mb-6 opacity-50">🔍</div>
+                <h3 className="text-2xl mb-3 text-[#f9fafb]">Produk Tidak Ditemukan</h3>
+                <p className="text-base mb-6">Coba ubah filter atau reset pencarian</p>
                 <button className="btn btn-primary" onClick={resetFilters}>
                   Reset Filter
                 </button>
@@ -980,43 +981,43 @@ export default function HomePage() {
 
       {/* Mobile Bottom Nav */}
       {isMobile && (
-        <nav className="bottom-nav">
-          <button className="nav-item active" onClick={() => router.push('/')}>
-            <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <nav className="fixed bottom-0 left-0 right-0 bg-[#1f2937] border-t border-[#374151] grid grid-cols-5 py-2 z-[1000]">
+          <button className="flex flex-col items-center gap-1 bg-transparent border-none text-[#4b5563] cursor-pointer py-2 transition-colors duration-300" onClick={() => router.push('/')}>
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
-            <span className="nav-label">Beranda</span>
+            <span className="text-[11px] font-medium">Beranda</span>
           </button>
-          <button className="nav-item" onClick={() => setShowMobileFilters(!showMobileFilters)}>
-            <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button className="flex flex-col items-center gap-1 bg-transparent border-none text-[#9ca3af] cursor-pointer py-2 transition-colors duration-300" onClick={() => setShowMobileFilters(!showMobileFilters)}>
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="4" y1="6" x2="20" y2="6"/>
               <line x1="4" y1="12" x2="20" y2="12"/>
               <line x1="4" y1="18" x2="14" y2="18"/>
               <circle cx="18" cy="18" r="2"/>
             </svg>
-            <span className="nav-label">Filter</span>
+            <span className="text-[11px] font-medium">Filter</span>
           </button>
-          <button className="nav-item" onClick={() => router.push('/products/new')}>
-            <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button className="flex flex-col items-center gap-1 bg-transparent border-none text-[#9ca3af] cursor-pointer py-2 transition-colors duration-300" onClick={() => router.push('/products/new')}>
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            <span className="nav-label">Jual</span>
+            <span className="text-[11px] font-medium">Jual</span>
           </button>
-          <button className="nav-item" onClick={handleNearbyClick}>
-            <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button className="flex flex-col items-center gap-1 bg-transparent border-none text-[#9ca3af] cursor-pointer py-2 transition-colors duration-300" onClick={handleNearbyClick}>
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="10" r="3"/>
               <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
             </svg>
-            <span className="nav-label">Sekitar</span>
+            <span className="text-[11px] font-medium">Sekitar</span>
           </button>
-          <button className="nav-item" onClick={() => router.push('/profile')}>
-            <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button className="flex flex-col items-center gap-1 bg-transparent border-none text-[#9ca3af] cursor-pointer py-2 transition-colors duration-300" onClick={() => router.push('/profile')}>
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <span className="nav-label">Profil</span>
+            <span className="text-[11px] font-medium">Profil</span>
           </button>
         </nav>
       )}

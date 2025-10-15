@@ -3,15 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createBrowserClient } from '@supabase/ssr';
-import '../login/login.css';
+import { useSupabaseClient } from '../components/SupabaseClientProvider';
 
 export default function RecoverPage() {
   const router = useRouter();
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  const supabase = useSupabaseClient();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -40,29 +36,29 @@ export default function RecoverPage() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        {/* Left Side - Branding (PC only) */}
-        <div className="auth-brand">
-          <div className="brand-content">
-            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ TokoMonggo</h1>
+    <div className="min-h-screen flex items-center justify-center p-5 bg-[#111827]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 max-w-[1200px] w-full bg-[#1f2937] rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+        {/* Left Side - Branding (Desktop only) */}
+        <div className="hidden lg:flex bg-gradient-to-br from-[#4b5563] to-[#374151] p-12 xl:p-[60px] flex-col justify-center text-white">
+          <div className="max-w-[450px]">
+            <Link href="/" className="no-underline text-white">
+              <h1 className="text-5xl mb-6 cursor-pointer">🛍️ Toko Monggo</h1>
             </Link>
-            <h2 className="brand-title">Lupa Kata Sandi?</h2>
-            <p className="brand-description">
+            <h2 className="text-4xl font-bold mb-4 leading-tight">Lupa Kata Sandi?</h2>
+            <p className="text-base leading-relaxed opacity-90 mb-10">
               Jangan khawatir! Masukkan email Anda dan kami akan mengirimkan link untuk mereset kata sandi Anda.
             </p>
-            <div className="brand-features">
-              <div className="feature-item">
-                <span className="feature-icon">✓</span>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 text-base font-medium">
+                <span className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">✓</span>
                 <span>Aman & Terpercaya</span>
               </div>
-              <div className="feature-item">
-                <span className="feature-icon">✓</span>
+              <div className="flex items-center gap-3 text-base font-medium">
+                <span className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">✓</span>
                 <span>Proses Cepat</span>
               </div>
-              <div className="feature-item">
-                <span className="feature-icon">✓</span>
+              <div className="flex items-center gap-3 text-base font-medium">
+                <span className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">✓</span>
                 <span>Email Terenkripsi</span>
               </div>
             </div>
@@ -70,59 +66,33 @@ export default function RecoverPage() {
         </div>
 
         {/* Right Side - Recovery Form */}
-        <div className="auth-form-wrapper">
-          <div className="auth-form-container">
-            <div className="form-header">
-              <h2 className="form-title">Reset Kata Sandi</h2>
-              <p className="form-subtitle">
+        <div className="p-10 md:p-12 xl:p-[60px] flex items-center justify-center">
+          <div className="w-full max-w-[420px]">
+            <div className="mb-8">
+              <h2 className="text-3xl md:text-[32px] font-bold mb-3 text-[#f9fafb]">Reset Kata Sandi</h2>
+              <p className="text-[15px] text-[#9ca3af]">
                 Ingat kata sandi?{' '}
-                <Link href="/login" className="link-primary">
+                <Link href="/login" className="text-[#4b5563] font-semibold hover:text-[#374151] hover:underline">
                   Masuk sekarang
                 </Link>
               </p>
             </div>
 
             {success ? (
-              <div className="success-container" style={{
-                textAlign: 'center',
-                padding: '40px 20px'
-              }}>
-                <div style={{
-                  fontSize: '64px',
-                  marginBottom: '24px'
-                }}>
+              <div className="text-center py-10 px-5">
+                <div className="text-[64px] mb-6">
                   ✉️
                 </div>
-                <h3 style={{
-                  fontSize: '22px',
-                  fontWeight: '600',
-                  color: 'var(--text-primary)',
-                  marginBottom: '12px'
-                }}>
+                <h3 className="text-[22px] font-semibold text-[#f9fafb] mb-3">
                   Email Terkirim!
                 </h3>
-                <p style={{
-                  fontSize: '15px',
-                  color: 'var(--text-secondary)',
-                  marginBottom: '24px',
-                  lineHeight: '1.6'
-                }}>
+                <p className="text-[15px] text-[#9ca3af] mb-6 leading-relaxed">
                   Kami telah mengirimkan link reset password ke <strong>{email}</strong>.
                   <br />
                   Silakan cek inbox atau folder spam Anda.
                 </p>
-                <div style={{
-                  padding: '16px',
-                  background: 'rgba(99, 102, 241, 0.1)',
-                  border: '1px solid var(--accent-primary)',
-                  borderRadius: '8px',
-                  marginBottom: '24px'
-                }}>
-                  <p style={{
-                    fontSize: '13px',
-                    color: 'var(--text-secondary)',
-                    margin: 0
-                  }}>
+                <div className="p-4 bg-[rgba(99,102,241,0.1)] border border-[#4b5563] rounded-lg mb-6">
+                  <p className="text-[13px] text-[#9ca3af] m-0">
                     💡 Link akan kadaluarsa dalam 1 jam
                   </p>
                 </div>
@@ -133,28 +103,19 @@ export default function RecoverPage() {
                   Kembali ke Login
                 </button>
                 <button
-                  className="btn btn-secondary btn-full"
+                  className="btn btn-secondary btn-full mt-3"
                   onClick={() => {
                     setSuccess(false);
                     setEmail('');
                   }}
-                  style={{ marginTop: '12px' }}
                 >
                   Kirim Ulang Email
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="auth-form">
+              <form onSubmit={handleSubmit} className="mb-8">
                 {error && (
-                  <div className="error-message" style={{
-                    padding: '12px 16px',
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid #ef4444',
-                    borderRadius: '8px',
-                    color: '#ef4444',
-                    fontSize: '14px',
-                    marginBottom: '20px'
-                  }}>
+                  <div className="p-3 px-4 bg-[rgba(239,68,68,0.1)] border border-[#ef4444] rounded-lg text-[#ef4444] text-sm mb-5">
                     {error}
                   </div>
                 )}
@@ -173,11 +134,7 @@ export default function RecoverPage() {
                     className="form-input"
                     autoFocus
                   />
-                  <p style={{
-                    fontSize: '13px',
-                    color: 'var(--text-secondary)',
-                    marginTop: '8px'
-                  }}>
+                  <p className="text-[13px] text-[#9ca3af] mt-2">
                     Masukkan email yang terdaftar di akun Anda
                   </p>
                 </div>
@@ -185,11 +142,11 @@ export default function RecoverPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`btn btn-primary btn-full ${loading ? 'loading' : ''}`}
+                  className={`btn btn-primary btn-full ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
                   {loading ? (
                     <>
-                      <span className="spinner"></span>
+                      <span className="spinner spinner-sm"></span>
                       Mengirim...
                     </>
                   ) : (
@@ -197,11 +154,8 @@ export default function RecoverPage() {
                   )}
                 </button>
 
-                <div style={{
-                  marginTop: '24px',
-                  textAlign: 'center'
-                }}>
-                  <Link href="/login" className="link-primary">
+                <div className="mt-6 text-center">
+                  <Link href="/login" className="text-[#4b5563] font-semibold hover:text-[#374151] hover:underline">
                     ← Kembali ke Login
                   </Link>
                 </div>

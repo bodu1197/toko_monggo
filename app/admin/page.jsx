@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image'; // Added for image optimization
-import './admin.css';
 
 import { useScreenSize } from '../hooks/useScreenSize';
 import LoadingState from '../components/common/LoadingState';
@@ -842,49 +841,53 @@ export default function AdminPage() {
 
   if (loading || !isAuthorized) {
     return (
-      <div className="admin-page">
+      <div className="min-h-screen bg-[#111827]">
         <LoadingState message="Memeriksa akses..." />
       </div>
     );
   }
 
   return (
-    <div className="admin-page">
+    <div className="min-h-screen bg-[#111827]">
       {/* Header */}
-      <header className="admin-header">
+      <header className="bg-[#1f2937] border-b border-[#374151] py-4 sticky top-0 z-[1000]">
         <div className="container">
-          <div className="header-left">
-            <h1 className="admin-title">🛡️ 관리자 대시보드</h1>
-          </div>
-          <div className="header-right">
-            <button className="btn-icon" onClick={() => router.push('/')}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9 22 9 12 15 12 15 22"/>
-              </svg>
-            </button>
-            <button className="logout-btn" onClick={handleLogout}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                <polyline points="16 17 21 12 16 7"/>
-                <line x1="21" y1="12" x2="9" y2="12"/>
-              </svg>
-              <span>로그아웃</span>
-            </button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl max-md:text-xl font-bold text-[#f9fafb]">🛡️ 관리자 대시보드</h1>
+            </div>
+            <div className="flex items-center gap-3">
+              <button className="btn-icon btn-icon-md" onClick={() => router.push('/')}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </button>
+              <button className="logout-btn max-md:px-3.5 max-md:py-2.5" onClick={handleLogout}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span className="max-md:hidden">로그아웃</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="admin-layout">
+      <div className="grid max-md:grid-cols-1 md:grid-cols-[250px_1fr] md:min-h-[calc(100vh-73px)]">
         {/* Sidebar */}
         {!isMobile && (
-          <aside className="admin-sidebar">
-            <nav className="sidebar-nav">
+          <aside className="bg-[#1f2937] border-r border-[#374151] py-6">
+            <nav className="flex flex-col gap-1 px-4">
               <button
-                className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+                className={`flex items-center gap-3 py-3.5 px-4 border-none rounded-lg text-[#9ca3af] text-[15px] font-medium cursor-pointer transition-all text-left ${
+                  activeTab === 'dashboard' ? 'bg-[#6366f1] text-white' : 'bg-transparent hover:bg-[#374151] hover:text-[#f9fafb]'
+                }`}
                 onClick={() => setActiveTab('dashboard')}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="3" width="7" height="7"/>
                   <rect x="14" y="3" width="7" height="7"/>
                   <rect x="14" y="14" width="7" height="7"/>
@@ -893,10 +896,12 @@ export default function AdminPage() {
                 대시보드
               </button>
               <button
-                className={`nav-item ${activeTab === 'users' ? 'active' : ''}`}
+                className={`flex items-center gap-3 py-3.5 px-4 border-none rounded-lg text-[#9ca3af] text-[15px] font-medium cursor-pointer transition-all text-left ${
+                  activeTab === 'users' ? 'bg-[#6366f1] text-white' : 'bg-transparent hover:bg-[#374151] hover:text-[#f9fafb]'
+                }`}
                 onClick={() => setActiveTab('users')}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                   <circle cx="9" cy="7" r="4"/>
                   <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -905,43 +910,51 @@ export default function AdminPage() {
                 회원 관리
               </button>
               <button
-                className={`nav-item ${activeTab === 'products' ? 'active' : ''}`}
+                className={`flex items-center gap-3 py-3.5 px-4 border-none rounded-lg text-[#9ca3af] text-[15px] font-medium cursor-pointer transition-all text-left ${
+                  activeTab === 'products' ? 'bg-[#6366f1] text-white' : 'bg-transparent hover:bg-[#374151] hover:text-[#f9fafb]'
+                }`}
                 onClick={() => setActiveTab('products')}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                 </svg>
                 상품 관리
               </button>
               <button
-                className={`nav-item ${activeTab === 'reports' ? 'active' : ''}`}
+                className={`flex items-center gap-3 py-3.5 px-4 border-none rounded-lg text-[#9ca3af] text-[15px] font-medium cursor-pointer transition-all text-left ${
+                  activeTab === 'reports' ? 'bg-[#6366f1] text-white' : 'bg-transparent hover:bg-[#374151] hover:text-[#f9fafb]'
+                }`}
                 onClick={() => setActiveTab('reports')}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                   <line x1="12" y1="9" x2="12" y2="13"/>
                   <line x1="12" y1="17" x2="12.01" y2="17"/>
                 </svg>
                 신고 관리
                 {stats.totalReports > 0 && (
-                  <span className="badge">{stats.totalReports}</span>
+                  <span className="ml-auto py-0.5 px-2 bg-[#ef4444] text-white rounded-[10px] text-[11px] font-semibold">{stats.totalReports}</span>
                 )}
               </button>
               <button
-                className={`nav-item ${activeTab === 'access' ? 'active' : ''}`}
+                className={`flex items-center gap-3 py-3.5 px-4 border-none rounded-lg text-[#9ca3af] text-[15px] font-medium cursor-pointer transition-all text-left ${
+                  activeTab === 'access' ? 'bg-[#6366f1] text-white' : 'bg-transparent hover:bg-[#374151] hover:text-[#f9fafb]'
+                }`}
                 onClick={() => setActiveTab('access')}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M3 3v18h18"/>
                   <path d="m19 9-5 5-4-4-3 3"/>
                 </svg>
                 접속 통계
               </button>
               <button
-                className={`nav-item ${activeTab === 'regional' ? 'active' : ''}`}
+                className={`flex items-center gap-3 py-3.5 px-4 border-none rounded-lg text-[#9ca3af] text-[15px] font-medium cursor-pointer transition-all text-left ${
+                  activeTab === 'regional' ? 'bg-[#6366f1] text-white' : 'bg-transparent hover:bg-[#374151] hover:text-[#f9fafb]'
+                }`}
                 onClick={() => setActiveTab('regional')}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10"/>
                   <line x1="2" y1="12" x2="22" y2="12"/>
                   <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -949,10 +962,12 @@ export default function AdminPage() {
                 지역별 통계
               </button>
               <button
-                className={`nav-item ${activeTab === 'trash' ? 'active' : ''}`}
+                className={`flex items-center gap-3 py-3.5 px-4 border-none rounded-lg text-[#9ca3af] text-[15px] font-medium cursor-pointer transition-all text-left ${
+                  activeTab === 'trash' ? 'bg-[#6366f1] text-white' : 'bg-transparent hover:bg-[#374151] hover:text-[#f9fafb]'
+                }`}
                 onClick={() => setActiveTab('trash')}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="3 6 5 6 21 6"/>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                   <line x1="10" y1="11" x2="10" y2="17"/>
@@ -965,48 +980,62 @@ export default function AdminPage() {
         )}
 
         {/* Main Content */}
-        <main className="admin-content">
+        <main className="py-8 px-6 max-md:py-5 max-md:px-4 overflow-x-hidden">
           {/* Mobile Tabs */}
           {isMobile && (
-            <div className="mobile-tabs">
+            <div className="flex gap-2 py-4 px-5 bg-[#1f2937] border-b border-[#374151] overflow-x-auto">
               <button
-                className={`tab ${activeTab === 'dashboard' ? 'active' : ''}`}
+                className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                  activeTab === 'dashboard' ? 'bg-[#6366f1] text-white' : 'bg-transparent text-[#9ca3af]'
+                }`}
                 onClick={() => setActiveTab('dashboard')}
               >
                 대시보드
               </button>
               <button
-                className={`tab ${activeTab === 'users' ? 'active' : ''}`}
+                className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                  activeTab === 'users' ? 'bg-[#6366f1] text-white' : 'bg-transparent text-[#9ca3af]'
+                }`}
                 onClick={() => setActiveTab('users')}
               >
                 회원
               </button>
               <button
-                className={`tab ${activeTab === 'products' ? 'active' : ''}`}
+                className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                  activeTab === 'products' ? 'bg-[#6366f1] text-white' : 'bg-transparent text-[#9ca3af]'
+                }`}
                 onClick={() => setActiveTab('products')}
               >
                 상품
               </button>
               <button
-                className={`tab ${activeTab === 'reports' ? 'active' : ''}`}
+                className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                  activeTab === 'reports' ? 'bg-[#6366f1] text-white' : 'bg-transparent text-[#9ca3af]'
+                }`}
                 onClick={() => setActiveTab('reports')}
               >
                 신고
               </button>
               <button
-                className={`tab ${activeTab === 'access' ? 'active' : ''}`}
+                className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                  activeTab === 'access' ? 'bg-[#6366f1] text-white' : 'bg-transparent text-[#9ca3af]'
+                }`}
                 onClick={() => setActiveTab('access')}
               >
                 접속
               </button>
               <button
-                className={`tab ${activeTab === 'regional' ? 'active' : ''}`}
+                className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                  activeTab === 'regional' ? 'bg-[#6366f1] text-white' : 'bg-transparent text-[#9ca3af]'
+                }`}
                 onClick={() => setActiveTab('regional')}
               >
                 지역
               </button>
               <button
-                className={`tab ${activeTab === 'trash' ? 'active' : ''}`}
+                className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                  activeTab === 'trash' ? 'bg-[#6366f1] text-white' : 'bg-transparent text-[#9ca3af]'
+                }`}
                 onClick={() => setActiveTab('trash')}
               >
                 휴지통
@@ -1016,60 +1045,60 @@ export default function AdminPage() {
 
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
-            <div className="dashboard-section">
-              <h2 className="section-title">대시보드 통계</h2>
+            <div>
+              <h2 className="section-title section-title-lg">대시보드 통계</h2>
 
-              <div className="stats-grid">
-                <div className="stat-card">
-                  <div className="stat-icon users">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6 mb-10 max-md:grid-cols-1 max-md:gap-4">
+                <div className="flex items-center gap-5 p-6 bg-[#1f2937] border border-[#374151] rounded-2xl transition-all hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:border-[#6366f1] max-md:p-5 max-md:gap-4">
+                  <div className="w-[60px] h-[60px] flex items-center justify-center rounded-xl shrink-0 bg-gradient-to-br from-[#667eea] to-[#764ba2] max-md:w-[50px] max-md:h-[50px]">
+                    <svg className="w-7 h-7 text-white max-md:w-6 max-md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                       <circle cx="9" cy="7" r="4"/>
                       <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
                       <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                   </div>
-                  <div className="stat-info">
-                    <div className="stat-number">{stats.totalUsers}</div>
-                    <div className="stat-label">총 회원 수</div>
+                  <div className="flex flex-col gap-1">
+                    <div className="stat-number stat-number-lg max-md:text-[28px]">{stats.totalUsers}</div>
+                    <div className="stat-label stat-label-md max-md:text-[13px]">총 회원 수</div>
                   </div>
                 </div>
 
-                <div className="stat-card">
-                  <div className="stat-icon products">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <div className="flex items-center gap-5 p-6 bg-[#1f2937] border border-[#374151] rounded-2xl transition-all hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:border-[#6366f1] max-md:p-5 max-md:gap-4">
+                  <div className="w-[60px] h-[60px] flex items-center justify-center rounded-xl shrink-0 bg-gradient-to-br from-[#f093fb] to-[#f5576c] max-md:w-[50px] max-md:h-[50px]">
+                    <svg className="w-7 h-7 text-white max-md:w-6 max-md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                     </svg>
                   </div>
-                  <div className="stat-info">
-                    <div className="stat-number">{stats.totalProducts}</div>
-                    <div className="stat-label">총 상품 수</div>
+                  <div className="flex flex-col gap-1">
+                    <div className="stat-number stat-number-lg max-md:text-[28px]">{stats.totalProducts}</div>
+                    <div className="stat-label stat-label-md max-md:text-[13px]">총 상품 수</div>
                   </div>
                 </div>
 
-                <div className="stat-card">
-                  <div className="stat-icon active">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <div className="flex items-center gap-5 p-6 bg-[#1f2937] border border-[#374151] rounded-2xl transition-all hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:border-[#6366f1] max-md:p-5 max-md:gap-4">
+                  <div className="w-[60px] h-[60px] flex items-center justify-center rounded-xl shrink-0 bg-gradient-to-br from-[#4facfe] to-[#00f2fe] max-md:w-[50px] max-md:h-[50px]">
+                    <svg className="w-7 h-7 text-white max-md:w-6 max-md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                     </svg>
                   </div>
-                  <div className="stat-info">
-                    <div className="stat-number">{stats.activeProducts}</div>
-                    <div className="stat-label">활성 상품</div>
+                  <div className="flex flex-col gap-1">
+                    <div className="stat-number stat-number-lg max-md:text-[28px]">{stats.activeProducts}</div>
+                    <div className="stat-label stat-label-md max-md:text-[13px]">활성 상품</div>
                   </div>
                 </div>
 
-                <div className="stat-card">
-                  <div className="stat-icon reports">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <div className="flex items-center gap-5 p-6 bg-[#1f2937] border border-[#374151] rounded-2xl transition-all hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:border-[#6366f1] max-md:p-5 max-md:gap-4">
+                  <div className="w-[60px] h-[60px] flex items-center justify-center rounded-xl shrink-0 bg-gradient-to-br from-[#fa709a] to-[#fee140] max-md:w-[50px] max-md:h-[50px]">
+                    <svg className="w-7 h-7 text-white max-md:w-6 max-md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                       <line x1="12" y1="9" x2="12" y2="13"/>
                       <line x1="12" y1="17" x2="12.01" y2="17"/>
                     </svg>
                   </div>
-                  <div className="stat-info">
-                    <div className="stat-number">{stats.totalReports}</div>
-                    <div className="stat-label">총 신고 수</div>
+                  <div className="flex flex-col gap-1">
+                    <div className="stat-number stat-number-lg max-md:text-[28px]">{stats.totalReports}</div>
+                    <div className="stat-label stat-label-md max-md:text-[13px]">총 신고 수</div>
                   </div>
                 </div>
               </div>
@@ -1078,11 +1107,11 @@ export default function AdminPage() {
 
           {/* Users Tab */}
           {activeTab === 'users' && (
-            <div className="users-section">
+            <div className="min-h-[600px]">
               <div className="section-header">
-                <h2 className="section-title">회원 관리</h2>
-                <div className="search-box">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <h2 className="section-title section-title-lg">회원 관리</h2>
+                <div className="flex items-center gap-3 py-2.5 px-4 bg-[#1f2937] border border-[#374151] rounded-lg min-w-[300px] transition-all focus-within:border-[#6366f1] focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] max-md:min-w-full">
+                  <svg className="w-[18px] h-[18px] text-[#6b7280] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"/>
                     <path d="m21 21-4.35-4.35"/>
                   </svg>
@@ -1091,28 +1120,29 @@ export default function AdminPage() {
                     placeholder="회원 검색..."
                     value={searchQuery}
                     onChange={handleSearch}
+                    className="flex-1 bg-transparent border-none outline-none text-[#f9fafb] text-sm placeholder:text-[#6b7280]"
                   />
                 </div>
               </div>
 
-              <div className="users-table-container">
-                <table className="users-table">
-                  <thead>
+              <div className="bg-[#1f2937] border border-[#374151] rounded-xl overflow-hidden max-md:overflow-x-auto">
+                <table className="w-full border-collapse max-md:min-w-[600px]">
+                  <thead className="bg-[#374151]">
                     <tr>
-                      <th>이름</th>
-                      <th>사용자명</th>
-                      <th>이메일</th>
-                      <th>가입일</th>
-                      <th>상태</th>
-                      <th>액션</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4 max-md:text-[13px]">이름</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4 max-md:text-[13px]">사용자명</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4 max-md:text-[13px]">이메일</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4 max-md:text-[13px]">가입일</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4 max-md:text-[13px]">상태</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4 max-md:text-[13px]">액션</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredUsers.map(user => (
-                      <tr key={user.id}>
-                        <td>
-                          <div className="user-cell">
-                            <div className="user-avatar">
+                      <tr key={user.id} className="transition-colors hover:bg-[#374151]">
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4 max-md:text-[13px]">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-[#374151] border-2 border-[#374151] flex items-center justify-center overflow-hidden shrink-0">
                               {user.avatar_url ? (
                                 <Image
                                   src={user.avatar_url}
@@ -1120,6 +1150,7 @@ export default function AdminPage() {
                                   width={40}
                                   height={40}
                                   unoptimized
+                                  className="w-full h-full object-cover"
                                   onError={(e) => {
                                     e.target.style.display = 'none';
                                     e.target.nextSibling.style.display = 'block';
@@ -1127,6 +1158,7 @@ export default function AdminPage() {
                                 />
                               ) : null}
                               <svg
+                                className="w-5 h-5 text-[#6b7280]"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -1140,25 +1172,25 @@ export default function AdminPage() {
                             <span>{user.full_name || '사용자'}</span>
                           </div>
                         </td>
-                        <td>{user.username || '-'}</td>
-                        <td>{user.email}</td>
-                        <td>{new Date(user.created_at).toLocaleDateString('ko-KR')}</td>
-                        <td>
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4 max-md:text-[13px]">{user.username || '-'}</td>
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4 max-md:text-[13px]">{user.email}</td>
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4 max-md:text-[13px]">{new Date(user.created_at).toLocaleDateString('ko-KR')}</td>
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4 max-md:text-[13px]">
                           {user.is_suspended ? (
-                            <span className="status-badge suspended" title={`중지 사유: ${user.suspension_reason || '-'}`}>
+                            <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(251,191,36,0.1)] text-[#f59e0b]" title={`중지 사유: ${user.suspension_reason || '-'}`}>
                               활동중지
                             </span>
                           ) : (
-                            <span className="status-badge active">활성</span>
+                            <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(16,185,129,0.1)] text-[#10b981]">활성</span>
                           )}
                         </td>
-                        <td>
-                          <div className="action-buttons">
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4 max-md:text-[13px]">
+                          <div className="flex items-center gap-2 flex-wrap">
                             {user.role !== 'admin' && (
                               <>
                                 {user.is_suspended ? (
                                   <button
-                                    className="btn-activate"
+                                    className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#10b981] text-white hover:bg-[#059669] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(16,185,129,0.4)]"
                                     onClick={() => handleActivateUser(user.id)}
                                     title="활동 재개"
                                   >
@@ -1166,7 +1198,7 @@ export default function AdminPage() {
                                   </button>
                                 ) : (
                                   <button
-                                    className="btn-suspend"
+                                    className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#f59e0b] text-white hover:bg-[#d97706] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(245,158,11,0.4)]"
                                     onClick={() => handleSuspendUser(user.id)}
                                     title="활동 중지"
                                   >
@@ -1174,7 +1206,7 @@ export default function AdminPage() {
                                   </button>
                                 )}
                                 <button
-                                  className="btn-delete"
+                                  className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#ef4444] text-white hover:bg-[#dc2626] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(239,68,68,0.4)]"
                                   onClick={() => handleDeleteUser(user.id)}
                                   title="회원 삭제"
                                 >
@@ -1183,7 +1215,7 @@ export default function AdminPage() {
                               </>
                             )}
                             {user.role === 'admin' && (
-                              <span className="admin-badge">관리자</span>
+                              <span className="py-1.5 px-3.5 rounded-md text-[13px] font-medium bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white whitespace-nowrap">관리자</span>
                             )}
                           </div>
                         </td>
@@ -1203,10 +1235,10 @@ export default function AdminPage() {
 
           {/* Products Tab */}
           {activeTab === 'products' && (
-            <div className="products-section">
+            <div>
               <div className="section-header">
-                <h2 className="section-title">상품 관리</h2>
-                <div className="search-box">
+                <h2 className="section-title section-title-lg">상품 관리</h2>
+                <div className="flex items-center gap-3 py-2.5 px-4 bg-[#1f2937] border border-[#374151] rounded-lg min-w-[300px] transition-all focus-within:border-[#6366f1] focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] max-md:min-w-full">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"/>
                     <path d="m21 21-4.35-4.35"/>

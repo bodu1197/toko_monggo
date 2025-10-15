@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { createBrowserClient } from '@supabase/ssr';
-import './ProductCard.css';
+import { useSupabaseClient } from '../SupabaseClientProvider';
 
 /**
- * 상품 정보를 표시하는 공통 카드 컴포넌트
+ * 상품 정보를 표시하는 공통 카드 컴포넌트 - Tailwind CSS v4
  * @param {object} props
  * @param {object} props.product - 상품 정보 객체
  * @param {'home' | 'profile'} [props.context='home'] - 카드가 사용되는 컨텍스트 (UI 분기용)
@@ -16,14 +15,10 @@ import './ProductCard.css';
  */
 export default function ProductCard({ product, context = 'home', onDelete, onStatusChange }) {
   const router = useRouter();
+  const supabase = useSupabaseClient();
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -97,7 +92,6 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
       setFavoriteLoading(true);
 
       if (isFavorite) {
-        // 좋아요 취소
         const { error } = await supabase
           .from('favorites')
           .delete()
@@ -107,7 +101,6 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
         if (error) throw error;
         setIsFavorite(false);
       } else {
-        // 좋아요 추가
         const { error } = await supabase
           .from('favorites')
           .insert({
@@ -127,58 +120,83 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
   };
 
   return (
-    <div className="product-card" onClick={handleCardClick}>
-      <div className="product-image">
+    <div
+      className="bg-white rounded-xl overflow-hidden shadow-[0_4px_6px_rgba(0,0,0,0.05)] transition-all duration-200 cursor-pointer flex flex-col hover:-translate-y-[5px] hover:shadow-[0_10px_15px_rgba(0,0,0,0.1)]"
+      onClick={handleCardClick}
+    >
+      <div className="relative w-full h-[220px] md:h-[152px] bg-gray-100">
         {product.image ? (
           <Image
             src={product.image}
             alt={product.title}
             fill
             sizes="(max-width: 768px) 50vw, 25vw"
-            className="product-img"
+            className="object-cover"
             loading="lazy"
             placeholder="blur"
             blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
           />
         ) : (
-          <div className="product-no-image">Tidak ada gambar</div>
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400 text-sm">
+            Tidak ada gambar
+          </div>
         )}
 
         {context === 'home' && (
           <button
-            className={`favorite-btn ${isFavorite ? 'favorite-active' : ''}`}
+            className={`absolute top-3 right-3 w-9 h-9 flex items-center justify-center border-none rounded-full cursor-pointer transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${
+              isFavorite
+                ? 'bg-[rgba(239,68,68,0.9)] hover:bg-[rgba(239,68,68,1)]'
+                : 'bg-white/80 hover:bg-white'
+            }`}
             onClick={handleFavoriteClick}
             disabled={favoriteLoading}
             title={isFavorite ? 'Hapus favorit' : 'Tambah ke favorit'}
           >
-            <svg viewBox="0 0 24 24" fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+            <svg
+              viewBox="0 0 24 24"
+              fill={isFavorite ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth="2"
+              className={`w-5 h-5 ${isFavorite ? 'text-white' : 'text-gray-400'}`}
+            >
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
           </button>
         )}
 
         {context === 'profile' && product.status && (
-            <div className={`product-status ${product.status === 'active' ? 'active' : product.status === 'paused' ? 'paused' : ''}`}>
-                {product.status === 'active' ? 'Dijual' : product.status === 'paused' ? 'Dijeda' : 'Terjual'}
-            </div>
+          <div className={`absolute top-2.5 left-2.5 text-white px-2 py-1 rounded-md text-xs font-medium ${
+            product.status === 'active' ? 'bg-emerald-500' :
+            product.status === 'paused' ? 'bg-amber-500' :
+            'bg-black/60'
+          }`}>
+            {product.status === 'active' ? 'Dijual' : product.status === 'paused' ? 'Dijeda' : 'Terjual'}
+          </div>
         )}
       </div>
 
-      <div className="product-info">
-        <h4 className="product-title">{product.title}</h4>
-        <p className="product-price">Rp {product.price?.toLocaleString('id-ID') || 0}</p>
-        <p className="product-location">📍 {product.city || ''}, {product.province || ''}</p>
-        
-
+      <div className="p-4 md:p-3.5 flex flex-col bg-gray-800 min-h-[120px] md:min-h-[110px]">
+        <h4 className="text-base md:text-[15px] font-semibold text-white m-0 mb-auto pb-2.5 h-12 md:h-[45px] leading-[1.5] overflow-hidden text-ellipsis [-webkit-line-clamp:2] [-webkit-box-orient:vertical] [display:-webkit-box]">
+          {product.title}
+        </h4>
+        <p className="text-lg md:text-[17px] font-bold text-emerald-500 my-2 md:my-1.5 mb-1">
+          Rp {product.price?.toLocaleString('id-ID') || 0}
+        </p>
+        <p className="text-[13px] text-gray-300 m-0">
+          📍 {product.city || ''}, {product.province || ''}
+        </p>
 
         {context === 'profile' && (
-          <div className="product-actions">
+          <div className="mt-auto flex gap-2">
             <button
-              className={`action-btn pause-btn ${product.status === 'paused' ? 'paused' : ''}`}
+              className={`flex-1 px-2 py-2 rounded-lg border border-gray-300 bg-white cursor-pointer text-sm font-medium flex items-center justify-center gap-1.5 transition-colors duration-200 hover:bg-gray-50 ${
+                product.status === 'paused' ? 'text-emerald-500' : 'text-amber-500'
+              }`}
               onClick={handleStatusChange}
               title={product.status === 'paused' ? 'Lanjutkan penjualan' : 'Jeda penjualan'}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
                 {product.status === 'paused' ? (
                   <polygon points="5 3 19 12 5 21 5 3" />
                 ) : (
@@ -190,15 +208,21 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
               </svg>
               {product.status === 'paused' ? 'Lanjutkan' : 'Jeda'}
             </button>
-            <button className="action-btn edit-btn" onClick={handleEditClick}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <button
+              className="flex-1 px-2 py-2 rounded-lg border border-gray-300 bg-white cursor-pointer text-sm font-medium flex items-center justify-center gap-1.5 transition-colors duration-200 hover:bg-gray-50 text-blue-500"
+              onClick={handleEditClick}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
               </svg>
               Edit
             </button>
-            <button className="action-btn delete-btn" onClick={handleDeleteClick}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <button
+              className="flex-1 px-2 py-2 rounded-lg border border-gray-300 bg-white cursor-pointer text-sm font-medium flex items-center justify-center gap-1.5 transition-colors duration-200 hover:bg-gray-50 text-red-500"
+              onClick={handleDeleteClick}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
                 <polyline points="3 6 5 6 21 6" />
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
               </svg>

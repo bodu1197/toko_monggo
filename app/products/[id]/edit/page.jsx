@@ -3,17 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
-import { createBrowserClient } from '@supabase/ssr';
+import { useSupabaseClient } from '../../../components/SupabaseClientProvider';
 import { compressImages, formatFileSize } from '../../../utils/imageCompression';
-import '../../new/new.css';
 
 export default function EditProductPage() {
   const router = useRouter();
   const params = useParams();
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  const supabase = useSupabaseClient();
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -513,10 +509,10 @@ export default function EditProductPage() {
 
   if (loading) {
     return (
-      <div className="new-product-page">
-        <div className="loading-container">
+      <div className="min-h-screen bg-[#111827] flex items-center justify-center">
+        <div className="text-center">
           <div className="spinner-large"></div>
-          <p>Memuat informasi produk...</p>
+          <p className="mt-4 text-[#9ca3af]">Memuat informasi produk...</p>
         </div>
       </div>
     );
@@ -528,35 +524,36 @@ export default function EditProductPage() {
   ];
 
   return (
-    <div className="new-product-page">
-      <div className="new-product-container">
-        <div className="page-header">
+    <div className="min-h-screen bg-[#111827] py-6 pb-10 sm:py-10">
+      <div className="max-w-[900px] mx-auto px-5">
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-5 mb-8 pb-6 border-b border-[#374151]">
           <button className="back-btn" onClick={() => router.back()}>
             ← Kembali
           </button>
-          <h1 className="page-title">Edit Produk</h1>
+          <h1 className="text-center text-[28px] font-bold text-[#f9fafb]">Edit Produk</h1>
           <div></div>
         </div>
 
-        <form onSubmit={handleSubmit} className="product-form">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* Foto Produk */}
-          <section className="form-section">
+          <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
             <h2 className="section-title">Foto Produk</h2>
-            <p className="section-description">Upload hingga 5 foto produk</p>
+            <p className="text-sm text-[#9ca3af] mb-5">Upload hingga 5 foto produk</p>
 
-            <div className="image-upload-area">
-              <div className="image-grid">
+            <div className="mt-5">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-4">
                 {allImages.map((item, index) => (
-                  <div key={index} className="image-preview">
+                  <div key={index} className="relative aspect-square rounded-xl overflow-hidden border-2 border-[#374151]">
                     <Image
                       src={item.type === 'existing' ? item.data.image_url : item.data.url}
                       alt={`Preview ${index + 1}`}
                       width={100}
                       height={100}
+                      className="w-full h-full object-cover"
                     />
                     <button
                       type="button"
-                      className="remove-image-btn"
+                      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 backdrop-blur-[10px] border-none text-white text-base cursor-pointer flex items-center justify-center transition-all duration-300 hover:bg-red-600/90 hover:scale-110"
                       onClick={() => {
                         if (item.type === 'existing') {
                           removeExistingImage(item.data.id, item.data.image_url);
@@ -585,7 +582,7 @@ export default function EditProductPage() {
                 ))}
 
                 {allImages.length < 5 && (
-                  <label className="upload-box">
+                  <label className="aspect-square border-2 border-dashed border-[#374151] rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 bg-[#111827] hover:border-[#6366f1] hover:bg-[#1f2937]">
                     <input
                       type="file"
                       accept="image/*"
@@ -594,8 +591,8 @@ export default function EditProductPage() {
                       style={{ display: 'none' }}
                       disabled={submitting}
                     />
-                    <div className="upload-icon">📷</div>
-                    <div className="upload-text">Tambah Foto</div>
+                    <div className="text-[48px] mb-2 opacity-60">📷</div>
+                    <div className="text-[13px] text-[#9ca3af] font-medium">Tambah Foto</div>
                   </label>
                 )}
               </div>
@@ -603,7 +600,7 @@ export default function EditProductPage() {
           </section>
 
           {/* Info Produk */}
-          <section className="form-section">
+          <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
             <h2 className="section-title">Informasi Produk</h2>
 
             <div className="form-group">
@@ -638,7 +635,7 @@ export default function EditProductPage() {
               <span className="char-count">{formData.description.length}/2000</span>
             </div>
 
-            <div className="form-row">
+            <div className="grid grid-cols-2 gap-5">
               <div className="form-group">
                 <label htmlFor="category1" className="form-label">Kategori Utama *</label>
                 <select
@@ -647,7 +644,7 @@ export default function EditProductPage() {
                   value={formData.category1}
                   onChange={handleChange}
                   required
-                  className="form-input"
+                  className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
                 >
                   <option value="">Pilih Kategori</option>
                   {mainCategories.map(cat => (
@@ -665,7 +662,7 @@ export default function EditProductPage() {
                   onChange={handleChange}
                   required
                   disabled={!formData.category1}
-                  className="form-input"
+                  className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
                 >
                   <option value="">Pilih Sub Kategori</option>
                   {subcategories.map(sub => (
@@ -683,7 +680,7 @@ export default function EditProductPage() {
                 value={formData.condition}
                 onChange={handleChange}
                 required
-                className="form-input"
+                className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
               >
                 <option value="Baru">Baru</option>
                 <option value="Seperti Baru">Seperti Baru</option>
@@ -695,7 +692,7 @@ export default function EditProductPage() {
           </section>
 
           {/* Harga */}
-          <section className="form-section">
+          <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
             <h2 className="section-title">Harga</h2>
 
             <div className="form-group">
@@ -713,22 +710,23 @@ export default function EditProductPage() {
               />
             </div>
 
-            <label className="checkbox-label">
+            <label className="flex items-center gap-2.5 cursor-pointer text-[15px] text-[#9ca3af] p-3 rounded-lg transition-colors duration-300 hover:bg-[#111827]">
               <input
                 type="checkbox"
                 name="negotiable"
                 checked={formData.negotiable}
                 onChange={handleChange}
+                className="w-5 h-5 cursor-pointer accent-[#6366f1]"
               />
               <span>Harga bisa nego</span>
             </label>
           </section>
 
           {/* Lokasi */}
-          <section className="form-section">
+          <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
             <h2 className="section-title">Lokasi</h2>
 
-            <div className="form-row">
+            <div className="grid grid-cols-2 gap-5">
               <div className="form-group">
                 <label htmlFor="province" className="form-label">Provinsi *</label>
                 <select
@@ -737,7 +735,7 @@ export default function EditProductPage() {
                   value={formData.province}
                   onChange={handleChange}
                   required
-                  className="form-input"
+                  className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
                 >
                   <option value="">Pilih Provinsi</option>
                   {provinces.map(province => (
@@ -755,7 +753,7 @@ export default function EditProductPage() {
                   onChange={handleChange}
                   required
                   disabled={!formData.province}
-                  className="form-input"
+                  className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
                 >
                   <option value="">Pilih Kota</option>
                   {cities.map(city => (
@@ -767,9 +765,9 @@ export default function EditProductPage() {
           </section>
 
           {/* Kontak */}
-          <section className="form-section">
+          <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
             <h2 className="section-title">Kontak</h2>
-            <p className="section-description">Minimal isi 1 nomor kontak</p>
+            <p className="text-sm text-[#9ca3af] mb-5">Minimal isi 1 nomor kontak</p>
 
             <div className="form-group">
               <label htmlFor="whatsapp" className="form-label">Nomor WhatsApp</label>
@@ -783,7 +781,7 @@ export default function EditProductPage() {
                 pattern="[0-9]{10,13}"
                 className="form-input"
               />
-              <p className="form-help">Format: 08xxxxxxxxxx (10-13 digit)</p>
+              <p className="text-[13px] text-[#6b7280] mt-1.5">Format: 08xxxxxxxxxx (10-13 digit)</p>
             </div>
 
             <div className="form-group">
@@ -798,7 +796,7 @@ export default function EditProductPage() {
                 pattern="[0-9]{10,13}"
                 className="form-input"
               />
-              <p className="form-help">Format: 08xxxxxxxxxx (10-13 digit)</p>
+              <p className="text-[13px] text-[#6b7280] mt-1.5">Format: 08xxxxxxxxxx (10-13 digit)</p>
             </div>
           </section>
 
@@ -814,7 +812,7 @@ export default function EditProductPage() {
             <button
               type="submit"
               disabled={submitting}
-              className={`btn btn-primary btn-lg ${submitting ? 'loading' : ''}`}
+              className={`btn btn-primary btn-lg ${submitting ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {submitting ? (
                 <>

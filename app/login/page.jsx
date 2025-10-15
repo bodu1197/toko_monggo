@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import './login.css';
 import { useSupabaseClient } from '../components/SupabaseClientProvider';
+import { isValidEmail, getSafeErrorMessage, rateLimiter } from '../utils/security';
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = useSupabaseClient(); // Get the client instance here
+  const supabase = useSupabaseClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,24 +17,58 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
+
+    // Rate limiting check - 5 attempts per 15 minutes
+    const rateLimitKey = `login_${email}`;
+    if (!rateLimiter.isAllowed(rateLimitKey, 5, 900000)) {
+      const resetTime = Math.ceil(rateLimiter.getResetTime(rateLimitKey) / 1000 / 60);
+      setError(`Terlalu banyak percobaan login. Silakan coba lagi dalam ${resetTime} menit.`);
+      return;
+    }
+
+    // Validate email format
+    const sanitizedEmail = email.trim().toLowerCase();
+    if (!isValidEmail(sanitizedEmail)) {
+      setError('Format email tidak valid');
+      return;
+    }
+
+    if (!password || password.length < 1) {
+      setError('Password harus diisi');
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
+        email: sanitizedEmail,
         password,
       });
 
       if (signInError) throw signInError;
 
       if (data?.user) {
+        // Reset rate limit on successful login
+        rateLimiter.reset(rateLimitKey);
+
         router.push('/');
         router.refresh();
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError(error.message || 'Email atau kata sandi salah');
+
+      // Use safe error message - don't reveal if email exists or not
+      const safeMessage = getSafeErrorMessage(error);
+
+      // Generic message for login errors to prevent user enumeration
+      if (error.message?.includes('Invalid login credentials') ||
+          error.message?.includes('Email not confirmed')) {
+        setError('Email atau kata sandi salah');
+      } else {
+        setError(safeMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -45,7 +79,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://tokomonggo.com/',
+          redirectTo: `${window.location.origin}/`,
         },
       });
       if (error) throw error;
@@ -60,7 +94,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
-          redirectTo: 'https://tokomonggo.com/',
+          redirectTo: `${window.location.origin}/`,
         },
       });
       if (error) throw error;
@@ -71,29 +105,29 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        {/* Left Side - Branding (PC only) */}
-        <div className="auth-brand">
-          <div className="brand-content">
-            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ Toko Monggo</h1>
+    <div className="min-h-screen flex items-center justify-center p-5 bg-[#111827]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 max-w-[1200px] w-full bg-[#1f2937] rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+        {/* Left Side - Branding (Desktop only) */}
+        <div className="hidden lg:flex bg-gradient-to-br from-[#4b5563] to-[#374151] p-12 xl:p-[60px] flex-col justify-center text-white">
+          <div className="max-w-[450px]">
+            <Link href="/" className="no-underline text-white">
+              <h1 className="text-5xl mb-6 cursor-pointer">🛍️ Toko Monggo</h1>
             </Link>
-            <h2 className="brand-title">Selamat Datang Kembali!</h2>
-            <p className="brand-description">
+            <h2 className="text-4xl font-bold mb-4 leading-tight">Selamat Datang Kembali!</h2>
+            <p className="text-base leading-relaxed opacity-90 mb-10">
               Platform marketplace terpercaya untuk jual beli barang bekas berkualitas di Indonesia
             </p>
-            <div className="brand-features">
-              <div className="feature-item">
-                <span className="feature-icon">✓</span>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 text-base font-medium">
+                <span className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">✓</span>
                 <span>Transaksi Aman</span>
               </div>
-              <div className="feature-item">
-                <span className="feature-icon">✓</span>
+              <div className="flex items-center gap-3 text-base font-medium">
+                <span className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">✓</span>
                 <span>Harga Terbaik</span>
               </div>
-              <div className="feature-item">
-                <span className="feature-icon">✓</span>
+              <div className="flex items-center gap-3 text-base font-medium">
+                <span className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">✓</span>
                 <span>Mudah Digunakan</span>
               </div>
             </div>
@@ -101,29 +135,21 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side - Login Form */}
-        <div className="auth-form-wrapper">
-          <div className="auth-form-container">
-            <div className="form-header">
-              <h2 className="form-title">Masuk ke Akun</h2>
-              <p className="form-subtitle">
+        <div className="p-10 md:p-12 xl:p-[60px] flex items-center justify-center">
+          <div className="w-full max-w-[420px]">
+            <div className="mb-8">
+              <h2 className="text-3xl md:text-[32px] font-bold mb-3 text-[#f9fafb]">Masuk ke Akun</h2>
+              <p className="text-[15px] text-[#9ca3af]">
                 Belum punya akun?{' '}
-                <Link href="/signup" className="link-primary">
+                <Link href="/signup" className="text-[#4b5563] font-semibold hover:text-[#374151] hover:underline">
                   Daftar sekarang
                 </Link>
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="auth-form">
+            <form onSubmit={handleSubmit} className="mb-8">
               {error && (
-                <div className="error-message" style={{
-                  padding: '12px 16px',
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid #ef4444',
-                  borderRadius: '8px',
-                  color: '#ef4444',
-                  fontSize: '14px',
-                  marginBottom: '20px'
-                }}>
+                <div className="p-3 px-4 bg-[rgba(239,68,68,0.1)] border border-[#ef4444] rounded-lg text-[#ef4444] text-sm mb-5">
                   {error}
                 </div>
               )}
@@ -147,7 +173,7 @@ export default function LoginPage() {
                 <label htmlFor="password" className="form-label">
                   Kata Sandi
                 </label>
-                <div className="password-input-wrapper">
+                <div className="relative">
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
@@ -159,7 +185,7 @@ export default function LoginPage() {
                   />
                   <button
                     type="button"
-                    className="password-toggle"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-xl p-2 text-[#6b7280] transition-colors duration-300 hover:text-[#f9fafb]"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? '👁️' : '👁️‍🗨️'}
@@ -167,12 +193,12 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="form-options">
-                <label className="checkbox-wrapper">
-                  <input type="checkbox" />
+              <div className="flex justify-between items-center mb-6">
+                <label className="flex items-center gap-2 cursor-pointer text-sm text-[#9ca3af]">
+                  <input type="checkbox" className="w-auto cursor-pointer" />
                   <span>Ingat saya</span>
                 </label>
-                <Link href="/recover" className="link-primary">
+                <Link href="/recover" className="text-[#4b5563] font-semibold text-sm hover:text-[#374151] hover:underline">
                   Lupa kata sandi?
                 </Link>
               </div>
@@ -180,11 +206,11 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`btn btn-primary btn-full ${loading ? 'loading' : ''}`}
+                className={`btn btn-primary btn-full ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
                 {loading ? (
                   <>
-                    <span className="spinner"></span>
+                    <span className="spinner spinner-sm"></span>
                     Memproses...
                   </>
                 ) : (
@@ -193,17 +219,18 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="divider">
-              <span>atau masuk dengan</span>
+            <div className="relative text-center my-8">
+              <div className="absolute top-1/2 left-0 right-0 h-px bg-[#374151]"></div>
+              <span className="relative bg-[#1f2937] px-4 text-[#6b7280] text-sm">atau masuk dengan</span>
             </div>
 
-            <div className="social-login">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 type="button"
-                className="btn btn-social google"
+                className="flex items-center justify-center gap-2 p-3 bg-[#374151] border border-[#4b5563] text-[#f9fafb] font-medium rounded-lg transition-all duration-300 hover:bg-[#111827] hover:border-[#4b5563]"
                 onClick={handleGoogleLogin}
               >
-                <svg className="social-icon" viewBox="0 0 24 24" width="18" height="18">
+                <svg className="text-[#4285F4] font-bold" viewBox="0 0 24 24" width="18" height="18">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -213,10 +240,10 @@ export default function LoginPage() {
               </button>
               <button
                 type="button"
-                className="btn btn-social apple"
+                className="flex items-center justify-center gap-2 p-3 bg-[#374151] border border-[#4b5563] text-[#f9fafb] font-medium rounded-lg transition-all duration-300 hover:bg-[#111827] hover:border-[#4b5563]"
                 onClick={handleAppleLogin}
               >
-                <svg className="social-icon" viewBox="0 0 24 24" width="27" height="27" fill="currentColor">
+                <svg className="text-white w-[27px] h-[27px] text-[27px]" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
                 </svg>
                 Apple

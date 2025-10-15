@@ -3,15 +3,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createBrowserClient } from '@supabase/ssr';
-import '../login/login.css';
+import { useSupabaseClient } from '../components/SupabaseClientProvider';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  const supabase = useSupabaseClient();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,6 +23,19 @@ export default function ResetPasswordPage() {
       if (error || !session) {
         setError('Link reset password tidak valid atau sudah kadaluarsa.');
         return;
+      }
+
+      // Additional validation: Check session type
+      if (session.user.recovery_sent_at) {
+        const recoveryTime = new Date(session.user.recovery_sent_at).getTime();
+        const now = Date.now();
+        const oneHour = 60 * 60 * 1000;
+
+        // Check if recovery link is older than 1 hour
+        if (now - recoveryTime > oneHour) {
+          setError('Link reset password sudah kadaluarsa. Silakan minta link baru.');
+          return;
+        }
       }
 
       setIsValidToken(true);
@@ -76,36 +85,22 @@ export default function ResetPasswordPage() {
 
   if (!isValidToken && error) {
     return (
-      <div className="auth-page">
-        <div className="auth-container">
-          <div className="auth-form-wrapper" style={{ maxWidth: '500px', margin: '0 auto' }}>
-            <div className="auth-form-container">
-              <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                <div style={{ fontSize: '64px', marginBottom: '24px' }}>⚠️</div>
-                <h2 style={{
-                  fontSize: '24px',
-                  fontWeight: '600',
-                  color: 'var(--text-primary)',
-                  marginBottom: '12px'
-                }}>
-                  Link Tidak Valid
-                </h2>
-                <p style={{
-                  fontSize: '15px',
-                  color: 'var(--text-secondary)',
-                  marginBottom: '24px',
-                  lineHeight: '1.6'
-                }}>
-                  {error}
-                </p>
-                <button
-                  className="btn btn-primary btn-full"
-                  onClick={() => router.push('/recover')}
-                >
-                  Minta Link Baru
-                </button>
-              </div>
-            </div>
+      <div className="min-h-screen bg-[#111827] flex items-center justify-center p-5">
+        <div className="w-full max-w-[500px]">
+          <div className="bg-[#1f2937] border border-[#374151] rounded-2xl p-10 text-center">
+            <div className="text-[64px] mb-6">⚠️</div>
+            <h2 className="text-[24px] font-semibold text-[#f9fafb] mb-3">
+              Link Tidak Valid
+            </h2>
+            <p className="text-[15px] text-[#9ca3af] mb-6 leading-relaxed">
+              {error}
+            </p>
+            <button
+              className="btn btn-primary btn-full"
+              onClick={() => router.push('/recover')}
+            >
+              Minta Link Baru
+            </button>
           </div>
         </div>
       </div>
@@ -113,56 +108,48 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        {/* Left Side - Branding (PC only) */}
-        <div className="auth-brand">
-          <div className="brand-content">
-            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <h1 className="brand-logo" style={{ cursor: 'pointer' }}>🛍️ TokoMonggo</h1>
-            </Link>
-            <h2 className="brand-title">Buat Kata Sandi Baru</h2>
-            <p className="brand-description">
-              Masukkan kata sandi baru untuk akun Anda. Pastikan kata sandi kuat dan mudah diingat.
-            </p>
-            <div className="brand-features">
-              <div className="feature-item">
-                <span className="feature-icon">✓</span>
-                <span>Minimal 8 Karakter</span>
-              </div>
-              <div className="feature-item">
-                <span className="feature-icon">✓</span>
-                <span>Kombinasi Huruf & Angka</span>
-              </div>
-              <div className="feature-item">
-                <span className="feature-icon">✓</span>
-                <span>Aman & Terenkripsi</span>
-              </div>
+    <div className="min-h-screen bg-[#111827] grid md:grid-cols-2">
+      {/* Left Side - Branding (PC only) */}
+      <div className="hidden md:flex items-center justify-center p-12 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6]">
+        <div className="max-w-[500px]">
+          <Link href="/" className="no-underline text-inherit">
+            <h1 className="text-[42px] font-bold text-white mb-8 cursor-pointer">🛍️ TokoMonggo</h1>
+          </Link>
+          <h2 className="text-[32px] font-bold text-white mb-4">Buat Kata Sandi Baru</h2>
+          <p className="text-[17px] text-white/90 mb-8 leading-relaxed">
+            Masukkan kata sandi baru untuk akun Anda. Pastikan kata sandi kuat dan mudah diingat.
+          </p>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-white text-xl">✓</span>
+              <span className="text-white/90 text-[15px]">Minimal 8 Karakter</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-white text-xl">✓</span>
+              <span className="text-white/90 text-[15px]">Kombinasi Huruf & Angka</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-white text-xl">✓</span>
+              <span className="text-white/90 text-[15px]">Aman & Terenkripsi</span>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Right Side - Reset Form */}
-        <div className="auth-form-wrapper">
-          <div className="auth-form-container">
-            <div className="form-header">
-              <h2 className="form-title">Reset Kata Sandi</h2>
-              <p className="form-subtitle">
+      {/* Right Side - Reset Form */}
+      <div className="flex items-center justify-center p-5 md:p-12">
+        <div className="w-full max-w-[480px]">
+          <div className="bg-[#1f2937] border border-[#374151] rounded-2xl p-8 md:p-10">
+            <div className="mb-8">
+              <h2 className="text-[28px] font-bold text-[#f9fafb] mb-2">Reset Kata Sandi</h2>
+              <p className="text-[15px] text-[#9ca3af]">
                 Masukkan kata sandi baru Anda
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="auth-form">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               {error && (
-                <div className="error-message" style={{
-                  padding: '12px 16px',
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid #ef4444',
-                  borderRadius: '8px',
-                  color: '#ef4444',
-                  fontSize: '14px',
-                  marginBottom: '20px'
-                }}>
+                <div className="p-3 md:p-4 bg-red-500/10 border border-red-500 rounded-lg text-red-500 text-sm mb-5">
                   {error}
                 </div>
               )}
@@ -171,7 +158,7 @@ export default function ResetPasswordPage() {
                 <label htmlFor="password" className="form-label">
                   Kata Sandi Baru
                 </label>
-                <div className="password-input-wrapper">
+                <div className="relative">
                   <input
                     id="password"
                     name="password"
@@ -180,22 +167,18 @@ export default function ResetPasswordPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Minimal 8 karakter"
                     required
-                    className="form-input"
+                    className="form-input pr-12"
                     autoFocus
                   />
                   <button
                     type="button"
-                    className="password-toggle"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#f9fafb] transition-colors bg-transparent border-none cursor-pointer p-0 text-lg"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? '👁️' : '👁️‍🗨️'}
                   </button>
                 </div>
-                <p style={{
-                  fontSize: '13px',
-                  color: 'var(--text-secondary)',
-                  marginTop: '8px'
-                }}>
+                <p className="text-[13px] text-[#9ca3af] mt-2">
                   Gunakan minimal 8 karakter dengan kombinasi huruf dan angka
                 </p>
               </div>
@@ -204,7 +187,7 @@ export default function ResetPasswordPage() {
                 <label htmlFor="confirmPassword" className="form-label">
                   Konfirmasi Kata Sandi
                 </label>
-                <div className="password-input-wrapper">
+                <div className="relative">
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
@@ -213,11 +196,11 @@ export default function ResetPasswordPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Ketik ulang kata sandi"
                     required
-                    className="form-input"
+                    className="form-input pr-12"
                   />
                   <button
                     type="button"
-                    className="password-toggle"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#f9fafb] transition-colors bg-transparent border-none cursor-pointer p-0 text-lg"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
@@ -226,17 +209,11 @@ export default function ResetPasswordPage() {
               </div>
 
               {password && confirmPassword && (
-                <div style={{
-                  padding: '12px 16px',
-                  background: password === confirmPassword
-                    ? 'rgba(16, 185, 129, 0.1)'
-                    : 'rgba(239, 68, 68, 0.1)',
-                  border: `1px solid ${password === confirmPassword ? '#10b981' : '#ef4444'}`,
-                  borderRadius: '8px',
-                  fontSize: '13px',
-                  marginBottom: '20px',
-                  color: password === confirmPassword ? '#10b981' : '#ef4444'
-                }}>
+                <div className={`p-3 md:p-4 rounded-lg text-sm ${
+                  password === confirmPassword
+                    ? 'bg-green-500/10 border border-green-500 text-green-500'
+                    : 'bg-red-500/10 border border-red-500 text-red-500'
+                }`}>
                   {password === confirmPassword ? '✓ Kata sandi cocok' : '✗ Kata sandi tidak cocok'}
                 </div>
               )}
@@ -244,7 +221,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={loading || !password || !confirmPassword}
-                className={`btn btn-primary btn-full ${loading ? 'loading' : ''}`}
+                className="btn btn-primary btn-full"
               >
                 {loading ? (
                   <>
