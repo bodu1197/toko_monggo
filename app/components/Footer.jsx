@@ -81,7 +81,7 @@ export default function Footer() {
           fontSize: '14px',
           flexWrap: 'wrap'
         }}>
-          <a href="#" style={{
+          <a href="/about" style={{
             color: 'var(--text-secondary)',
             textDecoration: 'none',
             transition: 'color 0.3s ease'
@@ -90,7 +90,7 @@ export default function Footer() {
           onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
             Tentang Kami
           </a>
-          <a href="#" style={{
+          <a href="/terms" style={{
             color: 'var(--text-secondary)',
             textDecoration: 'none',
             transition: 'color 0.3s ease'
@@ -99,7 +99,7 @@ export default function Footer() {
           onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
             Syarat & Ketentuan
           </a>
-          <a href="#" style={{
+          <a href="/privacy" style={{
             color: 'var(--text-secondary)',
             textDecoration: 'none',
             transition: 'color 0.3s ease'
@@ -108,7 +108,7 @@ export default function Footer() {
           onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
             Kebijakan Privasi
           </a>
-          <a href="#" style={{
+          <a href="/help" style={{
             color: 'var(--text-secondary)',
             textDecoration: 'none',
             transition: 'color 0.3s ease'
