@@ -996,6 +996,9 @@ export default function ProductDetailPage() {
                 )}
               </div>
             </div>
+
+            {/* Sidebar Advertisement */}
+            <Advertisement position="sidebar" />
           </div>
         </div>
       </div>
