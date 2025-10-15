@@ -2,7 +2,6 @@ import localFont from 'next/font/local';
 import './globals.css';
 import LocationTracker from './components/LocationTracker';
 import { SupabaseClientProvider } from './components/SupabaseClientProvider';
-import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 const inter = localFont({
   src: '../public/fonts/inter.woff2',
@@ -113,22 +112,6 @@ export default function RootLayout({ children }) {
           :root{--color-primary-900:#111827;--color-primary-50:#f9fafb;--color-primary-300:#d1d5db;--color-primary-400:#9ca3af}
           body{background-color:#111827;color:#f9fafb;margin:0;min-height:100vh}
           .antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-
-          /* PWA Install Prompt Animation */
-          @keyframes slideUp {
-            from {
-              transform: translateY(100%);
-              opacity: 0;
-            }
-            to {
-              transform: translateY(0);
-              opacity: 1;
-            }
-          }
-
-          .animate-slideUp {
-            animation: slideUp 0.3s ease-out;
-          }
         `}} />
 
 
@@ -181,7 +164,6 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} bg-surface-primary text-text-primary min-h-screen antialiased`}>
         <SupabaseClientProvider>
           <LocationTracker />
-          <PWAInstallPrompt />
           {children}
         </SupabaseClientProvider>
       </body>
