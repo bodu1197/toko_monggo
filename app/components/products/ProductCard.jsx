@@ -156,6 +156,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
             onClick={handleFavoriteClick}
             disabled={favoriteLoading}
             title={isFavorite ? 'Hapus favorit' : 'Tambah ke favorit'}
+            aria-label={isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit'}
           >
             <svg
               viewBox="0 0 24 24"

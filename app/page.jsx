@@ -575,7 +575,7 @@ export default function HomePage() {
                       </div>
                     )}
                   </div>
-                  <button type="submit" className="py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 flex items-center justify-center hover:bg-[#374151]" disabled={isSearching}>
+                  <button type="submit" className="py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 flex items-center justify-center hover:bg-[#374151]" disabled={isSearching} aria-label="Cari produk">
                     {isSearching ? (
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
@@ -595,13 +595,14 @@ export default function HomePage() {
                   <button
                     className="flex items-center justify-center w-10 h-10 bg-[#374151] border border-[#374151] rounded-lg cursor-pointer transition-all hover:bg-[#111827] hover:border-[#4b5563] hover:-translate-y-0.5"
                     onClick={() => router.push('/profile')}
+                    aria-label="Profil"
                   >
                     <svg className="w-5 h-5 text-[#f9fafb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                       <circle cx="12" cy="7" r="4"/>
                     </svg>
                   </button>
-                  <button className="flex items-center justify-center w-10 h-10 bg-[#374151] border border-[#374151] rounded-lg cursor-pointer transition-all hover:bg-[#111827] hover:border-[#4b5563] hover:-translate-y-0.5">
+                  <button className="flex items-center justify-center w-10 h-10 bg-[#374151] border border-[#374151] rounded-lg cursor-pointer transition-all hover:bg-[#111827] hover:border-[#4b5563] hover:-translate-y-0.5" aria-label="Favorit">
                     <svg className="w-5 h-5 text-[#f9fafb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                     </svg>
@@ -626,7 +627,9 @@ export default function HomePage() {
         <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
           <div className="flex gap-3 items-center flex-wrap">
             <div className="flex-1 min-w-[150px]">
+              <label htmlFor="filter-province-pc" className="sr-only">Filter provinsi</label>
               <select
+                id="filter-province-pc"
                 name="province"
                 value={filters.province}
                 onChange={handleFilterChange}
@@ -640,7 +643,9 @@ export default function HomePage() {
             </div>
 
             <div className="flex-1 min-w-[150px]">
+              <label htmlFor="filter-city-pc" className="sr-only">Filter kota</label>
               <select
+                id="filter-city-pc"
                 name="city"
                 value={filters.city}
                 onChange={handleFilterChange}
@@ -655,7 +660,9 @@ export default function HomePage() {
             </div>
 
             <div className="flex-1 min-w-[150px]">
+              <label htmlFor="filter-category-pc" className="sr-only">Filter kategori</label>
               <select
+                id="filter-category-pc"
                 name="category"
                 value={filters.category}
                 onChange={handleFilterChange}
@@ -671,7 +678,9 @@ export default function HomePage() {
             </div>
 
             <div className="flex-1 min-w-[150px]">
+              <label htmlFor="filter-subcategory-pc" className="sr-only">Filter sub kategori</label>
               <select
+                id="filter-subcategory-pc"
                 name="subcategory"
                 value={filters.subcategory}
                 onChange={handleFilterChange}
@@ -693,7 +702,7 @@ export default function HomePage() {
                   <circle cx="12" cy="10" r="3"/>
                 </svg>
                 <span className="font-medium text-[#9ca3af]">50km</span>
-                <button className="w-8 h-8 flex items-center justify-center bg-[#374151] border border-[#374151] rounded-md text-[#9ca3af] cursor-pointer transition-all duration-300 flex-shrink-0 ml-1 hover:bg-[#4b5563] hover:text-[#f9fafb] hover:rotate-180" onClick={handleNearbyClick} title="Refresh">
+                <button className="w-8 h-8 flex items-center justify-center bg-[#374151] border border-[#374151] rounded-md text-[#9ca3af] cursor-pointer transition-all duration-300 flex-shrink-0 ml-1 hover:bg-[#4b5563] hover:text-[#f9fafb] hover:rotate-180" onClick={handleNearbyClick} title="Refresh" aria-label="Refresh produk sekitar">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M1 4v6h6M23 20v-6h-6"/>
                     <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
@@ -745,7 +754,7 @@ export default function HomePage() {
           <div className="fixed bottom-0 left-0 right-0 bg-[#1f2937] rounded-t-[20px] z-[1501] animate-[slideUpFromBottom_0.3s_ease-out] max-h-[85vh] overflow-y-auto shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between py-5 px-6 border-b border-[#374151] bg-[#1f2937] sticky top-0 z-10">
               <h3 className="text-xl font-bold text-[#f9fafb] m-0">Filter & Pencarian</h3>
-              <button className="w-9 h-9 flex items-center justify-center bg-[#374151] border border-[#374151] rounded-full cursor-pointer transition-all duration-300 hover:bg-[#111827] hover:border-[#9ca3af]" onClick={() => setShowMobileFilters(false)}>
+              <button className="w-9 h-9 flex items-center justify-center bg-[#374151] border border-[#374151] rounded-full cursor-pointer transition-all duration-300 hover:bg-[#111827] hover:border-[#9ca3af]" onClick={() => setShowMobileFilters(false)} aria-label="Tutup filter">
                 <svg className="w-[18px] h-[18px] text-[#9ca3af]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="18" y1="6" x2="6" y2="18"/>
                   <line x1="6" y1="6" x2="18" y2="18"/>
@@ -784,7 +793,7 @@ export default function HomePage() {
                 </div>
               )}
             </div>
-            <button type="submit" className="w-[42px] h-[42px] p-0 flex items-center justify-center py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 hover:bg-[#374151]" disabled={isSearching}>
+            <button type="submit" className="w-[42px] h-[42px] p-0 flex items-center justify-center py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 hover:bg-[#374151]" disabled={isSearching} aria-label="Cari produk">
               {isSearching ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
@@ -798,7 +807,9 @@ export default function HomePage() {
 
           <div className="flex gap-3 items-center flex-wrap">
             <div className="flex-1 min-w-[150px]">
+              <label htmlFor="filter-province-mobile" className="sr-only">Filter provinsi</label>
               <select
+                id="filter-province-mobile"
                 name="province"
                 value={filters.province}
                 onChange={handleFilterChange}
@@ -812,7 +823,9 @@ export default function HomePage() {
             </div>
 
             <div className="flex-1 min-w-[150px]">
+              <label htmlFor="filter-city-mobile" className="sr-only">Filter kota</label>
               <select
+                id="filter-city-mobile"
                 name="city"
                 value={filters.city}
                 onChange={handleFilterChange}
@@ -827,7 +840,9 @@ export default function HomePage() {
             </div>
 
             <div className="flex-1 min-w-[150px]">
+              <label htmlFor="filter-category-mobile" className="sr-only">Filter kategori</label>
               <select
+                id="filter-category-mobile"
                 name="category"
                 value={filters.category}
                 onChange={handleFilterChange}
@@ -843,7 +858,9 @@ export default function HomePage() {
             </div>
 
             <div className="flex-1 min-w-[150px]">
+              <label htmlFor="filter-subcategory-mobile" className="sr-only">Filter sub kategori</label>
               <select
+                id="filter-subcategory-mobile"
                 name="subcategory"
                 value={filters.subcategory}
                 onChange={handleFilterChange}
@@ -908,7 +925,7 @@ export default function HomePage() {
       <section className="py-[60px] bg-[#111827]">
         <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-[1.25rem] font-bold text-[#f9fafb]">Produk Terbaru</h3>
+            <h2 className="text-[1.25rem] font-bold text-[#f9fafb]">Produk Terbaru</h2>
           </div>
 
           <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-4 gap-6'}`}>
