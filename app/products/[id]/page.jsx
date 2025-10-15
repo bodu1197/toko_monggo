@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { createBrowserClient } from '@supabase/ssr';
+import OptimizedImage from '../../components/common/OptimizedImage';
 import ProductCard from '../../components/products/ProductCard';
 import {
   ImageGallery,
@@ -532,15 +533,13 @@ export default function ProductDetailPage() {
             <div className="flex flex-col gap-4 w-screen -mx-3 px-3 lg:w-auto lg:mx-0 lg:px-0">
               <div className="relative w-full aspect-video bg-[#1f2937] border border-[#374151] rounded-2xl lg:rounded-2xl overflow-hidden flex items-center justify-center">
                 {currentImage ? (
-                  <Image
+                  <OptimizedImage
                     src={currentImage}
                     alt={product.title}
                     fill
-                    sizes="(max-width: 768px) 100vw, 70vw"
+                    context="product-detail"
+                    index={0}
                     className="object-cover"
-                    priority
-                    placeholder="blur"
-                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iIzI4MjgyOCIvPjwvc3ZnPg=="
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center gap-3 w-full h-full text-[#6b7280]">
@@ -567,13 +566,13 @@ export default function ProductDetailPage() {
                       onClick={() => setSelectedImageIndex(index)}
                     >
                       {img.image_url ? (
-                        <Image
+                        <OptimizedImage
                           src={img.image_url}
                           alt={`Thumbnail ${index + 1}`}
                           fill
-                          sizes="100px"
+                          context="thumbnail"
+                          index={index}
                           className="object-cover"
-                          loading="lazy"
                         />
                       ) : (
                         <div className="flex items-center justify-center w-full h-full text-[#6b7280]">

@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSupabaseClient } from '../SupabaseClientProvider';
-import { generateBlurPlaceholder } from '../../utils/imageOptimization';
+import OptimizedImage from '../common/OptimizedImage';
 
 /**
  * 상품 정보를 표시하는 공통 카드 컴포넌트 - Tailwind CSS v4
@@ -16,7 +15,7 @@ import { generateBlurPlaceholder } from '../../utils/imageOptimization';
  * @param {function} [props.onRenew] - 갱신 버튼 클릭 시 호출될 함수 (profile 컨텍스트용)
  * @param {boolean} [props.priority=false] - LCP 이미지 우선 로딩 (첫 번째 카드용)
  */
-export default function ProductCard({ product, context = 'home', onDelete, onStatusChange, onRenew, priority = false }) {
+export default function ProductCard({ product, context = 'home', onDelete, onStatusChange, onRenew, priority = false, index = 0 }) {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -157,23 +156,13 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
     >
       <div className="relative w-full h-[220px] md:h-[192px] bg-gray-100">
         {product.image ? (
-          <Image
+          <OptimizedImage
             src={product.image}
             alt={product.title}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            context="product-card"
+            index={index}
             className="object-cover"
-            priority={priority}
-            loading={priority ? undefined : "lazy"}
-            quality={75}
-            placeholder="blur"
-            blurDataURL={generateBlurPlaceholder(4, 3)}
-            onLoadingComplete={(result) => {
-              if (typeof window !== 'undefined' && result.naturalWidth === 0) {
-                // Handle broken images
-                console.error('Broken image detected:', product.image);
-              }
-            }}
           />
         ) : (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400 text-sm">

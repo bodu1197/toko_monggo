@@ -2,6 +2,7 @@
 
 import { useState, lazy, Suspense } from 'react';
 import Image from 'next/image';
+import OptimizedImage from '../common/OptimizedImage';
 
 // Lazy load heavy components
 export const Advertisement = lazy(() => import('../Advertisement'));
@@ -34,15 +35,13 @@ export const ImageGallery = ({ images, selectedImageIndex, setSelectedImageIndex
     <div className="flex flex-col gap-4 w-screen -mx-3 px-3 lg:w-auto lg:mx-0 lg:px-0">
       <div className="relative w-full aspect-video bg-surface-secondary border border-border-primary rounded-2xl lg:rounded-2xl overflow-hidden flex items-center justify-center">
         {currentImage ? (
-          <Image
+          <OptimizedImage
             src={currentImage}
             alt={productTitle}
             fill
-            sizes="(max-width: 768px) 100vw, 70vw"
+            context="product-detail"
+            index={0}
             className="object-cover"
-            priority
-            placeholder="blur"
-            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iIzI4MjgyOCIvPjwvc3ZnPg=="
           />
         ) : (
           <div className="flex flex-col items-center justify-center gap-3 w-full h-full text-text-muted">
@@ -69,13 +68,13 @@ export const ImageGallery = ({ images, selectedImageIndex, setSelectedImageIndex
               onClick={() => setSelectedImageIndex(index)}
             >
               {img.image_url ? (
-                <Image
+                <OptimizedImage
                   src={img.image_url}
                   alt={`Thumbnail ${index + 1}`}
                   fill
-                  sizes="100px"
+                  context="thumbnail"
+                  index={index}
                   className="object-cover"
-                  loading="lazy"
                 />
               ) : (
                 <div className="flex items-center justify-center w-full h-full text-text-muted">

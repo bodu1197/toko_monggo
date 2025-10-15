@@ -972,6 +972,7 @@ export default function HomePage() {
                       product={product}
                       context="home"
                       priority={index < 4}
+                      index={index}
                     />
                     {/* Insert advertisement after every 8 products */}
                     {(index + 1) % 8 === 0 && (
