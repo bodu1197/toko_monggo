@@ -27,6 +27,11 @@ const Footer = dynamic(() => import('./components/Footer'), {
   ssr: false
 });
 
+const NotificationPermission = dynamic(() => import('./components/NotificationPermission'), {
+  loading: () => null,
+  ssr: false
+});
+
 export default function HomePage() {
   const router = useRouter();
   const supabase = useSupabaseClient(); // Get the client instance here
@@ -37,6 +42,7 @@ export default function HomePage() {
   const [userLocation, setUserLocation] = useState(null);
   const [locationStatus, setLocationStatus] = useState('idle'); // idle, loading, success, denied
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   // 검색 상태
   const [searchQuery, setSearchQuery] = useState('');
@@ -549,12 +555,14 @@ export default function HomePage() {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
+      setCurrentUser(session?.user || null);
     };
     checkAuth();
 
     // 인증 상태 변화 감지
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
+      setCurrentUser(session?.user || null);
     });
 
     return () => subscription.unsubscribe();
@@ -1033,6 +1041,9 @@ export default function HomePage() {
 
       {/* Footer - PC only */}
       {!isMobile && <Footer />}
+
+      {/* Notification Permission Banner */}
+      <NotificationPermission user={currentUser} supabase={supabase} />
     </div>
   );
 }
