@@ -23,6 +23,7 @@ const nextConfig = {
   experimental: {
     optimizeCss: true, // Enable CSS optimization (requires critters)
     optimizePackageImports: ['react', 'react-dom'], // Tree-shake React imports
+    cssChunking: true, // Enable CSS chunking for better caching
   },
 
   // Compiler optimizations
@@ -134,6 +135,19 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/css/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+          {
+            key: 'Link',
+            value: '</fonts/inter.woff2>; rel=preload; as=font; type=font/woff2; crossorigin=anonymous',
           },
         ],
       },

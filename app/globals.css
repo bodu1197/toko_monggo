@@ -1,9 +1,7 @@
-/* Tailwind CSS v4 */
 @import "tailwindcss";
 
-/* CSS Variables with semantic naming */
 @theme {
-  /* Primary palette - Gray scale */
+  /* Colors */
   --color-primary-50: #f9fafb;
   --color-primary-100: #f3f4f6;
   --color-primary-200: #e5e7eb;
@@ -14,26 +12,18 @@
   --color-primary-700: #374151;
   --color-primary-800: #1f2937;
   --color-primary-900: #111827;
-
-  /* Semantic colors */
   --color-accent: #4b5563;
   --color-accent-hover: #374151;
   --color-success: #10b981;
   --color-error: #ef4444;
   --color-warning: #f59e0b;
   --color-info: #3b82f6;
-
-  /* Surface colors */
-  --color-surface-primary: var(--color-primary-900);
-  --color-surface-secondary: var(--color-primary-800);
-  --color-surface-tertiary: var(--color-primary-700);
-
-  /* Text colors */
-  --color-text-primary: var(--color-primary-50);
-  --color-text-secondary: var(--color-primary-300);
-  --color-text-muted: var(--color-primary-400);
-
-  /* Border colors */
-  --color-border-primary: var(--color-primary-700);
-  --color-border-secondary: var(--color-primary-600);
+  --color-surface-primary: #111827;
+  --color-surface-secondary: #1f2937;
+  --color-surface-tertiary: #374151;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d1d5db;
+  --color-text-muted: #9ca3af;
+  --color-border-primary: #374151;
+  --color-border-secondary: #4b5563;
 }
