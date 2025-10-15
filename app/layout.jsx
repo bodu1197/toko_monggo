@@ -21,6 +21,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <head>
+        {/* Inline critical CSS to prevent render blocking */}
+        <style dangerouslySetInnerHTML={{__html: `
+          body{background-color:#111827;color:#f9fafb;min-height:100vh;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+          *{box-sizing:border-box;margin:0;padding:0}
+        `}} />
+
         {/* Preconnect to Supabase for faster API calls */}
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
