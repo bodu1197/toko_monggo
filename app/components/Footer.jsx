@@ -127,10 +127,10 @@ export default function Footer() {
           marginBottom: '24px',
           color: 'var(--text-secondary)'
         }}>
-          <p style={{ marginBottom: '8px', fontWeight: '600' }}>Group Monggo</p>
           <p style={{ marginBottom: '8px' }}>WeWork - 21 Collyer Quay</p>
           <p style={{ marginBottom: '8px' }}>21 Collyer Quay, Singapore 049320</p>
-          <p style={{ marginBottom: '8px' }}>Email: contact@tokomonggo.com | Layanan Pelanggan: 1588-1234</p>
+          <p style={{ marginBottom: '8px' }}>Email: contact@tokomonggo.com</p>
+          <p style={{ marginBottom: '8px', fontWeight: '600' }}>Group Monggo</p>
         </div>
 
         {/* 저작권 */}
