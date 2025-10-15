@@ -19,15 +19,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <head>
-        {/* Preconnect to Google Fonts for better performance */}
+        {/* Preconnect to external resources */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-        {/* Preconnect to Supabase */}
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
 
-        {/* Preload critical CSS (inline되므로 필요 없을 수 있음) */}
-        <link rel="preload" href="/fonts/inter-v12-latin-regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        {/* DNS Prefetch for faster resource loading */}
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
       </head>
       <body className={inter.className}>
         <SupabaseClientProvider>
