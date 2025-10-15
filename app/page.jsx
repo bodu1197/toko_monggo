@@ -536,7 +536,7 @@ export default function HomePage() {
   }, [loadProvinces, loadMainCategories, fetchProducts]);
 
   return (
-    <div className={`min-h-screen ${isMobile ? 'pb-20' : ''}`}>
+    <div className={`min-h-screen flex flex-col ${isMobile ? 'pb-20' : ''}`}>
       {/* Sticky Header + Filter Wrapper - PC only */}
       <div className={`${isMobile ? 'sticky top-0 z-[1000] bg-[#1f2937]' : 'sticky top-0 z-[1000] bg-[#1f2937] will-change-transform transform-gpu backface-hidden'}`}>
         {/* Header - PC와 모바일 다른 레이아웃 */}
@@ -924,7 +924,7 @@ export default function HomePage() {
       )}
 
       {/* Products Grid */}
-      <section className="py-[60px] bg-[#111827]">
+      <section className="flex-1 py-[60px] bg-[#111827]">
         <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-[1.25rem] font-bold text-[#f9fafb]">Produk Terbaru</h2>
