@@ -15,6 +15,7 @@ const inter = localFont({
 export const metadata = {
   title: 'TokoMonggo - Marketplace Barang Bekas Terpercaya',
   description: 'Platform jual beli barang bekas terpercaya di Indonesia. Jual beli laptop bekas, handphone bekas, elektronik bekas, furniture bekas dengan harga terbaik. Marketplace online Indonesia.',
+  manifest: '/manifest.json', // PWA support
   keywords: [
     'jual beli barang bekas',
     'marketplace barang bekas',
@@ -102,9 +103,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <head>
-        {/* Preconnect to Supabase for faster API calls */}
+        {/* Critical performance optimizations */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#111827" />
+
+        {/* Preconnect to critical domains for faster resource loading */}
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+        <link rel="preconnect" href="https://api.dicebear.com" />
+        <link rel="preconnect" href="https://picsum.photos" />
+
+        {/* Resource hints for better performance */}
+        <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
 
         {/* JSON-LD for Google */}
         <script

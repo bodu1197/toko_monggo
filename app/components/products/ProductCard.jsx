@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSupabaseClient } from '../SupabaseClientProvider';
+import { generateBlurPlaceholder } from '../../utils/imageOptimization';
 
 /**
  * 상품 정보를 표시하는 공통 카드 컴포넌트 - Tailwind CSS v4
@@ -160,14 +161,19 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
             src={product.image}
             alt={product.title}
             fill
-            sizes="(max-width: 768px) 50vw, 25vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover"
             priority={priority}
             loading={priority ? undefined : "lazy"}
-            fetchPriority={priority ? "high" : "low"}
             quality={75}
             placeholder="blur"
-            blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+            blurDataURL={generateBlurPlaceholder(4, 3)}
+            onLoadingComplete={(result) => {
+              if (typeof window !== 'undefined' && result.naturalWidth === 0) {
+                // Handle broken images
+                console.error('Broken image detected:', product.image);
+              }
+            }}
           />
         ) : (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400 text-sm">

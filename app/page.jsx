@@ -6,12 +6,22 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 
 import { useScreenSize } from './hooks/useScreenSize';
-import LoadingState from './components/common/LoadingState';
-import ProductCard from './components/products/ProductCard';
-import Advertisement from './components/Advertisement';
 import { useSupabaseClient } from './components/SupabaseClientProvider';
 
-// Dynamic import only for Footer (non-critical, PC only)
+// Dynamic imports for better performance
+const LoadingState = dynamic(() => import('./components/common/LoadingState'), {
+  loading: () => <div className="col-span-full text-center py-10">Loading...</div>
+});
+
+const ProductCard = dynamic(() => import('./components/products/ProductCard'), {
+  loading: () => <div className="bg-[#1f2937] rounded-lg h-[300px] animate-pulse" />
+});
+
+const Advertisement = dynamic(() => import('./components/Advertisement'), {
+  loading: () => null,
+  ssr: false
+});
+
 const Footer = dynamic(() => import('./components/Footer'), {
   loading: () => null,
   ssr: false

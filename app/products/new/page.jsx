@@ -35,6 +35,17 @@ export default function NewProductPage() {
   const [images, setImages] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
 
+  // Cleanup object URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      images.forEach(url => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+      });
+    };
+  }, [images]);
+
   // Load provinces from DB
   const loadProvinces = useCallback(async () => {
     try {
@@ -219,6 +230,12 @@ export default function NewProductPage() {
   };
 
   const removeImage = (index) => {
+    // Revoke the object URL to free memory
+    const urlToRevoke = images[index];
+    if (urlToRevoke && urlToRevoke.startsWith('blob:')) {
+      URL.revokeObjectURL(urlToRevoke);
+    }
+
     setImages(images.filter((_, i) => i !== index));
     setImageFiles(imageFiles.filter((_, i) => i !== index));
   };

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { useSupabaseClient } from './SupabaseClientProvider';
 
 /**
@@ -65,13 +66,23 @@ export default function Advertisement({ position, className = '' }) {
 
   return (
     <div className={`advertisement-container ${className}`}>
-      {ads.map((ad) => (
-        <div
-          key={ad.id}
-          className="advertisement-item"
-          dangerouslySetInnerHTML={{ __html: ad.ad_code }}
-        />
-      ))}
+      {ads.map((ad) => {
+        // Sanitize ad code to prevent XSS attacks
+        const sanitizedHtml = DOMPurify.sanitize(ad.ad_code, {
+          ADD_TAGS: ['script'], // Allow script tags for ad tracking
+          ADD_ATTR: ['onclick', 'onload'], // Allow event handlers for ads
+          FORCE_BODY: true,
+          RETURN_TRUSTED_TYPE: true
+        });
+
+        return (
+          <div
+            key={ad.id}
+            className="advertisement-item"
+            dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+          />
+        );
+      })}
     </div>
   );
 }

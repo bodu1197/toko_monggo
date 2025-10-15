@@ -1,7 +1,16 @@
-export default function sitemap() {
+import { createBrowserClient } from '@supabase/ssr';
+
+export default async function sitemap() {
   const baseUrl = 'https://tokomonggo.com';
 
-  return [
+  // Initialize Supabase client
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  // Static pages
+  const staticPages = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -57,4 +66,59 @@ export default function sitemap() {
       priority: 0.7,
     },
   ];
+
+  try {
+    // Get all active products for dynamic sitemap
+    const { data: products } = await supabase
+      .from('products')
+      .select('id, updated_at')
+      .eq('status', 'active')
+      .order('updated_at', { ascending: false })
+      .limit(1000); // Limit to prevent huge sitemaps
+
+    const productPages = products?.map((product) => ({
+      url: `${baseUrl}/products/${product.id}`,
+      lastModified: new Date(product.updated_at),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    })) || [];
+
+    // Get all categories for category pages
+    const { data: categories } = await supabase
+      .from('categories')
+      .select('name, parent_category')
+      .order('name');
+
+    const categoryPages = [];
+    const uniqueParentCategories = new Set();
+
+    categories?.forEach(cat => {
+      if (cat.parent_category) {
+        uniqueParentCategories.add(cat.parent_category);
+        // Add subcategory pages
+        categoryPages.push({
+          url: `${baseUrl}/category/${encodeURIComponent(cat.parent_category)}/${encodeURIComponent(cat.name)}`,
+          lastModified: new Date(),
+          changeFrequency: 'weekly',
+          priority: 0.8,
+        });
+      }
+    });
+
+    // Add parent category pages
+    [...uniqueParentCategories].forEach(parentCat => {
+      categoryPages.push({
+        url: `${baseUrl}/category/${encodeURIComponent(parentCat)}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+      });
+    });
+
+    return [...staticPages, ...productPages, ...categoryPages];
+  } catch (error) {
+    console.error('Error generating sitemap:', error);
+    // Return static pages only if database fails
+    return staticPages;
+  }
 }

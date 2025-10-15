@@ -1,11 +1,20 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { createBrowserClient } from '@supabase/ssr';
 import ProductCard from '../../components/products/ProductCard';
-import Advertisement from '../../components/Advertisement';
+import {
+  ImageGallery,
+  ShareModal,
+  ReportModal,
+  Advertisement,
+  CommentsLoading
+} from '../../components/products/ProductDetailComponents';
+
+// Lazy load comments section
+const CommentsSection = lazy(() => import('../../components/products/CommentsSection'));
 
 export default function ProductDetailPage() {
   const router = useRouter();
