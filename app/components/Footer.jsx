@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function Footer() {
   return (
@@ -81,7 +82,7 @@ export default function Footer() {
           fontSize: '14px',
           flexWrap: 'wrap'
         }}>
-          <a href="/about" style={{
+          <Link href="/about" style={{
             color: 'var(--text-secondary)',
             textDecoration: 'none',
             transition: 'color 0.3s ease'
@@ -89,8 +90,8 @@ export default function Footer() {
           onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
           onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
             Tentang Kami
-          </a>
-          <a href="/terms" style={{
+          </Link>
+          <Link href="/terms" style={{
             color: 'var(--text-secondary)',
             textDecoration: 'none',
             transition: 'color 0.3s ease'
@@ -98,8 +99,8 @@ export default function Footer() {
           onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
           onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
             Syarat & Ketentuan
-          </a>
-          <a href="/privacy" style={{
+          </Link>
+          <Link href="/privacy" style={{
             color: 'var(--text-secondary)',
             textDecoration: 'none',
             transition: 'color 0.3s ease'
@@ -107,8 +108,8 @@ export default function Footer() {
           onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
           onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
             Kebijakan Privasi
-          </a>
-          <a href="/help" style={{
+          </Link>
+          <Link href="/help" style={{
             color: 'var(--text-secondary)',
             textDecoration: 'none',
             transition: 'color 0.3s ease'
@@ -116,7 +117,7 @@ export default function Footer() {
           onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
           onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
             Pusat Bantuan
-          </a>
+          </Link>
         </div>
 
         {/* 회사 정보 */}
