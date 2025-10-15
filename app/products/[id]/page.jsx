@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { createBrowserClient } from '@supabase/ssr';
 import ProductCard from '../../components/products/ProductCard';
+import Advertisement from '../../components/Advertisement';
 
 export default function ProductDetailPage() {
   const router = useRouter();
@@ -889,6 +890,9 @@ export default function ProductDetailPage() {
                 </div>
               </div>
             )}
+
+            {/* Advertisement Section - Product Detail Page */}
+            <Advertisement position="product_detail" className="mt-6" />
           </div>
 
           {/* Right Column */}

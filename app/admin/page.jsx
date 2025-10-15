@@ -14,7 +14,7 @@ export default function AdminPage() {
   const { user, profile, loading } = useAuth({ redirectTo: '/login' }); // useAuth 훅 적용
   const supabase = useSupabaseClient(); // Get the client instance here
   const [isAuthorized, setIsAuthorized] = useState(false); // 관리자 권한 확인을 위해 유지
-  const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, users, products, access
+  const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, users, products, access, layout
   const isMobile = useScreenSize();
 
   // Dashboard stats
@@ -55,6 +55,16 @@ export default function AdminPage() {
   const [trashProducts, setTrashProducts] = useState([]);
   const [filteredTrashProducts, setFilteredTrashProducts] = useState([]);
   const [trashSearchQuery, setTrashSearchQuery] = useState('');
+
+  // Layout/Advertisement management
+  const [advertisements, setAdvertisements] = useState([]);
+  const [editingAd, setEditingAd] = useState(null);
+  const [adFormData, setAdFormData] = useState({
+    name: '',
+    position: 'header',
+    ad_code: '',
+    is_active: true
+  });
 
   const fetchDashboardStats = useCallback(async () => {
     try {
@@ -681,6 +691,20 @@ export default function AdminPage() {
     }
   }, [supabase, setRegionalStats]);
 
+  const fetchAdvertisements = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('advertisements')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setAdvertisements(data || []);
+    } catch (error) {
+      console.error('Error fetching advertisements:', error);
+    }
+  }, [supabase]);
+
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -828,6 +852,8 @@ export default function AdminPage() {
           fetchReports();
         } else if (activeTab === 'trash') {
           fetchTrashProducts();
+        } else if (activeTab === 'layout') {
+          fetchAdvertisements();
         }
       } else if (user) {
         // 로그인했지만 관리자가 아님
@@ -837,7 +863,7 @@ export default function AdminPage() {
         // 로그인하지 않음 (useAuth에서 이미 /login으로 리디렉션)
       }
     }
-  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, fetchRegionalStats, fetchDashboardStats, fetchUsers, fetchProducts, fetchTrashProducts, router]);
+  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, fetchRegionalStats, fetchDashboardStats, fetchUsers, fetchProducts, fetchTrashProducts, fetchAdvertisements, router]);
 
   if (loading || !isAuthorized) {
     return (
@@ -969,6 +995,19 @@ export default function AdminPage() {
               </button>
               <button
                 className={`flex items-center gap-3 py-3.5 px-4 border-none rounded-lg text-[#9ca3af] text-[15px] font-medium cursor-pointer transition-all text-left ${
+                  activeTab === 'layout' ? 'bg-[#6366f1] text-white' : 'bg-transparent hover:bg-[#374151] hover:text-[#f9fafb]'
+                }`}
+                onClick={() => setActiveTab('layout')}
+              >
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="3" y1="9" x2="21" y2="9"/>
+                  <line x1="9" y1="21" x2="9" y2="9"/>
+                </svg>
+                <span>레이아웃 관리</span>
+              </button>
+              <button
+                className={`flex items-center gap-3 py-3.5 px-4 border-none rounded-lg text-[#9ca3af] text-[15px] font-medium cursor-pointer transition-all text-left ${
                   activeTab === 'trash' ? 'bg-[#6366f1] text-white' : 'bg-transparent hover:bg-[#374151] hover:text-[#f9fafb]'
                 }`}
                 onClick={() => setActiveTab('trash')}
@@ -1037,6 +1076,14 @@ export default function AdminPage() {
                 onClick={() => setActiveTab('regional')}
               >
                 지역
+              </button>
+              <button
+                className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
+                  activeTab === 'layout' ? 'bg-[#6366f1] text-white' : 'bg-transparent text-[#9ca3af]'
+                }`}
+                onClick={() => setActiveTab('layout')}
+              >
+                레이아웃
               </button>
               <button
                 className={`py-2.5 px-4 border-none rounded-lg text-sm font-medium cursor-pointer transition-all whitespace-nowrap ${
@@ -1753,6 +1800,250 @@ export default function AdminPage() {
                     <p>휴지통이 비어 있습니다</p>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Layout Management Tab */}
+          {activeTab === 'layout' && (
+            <div>
+              <h2 className="text-[1.75rem] font-bold text-[#f9fafb] mb-6">레이아웃 관리</h2>
+
+              {/* Advertisement Management Section */}
+              <div className="bg-[#1f2937] border border-[#374151] rounded-2xl p-6 mb-6">
+                <h3 className="text-xl font-bold text-[#f9fafb] mb-4">광고 관리</h3>
+
+                {/* Add/Edit Advertisement Form */}
+                <div className="bg-[#111827] border border-[#374151] rounded-xl p-5 mb-6">
+                  <h4 className="text-lg font-semibold text-[#f9fafb] mb-4">
+                    {editingAd ? '광고 수정' : '새 광고 추가'}
+                  </h4>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                        광고 이름
+                      </label>
+                      <input
+                        type="text"
+                        value={adFormData.name}
+                        onChange={(e) => setAdFormData({...adFormData, name: e.target.value})}
+                        placeholder="예: 메인 배너 광고"
+                        className="w-full px-4 py-2.5 bg-[#1f2937] border border-[#374151] rounded-lg text-[#f9fafb] focus:outline-none focus:ring-2 focus:ring-[#6366f1]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                        광고 위치
+                      </label>
+                      <select
+                        value={adFormData.position}
+                        onChange={(e) => setAdFormData({...adFormData, position: e.target.value})}
+                        className="w-full px-4 py-2.5 bg-[#1f2937] border border-[#374151] rounded-lg text-[#f9fafb] focus:outline-none focus:ring-2 focus:ring-[#6366f1]"
+                      >
+                        <option value="header">헤더</option>
+                        <option value="sidebar">사이드바</option>
+                        <option value="footer">푸터</option>
+                        <option value="between_products">상품 목록 사이</option>
+                        <option value="product_detail">상품 상세페이지</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                        광고 코드 (Google Ads 스크립트 또는 HTML)
+                      </label>
+                      <textarea
+                        value={adFormData.ad_code}
+                        onChange={(e) => setAdFormData({...adFormData, ad_code: e.target.value})}
+                        placeholder="<script>...</script> 또는 HTML 코드를 입력하세요"
+                        rows={8}
+                        className="w-full px-4 py-2.5 bg-[#1f2937] border border-[#374151] rounded-lg text-[#f9fafb] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#6366f1]"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="is_active"
+                        checked={adFormData.is_active}
+                        onChange={(e) => setAdFormData({...adFormData, is_active: e.target.checked})}
+                        className="w-4 h-4 rounded border-[#374151] bg-[#1f2937] text-[#6366f1] focus:ring-2 focus:ring-[#6366f1]"
+                      />
+                      <label htmlFor="is_active" className="text-sm font-medium text-[#9ca3af]">
+                        활성화
+                      </label>
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        onClick={async () => {
+                          try {
+                            if (!adFormData.name || !adFormData.ad_code) {
+                              alert('광고 이름과 코드를 입력해주세요.');
+                              return;
+                            }
+
+                            if (editingAd) {
+                              // Update existing ad
+                              const { error } = await supabase
+                                .from('advertisements')
+                                .update({
+                                  name: adFormData.name,
+                                  position: adFormData.position,
+                                  ad_code: adFormData.ad_code,
+                                  is_active: adFormData.is_active
+                                })
+                                .eq('id', editingAd.id);
+
+                              if (error) throw error;
+                              alert('광고가 수정되었습니다.');
+                            } else {
+                              // Insert new ad
+                              const { error } = await supabase
+                                .from('advertisements')
+                                .insert({
+                                  name: adFormData.name,
+                                  position: adFormData.position,
+                                  ad_code: adFormData.ad_code,
+                                  is_active: adFormData.is_active
+                                });
+
+                              if (error) throw error;
+                              alert('광고가 추가되었습니다.');
+                            }
+
+                            // Reset form
+                            setAdFormData({
+                              name: '',
+                              position: 'header',
+                              ad_code: '',
+                              is_active: true
+                            });
+                            setEditingAd(null);
+                            fetchAdvertisements();
+                          } catch (error) {
+                            console.error('Error saving advertisement:', error);
+                            alert('광고 저장 중 오류가 발생했습니다.');
+                          }
+                        }}
+                        className="px-6 py-2.5 bg-[#6366f1] text-white rounded-lg font-medium hover:bg-[#5558e3] transition-colors"
+                      >
+                        {editingAd ? '수정하기' : '추가하기'}
+                      </button>
+
+                      {editingAd && (
+                        <button
+                          onClick={() => {
+                            setEditingAd(null);
+                            setAdFormData({
+                              name: '',
+                              position: 'header',
+                              ad_code: '',
+                              is_active: true
+                            });
+                          }}
+                          className="px-6 py-2.5 bg-[#374151] text-white rounded-lg font-medium hover:bg-[#4b5563] transition-colors"
+                        >
+                          취소
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Advertisement List */}
+                <div>
+                  <h4 className="text-lg font-semibold text-[#f9fafb] mb-4">등록된 광고 목록</h4>
+
+                  {advertisements.length === 0 ? (
+                    <div className="text-center py-12 text-[#6b7280]">
+                      등록된 광고가 없습니다.
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {advertisements.map((ad) => (
+                        <div
+                          key={ad.id}
+                          className="bg-[#111827] border border-[#374151] rounded-xl p-4 hover:border-[#6366f1] transition-colors"
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <h5 className="text-base font-semibold text-[#f9fafb]">{ad.name}</h5>
+                                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                  ad.is_active
+                                    ? 'bg-emerald-500/20 text-emerald-400'
+                                    : 'bg-gray-500/20 text-gray-400'
+                                }`}>
+                                  {ad.is_active ? '활성' : '비활성'}
+                                </span>
+                              </div>
+                              <p className="text-sm text-[#9ca3af]">
+                                위치: <span className="text-[#6366f1]">
+                                  {ad.position === 'header' ? '헤더' :
+                                   ad.position === 'sidebar' ? '사이드바' :
+                                   ad.position === 'footer' ? '푸터' :
+                                   ad.position === 'between_products' ? '상품 목록 사이' :
+                                   '상품 상세페이지'}
+                                </span>
+                              </p>
+                            </div>
+
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  setEditingAd(ad);
+                                  setAdFormData({
+                                    name: ad.name,
+                                    position: ad.position,
+                                    ad_code: ad.ad_code,
+                                    is_active: ad.is_active
+                                  });
+                                }}
+                                className="px-3 py-1.5 bg-blue-500/20 text-blue-400 rounded-lg text-sm font-medium hover:bg-blue-500/30 transition-colors"
+                              >
+                                수정
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  if (!confirm('이 광고를 삭제하시겠습니까?')) return;
+
+                                  try {
+                                    const { error } = await supabase
+                                      .from('advertisements')
+                                      .delete()
+                                      .eq('id', ad.id);
+
+                                    if (error) throw error;
+                                    alert('광고가 삭제되었습니다.');
+                                    fetchAdvertisements();
+                                  } catch (error) {
+                                    console.error('Error deleting advertisement:', error);
+                                    alert('광고 삭제 중 오류가 발생했습니다.');
+                                  }
+                                }}
+                                className="px-3 py-1.5 bg-red-500/20 text-red-400 rounded-lg text-sm font-medium hover:bg-red-500/30 transition-colors"
+                              >
+                                삭제
+                              </button>
+                            </div>
+                          </div>
+
+                          <details className="mt-3">
+                            <summary className="text-sm text-[#6b7280] cursor-pointer hover:text-[#9ca3af]">
+                              광고 코드 보기
+                            </summary>
+                            <pre className="mt-2 p-3 bg-[#0d1117] border border-[#374151] rounded-lg text-xs text-[#9ca3af] overflow-x-auto">
+                              {ad.ad_code}
+                            </pre>
+                          </details>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}

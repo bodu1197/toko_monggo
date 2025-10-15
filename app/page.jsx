@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic';
 import { useScreenSize } from './hooks/useScreenSize';
 import LoadingState from './components/common/LoadingState';
 import ProductCard from './components/products/ProductCard';
+import Advertisement from './components/Advertisement';
 import { useSupabaseClient } from './components/SupabaseClientProvider';
 
 // Dynamic import only for Footer (non-critical, PC only)
@@ -935,14 +936,23 @@ export default function HomePage() {
                 <LoadingState message="Memuat produk..." />
               </div>
             ) : filteredProducts.length > 0 ? (
-              filteredProducts.map((product, index) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  context="home"
-                  priority={index < 4}
-                />
-              ))
+              <>
+                {filteredProducts.map((product, index) => (
+                  <React.Fragment key={product.id}>
+                    <ProductCard
+                      product={product}
+                      context="home"
+                      priority={index < 4}
+                    />
+                    {/* Insert advertisement after every 8 products */}
+                    {(index + 1) % 8 === 0 && (
+                      <div className="col-span-full">
+                        <Advertisement position="between_products" className="my-4" />
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+              </>
             ) : (
               <div className="col-span-full text-center py-20 px-5 text-[#9ca3af]">
                 <div className="text-[80px] mb-6 opacity-50">🔍</div>
