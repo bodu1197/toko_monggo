@@ -51,6 +51,24 @@ export default function ProfilePage() {
     }
   }, [supabaseClient]);
 
+  const handleRenewProduct = useCallback(async (productId) => {
+    if (!confirm('Perpanjang iklan ini 30 hari lagi?')) return;
+
+    try {
+      const { error } = await supabaseClient.rpc('renew_product', {
+        product_id: productId
+      });
+
+      if (error) throw error;
+
+      await fetchUserProducts(user.id);
+      alert('Iklan berhasil diperpanjang 30 hari!');
+    } catch (error) {
+      console.error('Error renewing product:', error);
+      alert('Gagal memperpanjang iklan');
+    }
+  }, [supabaseClient, user, fetchUserProducts]);
+
   const fetchFavoriteProducts = useCallback(async (userId) => {
     try {
       const { data, error } = await supabaseClient
@@ -474,15 +492,16 @@ export default function ProfilePage() {
                       price: product.price,
                       city: product.regencies?.regency_name,
                       image: product.product_images?.[0]?.image_url,
-                      status: product.status
+                      status: product.status,
+                      expires_at: product.expires_at
                     }}
                     context="profile"
                     onDelete={handleDeleteProduct}
                     onStatusChange={handleStatusChange}
+                    onRenew={handleRenewProduct}
                   />
                 ))}
-              </div>
-            )}
+              </div>            )}
           </div>
         )}
 

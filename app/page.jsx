@@ -145,7 +145,7 @@ export default function HomePage() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error} = await supabase
         .from('products')
         .select(`
           *,
@@ -164,6 +164,7 @@ export default function HomePage() {
           )
         `)
         .eq('status', 'active')
+        .gt('expires_at', new Date().toISOString())  // Only non-expired products
         .order('created_at', { ascending: false })
         .limit(50);
 
