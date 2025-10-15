@@ -837,7 +837,7 @@ export default function AdminPage() {
         // 로그인하지 않음 (useAuth에서 이미 /login으로 리디렉션)
       }
     }
-  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, fetchRegionalStats, fetchDashboardStats, fetchUsers, fetchProducts, router]);
+  }, [loading, user, profile, activeTab, fetchAccessStats, fetchReports, fetchRegionalStats, fetchDashboardStats, fetchUsers, fetchProducts, fetchTrashProducts, router]);
 
   if (loading || !isAuthorized) {
     return (

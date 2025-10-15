@@ -270,7 +270,7 @@ export default function EditProductPage() {
     loadProvinces();
     loadMainCategories();
     checkUserAndLoadProduct();
-  }, [loadProvinces, loadMainCategories, checkUserAndLoadProduct]);
+  }, [params.id, loadProvinces, loadMainCategories, checkUserAndLoadProduct]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
