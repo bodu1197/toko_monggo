@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
 import {
@@ -37,30 +37,24 @@ export default function NotificationSettingsPage() {
     email_enabled: true
   });
 
-  useEffect(() => {
-    checkAuth();
-    checkNotificationStatus();
-    loadPreferences();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       router.push('/login');
       return;
     }
     setUser(user);
-  };
+  }, [supabase, router]);
 
-  const checkNotificationStatus = async () => {
+  const checkNotificationStatus = useCallback(async () => {
     if (!isNotificationSupported()) return;
 
     const subscribed = await checkSubscription();
     setIsSubscribed(subscribed);
     setPushEnabled(subscribed);
-  };
+  }, []);
 
-  const loadPreferences = async () => {
+  const loadPreferences = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -88,7 +82,13 @@ export default function NotificationSettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
+
+  useEffect(() => {
+    checkAuth();
+    checkNotificationStatus();
+    loadPreferences();
+  }, [checkAuth, checkNotificationStatus, loadPreferences]);
 
   const handleTogglePush = async () => {
     if (!user) return;

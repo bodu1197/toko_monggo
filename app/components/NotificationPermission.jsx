@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   isNotificationSupported,
   requestNotificationPermission,
@@ -15,11 +15,7 @@ export default function NotificationPermission({ user, supabase }) {
   const [loading, setLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  useEffect(() => {
-    checkNotificationStatus();
-  }, []);
-
-  const checkNotificationStatus = async () => {
+  const checkNotificationStatus = useCallback(async () => {
     if (!isNotificationSupported() || !user) return;
 
     const isSubbed = await checkSubscription();
@@ -30,7 +26,11 @@ export default function NotificationPermission({ user, supabase }) {
     if (!isSubbed && !dismissed) {
       setShowBanner(true);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    checkNotificationStatus();
+  }, [checkNotificationStatus]);
 
   const handleEnableNotifications = async () => {
     if (!user) {
