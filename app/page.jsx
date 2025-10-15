@@ -963,7 +963,9 @@ export default function HomePage() {
 
           <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-4 gap-6'}`}>
             {loading ? (
-              <LoadingState message="Memuat produk..." />
+              <div className="col-span-full">
+                <LoadingState message="Memuat produk..." />
+              </div>
             ) : filteredProducts.length > 0 ? (
               filteredProducts.map(product => (
                 <ProductCard key={product.id} product={product} context="home" />
