@@ -41,7 +41,14 @@ export default function Advertisement({ position, className = '' }) {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        setAds(data || []);
+
+        // Randomly select one ad if multiple ads exist
+        if (data && data.length > 0) {
+          const randomIndex = Math.floor(Math.random() * data.length);
+          setAds([data[randomIndex]]);
+        } else {
+          setAds([]);
+        }
       } catch (error) {
         console.error('Error fetching advertisements:', error);
       } finally {
