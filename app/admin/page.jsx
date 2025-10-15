@@ -623,7 +623,7 @@ export default function AdminPage() {
     };
 
     try {
-      // Fetch access logs (assuming access_logs table exists)
+      // Fetch access logs (excluding bot/crawler traffic)
       const { data, error } = await supabase
         .from('access_logs')
         .select('*')
@@ -632,7 +632,21 @@ export default function AdminPage() {
 
       if (error) throw error;
 
-      const logs = data || [];
+      // Filter out bot/crawler traffic
+      const botPatterns = [
+        /bot/i, /crawler/i, /spider/i, /scraper/i,
+        /googlebot/i, /bingbot/i, /yandex/i, /baidu/i,
+        /slurp/i, /duckduck/i, /facebookexternalhit/i,
+        /linkedinbot/i, /twitterbot/i, /whatsapp/i,
+        /telegrambot/i, /applebot/i, /semrush/i, /ahrefs/i,
+        /mj12bot/i, /dotbot/i, /rogerbot/i, /exabot/i,
+        /facebot/i, /ia_archiver/i, /archive.org/i
+      ];
+
+      const logs = (data || []).filter(log => {
+        if (!log.user_agent) return true; // Include if no user agent
+        return !botPatterns.some(pattern => pattern.test(log.user_agent));
+      });
 
       // Process hourly stats (last 24 hours)
       const hourly = processHourlyStats(logs);
