@@ -911,8 +911,13 @@ export default function HomePage() {
                 <LoadingState message="Memuat produk..." />
               </div>
             ) : filteredProducts.length > 0 ? (
-              filteredProducts.map(product => (
-                <ProductCard key={product.id} product={product} context="home" />
+              filteredProducts.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  context="home"
+                  priority={index === 0}
+                />
               ))
             ) : (
               <div className="col-span-full text-center py-20 px-5 text-[#9ca3af]">

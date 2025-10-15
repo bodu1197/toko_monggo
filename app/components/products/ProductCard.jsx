@@ -12,8 +12,9 @@ import { useSupabaseClient } from '../SupabaseClientProvider';
  * @param {'home' | 'profile'} [props.context='home'] - 카드가 사용되는 컨텍스트 (UI 분기용)
  * @param {function} [props.onDelete] - 삭제 버튼 클릭 시 호출될 함수 (profile 컨텍스트용)
  * @param {function} [props.onStatusChange] - 상태 변경 버튼 클릭 시 호출될 함수 (profile 컨텍스트용)
+ * @param {boolean} [props.priority=false] - LCP 이미지 우선 로딩 (첫 번째 카드용)
  */
-export default function ProductCard({ product, context = 'home', onDelete, onStatusChange }) {
+export default function ProductCard({ product, context = 'home', onDelete, onStatusChange, priority = false }) {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -132,7 +133,8 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
             fill
             sizes="(max-width: 768px) 50vw, 25vw"
             className="object-cover"
-            loading="lazy"
+            priority={priority}
+            loading={priority ? undefined : "lazy"}
             quality={75}
             placeholder="blur"
             blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
