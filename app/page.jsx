@@ -3,12 +3,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Footer from './components/Footer';
+import dynamic from 'next/dynamic';
 
 import { useScreenSize } from './hooks/useScreenSize';
 import LoadingState from './components/common/LoadingState';
 import ProductCard from './components/products/ProductCard';
 import { useSupabaseClient } from './components/SupabaseClientProvider';
+
+// Dynamic import only for Footer (non-critical, PC only)
+const Footer = dynamic(() => import('./components/Footer'), {
+  loading: () => null,
+  ssr: false
+});
 
 export default function HomePage() {
   const router = useRouter();

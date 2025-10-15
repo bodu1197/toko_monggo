@@ -29,6 +29,22 @@ const nextConfig = {
     } : false,
   },
 
+  // Production optimization
+  productionBrowserSourceMaps: false, // Disable source maps in production
+
+  // Webpack optimizations
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Client-side optimizations
+      config.optimization = {
+        ...config.optimization,
+        usedExports: true, // Tree shaking
+        sideEffects: false, // Enable aggressive tree shaking
+      };
+    }
+    return config;
+  },
+
   // Images optimization
   images: {
     remotePatterns: [
