@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { createBrowserClient } from '@supabase/ssr';
+import ProductCard from '../../components/products/ProductCard';
 
 export default function ProductDetailPage() {
   const router = useRouter();
@@ -41,6 +42,9 @@ export default function ProductDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
 
+  // Similar products state
+  const [similarProducts, setSimilarProducts] = useState([]);
+
   const fetchCurrentUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
@@ -64,7 +68,8 @@ export default function ProductDetailPage() {
             province_name
           ),
           categories (
-            name
+            name,
+            parent_category
           )
         `)
         .eq('id', params.id)
@@ -92,6 +97,69 @@ export default function ProductDetailPage() {
       setLoading(false);
     }
   }, [supabase, params.id]);
+
+  const fetchSimilarProducts = useCallback(async (productData) => {
+    if (!productData || !productData.categories?.parent_category || !productData.regency_id) {
+      return;
+    }
+
+    try {
+      // First, get all category IDs that have the same parent category
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('categories')
+        .select('category_id')
+        .eq('parent_category', productData.categories.parent_category);
+
+      if (categoriesError) throw categoriesError;
+
+      const categoryIds = categoriesData.map(cat => cat.category_id);
+
+      if (categoryIds.length === 0) {
+        setSimilarProducts([]);
+        return;
+      }
+
+      // Then fetch products with matching categories
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          id,
+          title,
+          price,
+          category_id,
+          regencies (
+            regency_name
+          ),
+          product_images (
+            image_url,
+            order
+          )
+        `)
+        .eq('regency_id', productData.regency_id)
+        .eq('status', 'active')
+        .neq('id', productData.id)
+        .gt('expires_at', new Date().toISOString())
+        .in('category_id', categoryIds)
+        .order('created_at', { ascending: false })
+        .limit(8);
+
+      if (error) throw error;
+
+      // Map to the format expected by ProductCard
+      const formattedProducts = (data || []).map(product => ({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        city: product.regencies?.regency_name || '',
+        province: '',
+        image: product.product_images?.sort((a, b) => a.order - b.order)[0]?.image_url || null
+      }));
+
+      setSimilarProducts(formattedProducts);
+    } catch (error) {
+      console.error('Error fetching similar products:', error);
+    }
+  }, [supabase]);
 
   const handleWhatsApp = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -277,6 +345,12 @@ export default function ProductDetailPage() {
 
     return () => window.removeEventListener('resize', checkMobile);
   }, [params.id, fetchComments, fetchCurrentUser, fetchProduct]);
+
+  useEffect(() => {
+    if (product) {
+      fetchSimilarProducts(product);
+    }
+  }, [product, fetchSimilarProducts]);
 
   useEffect(() => {
     if (currentUser) {
@@ -783,6 +857,38 @@ export default function ProductDetailPage() {
                 )}
               </div>
             </div>
+
+            {/* Similar Products Section */}
+            {similarProducts.length > 0 && (
+              <div className="p-4 lg:p-8 bg-[#1f2937] border border-[#374151] rounded-xl lg:rounded-2xl">
+                <h3 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Produk Serupa</h3>
+
+                {/* Desktop: 2-row grid */}
+                <div className="hidden md:grid grid-cols-4 gap-4">
+                  {similarProducts.map((similarProduct) => (
+                    <ProductCard
+                      key={similarProduct.id}
+                      product={similarProduct}
+                      context="home"
+                    />
+                  ))}
+                </div>
+
+                {/* Mobile: Horizontal scroll */}
+                <div className="md:hidden overflow-x-auto -mx-4 px-4">
+                  <div className="flex gap-3" style={{ width: 'max-content' }}>
+                    {similarProducts.map((similarProduct) => (
+                      <div key={similarProduct.id} style={{ width: '280px' }}>
+                        <ProductCard
+                          product={similarProduct}
+                          context="home"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column */}
