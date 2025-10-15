@@ -19,6 +19,7 @@ const nextConfig = {
   // CSS optimization
   experimental: {
     optimizeCss: true, // Enable CSS optimization (requires critters)
+    optimizePackageImports: ['react', 'react-dom'], // Tree-shake React imports
   },
 
   // Compiler optimizations

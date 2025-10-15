@@ -8,6 +8,8 @@ const inter = Inter({
   display: 'swap', // 폰트 로딩 중에도 텍스트 표시 (FOUT 방지)
   preload: true,   // 폰트 미리 로드
   variable: '--font-inter', // CSS 변수로 사용 가능
+  adjustFontFallback: true, // Reduce layout shift
+  fallback: ['system-ui', 'arial'], // System font fallback
 });
 
 export const metadata = {
