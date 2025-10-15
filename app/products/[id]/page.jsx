@@ -429,7 +429,7 @@ export default function ProductDetailPage() {
   return (
     <div className="min-h-screen bg-[#111827] pb-[100px]">
       {/* Header */}
-      <header className="bg-[#1f2937] border-b border-[#374151] py-4 sticky top-0 z-[100]">
+      <header className="bg-[#1f2937] border-b border-[#374151] py-3 sticky top-0 z-[100]">
         <div className="container flex items-center justify-between">
           <button className="back-btn" onClick={() => router.back()}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -440,7 +440,7 @@ export default function ProductDetailPage() {
         </div>
       </header>
 
-      <div className="container py-8 px-5">
+      <div className="container py-6 px-5">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,900px)_minmax(0,380px)] gap-10 max-w-[1400px] mx-auto items-start justify-center">
           {/* Left Column */}
           <div className="flex flex-col gap-6">
