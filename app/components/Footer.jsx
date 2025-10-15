@@ -127,9 +127,9 @@ export default function Footer() {
           marginBottom: '24px',
           color: 'var(--text-secondary)'
         }}>
-          <p style={{ marginBottom: '8px' }}>(PT) TokoMonggo | CEO: Budi Santoso | NIB: 123-45-67890</p>
-          <p style={{ marginBottom: '8px' }}>Izin Usaha No. 2024-JakartaSelatan-12345</p>
-          <p style={{ marginBottom: '8px' }}>Alamat: Jl. Sudirman No. 123, Lantai 45 (TokoMonggo Tower), Jakarta Selatan, Indonesia</p>
+          <p style={{ marginBottom: '8px', fontWeight: '600' }}>Group Monggo</p>
+          <p style={{ marginBottom: '8px' }}>WeWork - 21 Collyer Quay</p>
+          <p style={{ marginBottom: '8px' }}>21 Collyer Quay, Singapore 049320</p>
           <p style={{ marginBottom: '8px' }}>Email: contact@tokomonggo.com | Layanan Pelanggan: 1588-1234</p>
         </div>
 
@@ -141,7 +141,7 @@ export default function Footer() {
           borderTop: '1px solid var(--border-color)',
           color: 'var(--text-muted)'
         }}>
-          <p>© 2025 TokoMonggo Inc. All rights reserved.</p>
+          <p>© 2025 Group Monggo. All rights reserved.</p>
         </div>
       </div>
     </footer>
