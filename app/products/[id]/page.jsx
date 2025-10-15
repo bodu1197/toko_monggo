@@ -733,7 +733,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Right Column */}
-          <div className="hidden lg:flex flex-col gap-6">
+          <div className="hidden lg:flex flex-col gap-6 sticky top-[73px]">
             {/* Price & Title */}
             <div className="p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
               <h1 className="text-[22px] font-bold text-[#f9fafb] mb-4 leading-snug break-words">
