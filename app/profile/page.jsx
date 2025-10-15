@@ -482,7 +482,7 @@ export default function ProfilePage() {
                 </button>
               </div>
             ) : (
-              <div className={`grid gap-5 md:gap-3 ${isMobile ? 'grid-cols-2' : 'grid-cols-4 md:grid-cols-2'}`}>
+              <div className={`grid gap-5 md:gap-3 ${isMobile ? 'grid-cols-1' : 'grid-cols-4 md:grid-cols-2'}`}>
                 {userProducts.map(product => (
                   <ProductCard
                     key={product.id}
@@ -528,7 +528,7 @@ export default function ProfilePage() {
                 </button>
               </div>
             ) : (
-              <div className={`grid gap-5 md:gap-3 ${isMobile ? 'grid-cols-2' : 'grid-cols-4 md:grid-cols-2'}`}>
+              <div className={`grid gap-5 md:gap-3 ${isMobile ? 'grid-cols-1' : 'grid-cols-4 md:grid-cols-2'}`}>
                 {favoriteProducts.map(product => (
                   <ProductCard
                     key={product.id}
