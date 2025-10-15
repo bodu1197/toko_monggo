@@ -43,7 +43,37 @@ const nextConfig = {
         ...config.optimization,
         usedExports: true, // Tree shaking
         sideEffects: false, // Enable aggressive tree shaking
+        minimize: true, // Ensure minification is enabled
       };
+
+      // Minify with more aggressive settings
+      if (config.optimization.minimizer) {
+        config.optimization.minimizer = config.optimization.minimizer.map(plugin => {
+          if (plugin.constructor.name === 'TerserPlugin') {
+            return {
+              ...plugin,
+              options: {
+                ...plugin.options,
+                terserOptions: {
+                  ...plugin.options?.terserOptions,
+                  compress: {
+                    ...plugin.options?.terserOptions?.compress,
+                    dead_code: true,
+                    drop_console: true,
+                    drop_debugger: true,
+                    pure_funcs: ['console.log', 'console.info', 'console.debug'],
+                    passes: 3, // Multiple passes for better optimization
+                  },
+                  mangle: {
+                    safari10: true,
+                  },
+                },
+              },
+            };
+          }
+          return plugin;
+        });
+      }
     }
     return config;
   },
