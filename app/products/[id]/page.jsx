@@ -520,7 +520,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Description Section */}
-            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-3 lg:order-7">
+            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-3 lg:order-5">
               <h3 className="section-title section-title-md">Deskripsi</h3>
               <p className="text-sm lg:text-[15px] leading-relaxed text-[#9ca3af] whitespace-pre-wrap">{product.description}</p>
 
@@ -599,7 +599,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Comments Section */}
-            <div className="p-4 lg:p-8 bg-[#1f2937] border border-[#374151] rounded-xl lg:rounded-2xl order-4 lg:order-9 mt-4 lg:mt-0">
+            <div className="p-4 lg:p-8 bg-[#1f2937] border border-[#374151] rounded-xl lg:rounded-2xl order-4 lg:order-7 mt-4 lg:mt-0">
               <h3 className="section-title section-title-md">Ulasan & Komentar ({comments.length})</h3>
 
               {/* Comment Form */}
