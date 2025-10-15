@@ -8,7 +8,7 @@ export default function Footer() {
     <footer style={{
       background: '#1f2937',
       borderTop: '1px solid var(--border-color)',
-      padding: '48px 24px',
+      padding: '32px 24px 16px 24px',
       color: 'var(--text-secondary)'
     }}>
       <div style={{
@@ -21,7 +21,7 @@ export default function Footer() {
           display: 'flex',
           justifyContent: 'center',
           gap: '24px',
-          marginBottom: '32px'
+          marginBottom: '20px'
         }}>
           <a href="#" aria-label="Facebook" style={{
             color: 'var(--text-secondary)',
@@ -78,7 +78,7 @@ export default function Footer() {
           display: 'flex',
           justifyContent: 'center',
           gap: '32px',
-          marginBottom: '32px',
+          marginBottom: '20px',
           fontSize: '14px',
           flexWrap: 'wrap'
         }}>
@@ -124,20 +124,19 @@ export default function Footer() {
         <div style={{
           textAlign: 'center',
           fontSize: '14px',
-          marginBottom: '24px',
+          marginBottom: '16px',
           color: 'var(--text-secondary)'
         }}>
-          <p style={{ marginBottom: '8px' }}>WeWork - 21 Collyer Quay</p>
-          <p style={{ marginBottom: '8px' }}>21 Collyer Quay, Singapore 049320</p>
-          <p style={{ marginBottom: '8px' }}>Email: contact@tokomonggo.com</p>
-          <p style={{ marginBottom: '8px', fontWeight: '600' }}>Group Monggo</p>
+          <p style={{ marginBottom: '6px' }}>21 Collyer Quay, Singapore 049320</p>
+          <p style={{ marginBottom: '6px' }}>Email: contact@tokomonggo.com</p>
+          <p style={{ marginBottom: '0', fontWeight: '600' }}>Group Monggo</p>
         </div>
 
         {/* 저작권 */}
         <div style={{
           textAlign: 'center',
           fontSize: '14px',
-          paddingTop: '24px',
+          paddingTop: '16px',
           paddingBottom: '0',
           borderTop: '1px solid var(--border-color)',
           color: 'var(--text-muted)'
