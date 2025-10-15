@@ -520,7 +520,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Description Section */}
-            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-3 lg:order-5">
+            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-3 lg:order-4">
               <h3 className="section-title section-title-md">Deskripsi</h3>
               <p className="text-sm lg:text-[15px] leading-relaxed text-[#9ca3af] whitespace-pre-wrap">{product.description}</p>
 
