@@ -533,7 +533,7 @@ export default function HomePage() {
       <div className={`${isMobile ? 'sticky top-0 z-[1000] bg-[#1f2937]' : 'sticky top-0 z-[1000] bg-[#1f2937] will-change-transform transform-gpu backface-hidden'}`}>
         {/* Header - PC와 모바일 다른 레이아웃 */}
         <header className={`${isMobile ? 'sticky top-0 z-[1000]' : ''} bg-[#1f2937] border-b border-[#374151] relative z-[1] ${isMobile ? 'py-3' : 'py-4'}`}>
-          <div className="container flex items-center justify-between gap-8">
+          <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4 flex items-center justify-between gap-8">
             <div className="flex items-center gap-12">
               <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold whitespace-nowrap cursor-pointer`} onClick={() => router.push('/')}>🛍️ Toko Monggo</h1>
             </div>
@@ -549,7 +549,7 @@ export default function HomePage() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onFocus={() => searchSuggestions.length > 0 && setShowSuggestions(true)}
                       onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                      className="form-input w-full py-3 px-4"
+                      className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                     />
                     {showSuggestions && searchSuggestions.length > 0 && (
                       <div className="absolute top-full left-0 right-0 bg-[#1f2937] border border-[#374151] border-t-0 rounded-b-lg max-h-[300px] overflow-y-auto z-[1001] shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
@@ -571,7 +571,7 @@ export default function HomePage() {
                   </div>
                   <button type="submit" className="py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 flex items-center justify-center hover:bg-[#374151]" disabled={isSearching}>
                     {isSearching ? (
-                      <div className="spinner-sm"></div>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                       <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="11" cy="11" r="8"/>
@@ -586,18 +586,21 @@ export default function HomePage() {
             <div className="flex items-center gap-4">
               {isMobile === false && (
                 <>
-                  <button className="btn-icon btn-icon-md" onClick={() => router.push('/profile')}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <button
+                    className="flex items-center justify-center w-10 h-10 bg-[#374151] border border-[#374151] rounded-lg cursor-pointer transition-all hover:bg-[#111827] hover:border-[#4b5563] hover:-translate-y-0.5"
+                    onClick={() => router.push('/profile')}
+                  >
+                    <svg className="w-5 h-5 text-[#f9fafb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                       <circle cx="12" cy="7" r="4"/>
                     </svg>
                   </button>
-                  <button className="btn-icon btn-icon-md">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <button className="flex items-center justify-center w-10 h-10 bg-[#374151] border border-[#374151] rounded-lg cursor-pointer transition-all hover:bg-[#111827] hover:border-[#4b5563] hover:-translate-y-0.5">
+                    <svg className="w-5 h-5 text-[#f9fafb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                     </svg>
                   </button>
-                  <button className="btn btn-primary" onClick={() => router.push('/products/new')}>
+                  <button className="w-full py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px" onClick={() => router.push('/products/new')}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <line x1="12" y1="5" x2="12" y2="19"/>
                       <line x1="5" y1="12" x2="19" y2="12"/>
@@ -614,7 +617,7 @@ export default function HomePage() {
         {/* Filter Bar - PC는 wrapper 안, 모바일은 wrapper 밖 */}
         {isMobile === false && (
         <section className="bg-[#1f2937] border-b border-[#374151] py-5 relative z-[1]">
-        <div className="container">
+        <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
           {/* Mobile: 검색창도 필터 안에 */}
           {isMobile === true && (
             <div className="flex gap-2 mb-3 pt-4">
@@ -718,7 +721,7 @@ export default function HomePage() {
             )}
 
             {isMobile === false && locationStatus === 'idle' && (
-              <button className="btn btn-primary" onClick={handleNearbyClick}>
+              <button className="w-full py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px" onClick={handleNearbyClick}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="10" r="3"/>
                   <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
@@ -800,7 +803,7 @@ export default function HomePage() {
               </button>
             </div>
             <div className="py-5">
-              <div className="container">
+              <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
                 {/* Mobile: 검색창도 필터 안에 */}
                 <form className="flex gap-2 mb-3 pt-4" onSubmit={handleSearch}>
             <div className="flex-1 relative min-w-[293px] max-w-[293px]">
@@ -833,7 +836,7 @@ export default function HomePage() {
             </div>
             <button type="submit" className="w-[42px] h-[42px] p-0 flex items-center justify-center py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 hover:bg-[#374151]" disabled={isSearching}>
               {isSearching ? (
-                <div className="spinner-sm"></div>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
                 <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8"/>
@@ -953,9 +956,9 @@ export default function HomePage() {
 
       {/* Products Grid */}
       <section className="py-[60px] bg-[#111827]">
-        <div className="container">
-          <div className="section-header">
-            <h3 className="section-title">Produk Terbaru</h3>
+        <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-[1.25rem] font-bold text-[#f9fafb]">Produk Terbaru</h3>
           </div>
 
           <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-4 gap-6'}`}>
@@ -970,7 +973,7 @@ export default function HomePage() {
                 <div className="text-[80px] mb-6 opacity-50">🔍</div>
                 <h3 className="text-2xl mb-3 text-[#f9fafb]">Produk Tidak Ditemukan</h3>
                 <p className="text-base mb-6">Coba ubah filter atau reset pencarian</p>
-                <button className="btn btn-primary" onClick={resetFilters}>
+                <button className="w-full py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px" onClick={resetFilters}>
                   Reset Filter
                 </button>
               </div>

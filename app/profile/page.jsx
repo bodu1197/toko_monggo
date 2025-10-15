@@ -287,15 +287,15 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[#111827] pb-10">
       {/* Header */}
       <header className="bg-[#1f2937] border-b border-[#374151] py-4 sticky top-0 z-[100]">
-        <div className="container flex items-center justify-between">
-          <button className="back-btn" onClick={() => router.back()}>
+        <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4 flex items-center justify-between">
+          <button className="flex items-center gap-2 py-2 px-0 bg-transparent border-none text-[#f9fafb] text-[15px] font-medium cursor-pointer transition-all hover:text-[#9ca3af]" onClick={() => router.back()}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
             Kembali
           </button>
           <h1 className="text-xl font-semibold text-[#f9fafb]">Profil Saya</h1>
-          <button className="logout-btn" onClick={handleLogout}>
+          <button className="flex items-center gap-2 bg-[#374151] border border-[#374151] text-[#f9fafb] text-sm font-medium cursor-pointer px-5 py-2.5 rounded-lg transition-all hover:bg-[#ef4444] hover:border-[#ef4444] hover:text-white" onClick={handleLogout}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
               <polyline points="16 17 21 12 16 7"/>
@@ -306,7 +306,7 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <div className="container max-w-[1200px] mx-auto px-5 md:px-4 py-8 md:py-5">
+      <div className="w-full max-w-[1200px] mx-auto px-5 md:px-4 py-8 md:py-5">
         {/* Profile Info Card */}
         <div className="bg-[#1f2937] border border-[#374151] rounded-2xl p-8 md:p-6 mb-8">
           <div className="flex justify-center mb-6">
@@ -350,29 +350,29 @@ export default function ProfilePage() {
           <div className="text-center mb-6">
             {isEditing ? (
               <div className="max-w-[500px] mx-auto">
-                <div className="form-group">
-                  <label className="form-label">Nama Lengkap</label>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-[#9ca3af] mb-2">Nama Lengkap</label>
                   <input
                     type="text"
                     value={editForm.full_name}
                     onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                    className="form-input"
+                    className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                   />
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Bio</label>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-[#9ca3af] mb-2">Bio</label>
                   <textarea
                     value={editForm.bio}
                     onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                    className="form-input resize-y"
+                    className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280] resize-y"
                     rows="3"
                   />
                 </div>
-                <div className="form-actions">
-                  <button className="btn btn-secondary" onClick={() => setIsEditing(false)}>
+                <div className="flex gap-3 mt-6">
+                  <button className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all text-sm inline-flex items-center justify-center gap-2 bg-[#374151] text-[#f9fafb] border border-[#374151] hover:bg-[#1f2937]" onClick={() => setIsEditing(false)}>
                     Batal
                   </button>
-                  <button className="btn btn-primary" onClick={handleSaveProfile}>
+                  <button className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px" onClick={handleSaveProfile}>
                     Simpan
                   </button>
                 </div>
@@ -396,17 +396,17 @@ export default function ProfilePage() {
           </div>
 
           <div className="grid grid-cols-3 gap-6 md:gap-4 pt-6 border-t border-[#374151]">
-            <div className="stat-item">
-              <span className="stat-number stat-number-lg">{userProducts.length}</span>
-              <span className="stat-label stat-label-sm">Iklan</span>
+            <div className="text-center">
+              <span className="block text-[2rem] font-bold text-[#f9fafb] mb-1">{userProducts.length}</span>
+              <span className="block text-[0.875rem] text-[#9ca3af]">Iklan</span>
             </div>
-            <div className="stat-item">
-              <span className="stat-number stat-number-lg">0</span>
-              <span className="stat-label stat-label-sm">Terjual</span>
+            <div className="text-center">
+              <span className="block text-[2rem] font-bold text-[#f9fafb] mb-1">0</span>
+              <span className="block text-[0.875rem] text-[#9ca3af]">Terjual</span>
             </div>
-            <div className="stat-item">
-              <span className="stat-number stat-number-lg">{favoriteProducts.length}</span>
-              <span className="stat-label stat-label-sm">Favorit</span>
+            <div className="text-center">
+              <span className="block text-[2rem] font-bold text-[#f9fafb] mb-1">{favoriteProducts.length}</span>
+              <span className="block text-[0.875rem] text-[#9ca3af]">Favorit</span>
             </div>
           </div>
         </div>
@@ -451,11 +451,11 @@ export default function ProfilePage() {
         {activeTab === 'products' && (
           <div className="min-h-[400px]">
             {userProducts.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">📦</div>
+              <div className="text-center py-20 px-5 text-[#9ca3af]">
+                <div className="text-[5rem] mb-6 opacity-50">📦</div>
                 <h3>Belum ada iklan</h3>
                 <p>Mulai jual barang bekas Anda sekarang</p>
-                <button className="btn btn-primary" onClick={() => router.push('/products/new')}>
+                <button className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px" onClick={() => router.push('/products/new')}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <line x1="12" y1="5" x2="12" y2="19"/>
                     <line x1="5" y1="12" x2="19" y2="12"/>
@@ -487,8 +487,8 @@ export default function ProfilePage() {
         )}
 
         {activeTab === 'sold' && (
-          <div className="empty-state">
-            <div className="empty-icon">💰</div>
+          <div className="text-center py-20 px-5 text-[#9ca3af]">
+            <div className="text-[5rem] mb-6 opacity-50">💰</div>
             <h3>Belum ada barang terjual</h3>
             <p>Produk yang sudah terjual akan muncul di sini</p>
           </div>
@@ -497,11 +497,11 @@ export default function ProfilePage() {
         {activeTab === 'favorites' && (
           <div className="min-h-[400px]">
             {favoriteProducts.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">❤️</div>
+              <div className="text-center py-20 px-5 text-[#9ca3af]">
+                <div className="text-[5rem] mb-6 opacity-50">❤️</div>
                 <h3>Belum ada favorit</h3>
                 <p>Simpan iklan favorit Anda di sini</p>
-                <button className="btn btn-primary" onClick={() => router.push('/')}>
+                <button className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px" onClick={() => router.push('/')}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                   </svg>

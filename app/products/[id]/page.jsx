@@ -402,9 +402,9 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#111827] pb-[100px]">
-        <div className="loading-container">
-          <div className="spinner-lg"></div>
-          <p>Memuat produk...</p>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] px-10 py-10 text-center">
+          <div className="w-12 h-12 border-4 border-[#374151] border-t-[#6366f1] rounded-full animate-spin"></div>
+          <p className="mt-4 text-[#9ca3af]">Memuat produk...</p>
         </div>
       </div>
     );
@@ -415,7 +415,7 @@ export default function ProductDetailPage() {
       <div className="min-h-screen bg-[#111827] pb-[100px]">
         <div className="flex flex-col items-center justify-center min-h-[60vh] px-10 py-10 text-center">
           <h2 className="text-2xl mb-6 text-[#f9fafb]">Produk tidak ditemukan</h2>
-          <button className="btn btn-primary" onClick={() => router.push('/')}>
+          <button className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px" onClick={() => router.push('/')}>
             Kembali ke Beranda
           </button>
         </div>
@@ -430,8 +430,8 @@ export default function ProductDetailPage() {
     <div className="min-h-screen bg-[#111827] pb-[100px]">
       {/* Header */}
       <header className="bg-[#1f2937] border-b border-[#374151] py-3 sticky top-0 z-[100]">
-        <div className="container flex items-center justify-between">
-          <button className="back-btn" onClick={() => router.back()}>
+        <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4 flex items-center justify-between">
+          <button className="flex items-center gap-2 py-2 px-0 bg-transparent border-none text-[#f9fafb] text-[15px] font-medium cursor-pointer transition-all hover:text-[#9ca3af]" onClick={() => router.back()}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
@@ -440,7 +440,7 @@ export default function ProductDetailPage() {
         </div>
       </header>
 
-      <div className="container !pt-5 pb-6 px-5">
+      <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4 !pt-5 pb-6 px-5">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,900px)_minmax(0,380px)] gap-10 max-w-[1400px] mx-auto items-start justify-center">
           {/* Left Column */}
           <div className="flex flex-col gap-6">
@@ -559,7 +559,7 @@ export default function ProductDetailPage() {
 
             {/* Details Section */}
             <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
-              <h3 className="section-title section-title-md">Detail</h3>
+              <h3 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Detail</h3>
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center pb-4 border-b border-[#374151] last:border-b-0 last:pb-0">
                   <span className="text-sm lg:text-sm text-[#9ca3af]">Kondisi</span>
@@ -574,7 +574,7 @@ export default function ProductDetailPage() {
 
             {/* Description Section */}
             <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
-              <h3 className="section-title section-title-md">Deskripsi</h3>
+              <h3 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Deskripsi</h3>
               <p className="text-sm lg:text-[15px] leading-relaxed text-[#9ca3af] whitespace-pre-wrap">{product.description}</p>
 
               {/* Share & Report Actions */}
@@ -653,7 +653,7 @@ export default function ProductDetailPage() {
 
             {/* Comments Section */}
             <div className="p-4 lg:p-8 bg-[#1f2937] border border-[#374151] rounded-xl lg:rounded-2xl mt-4 lg:mt-0">
-              <h3 className="section-title section-title-md">Ulasan & Komentar ({comments.length})</h3>
+              <h3 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Ulasan & Komentar ({comments.length})</h3>
 
               {/* Comment Form */}
               {currentUser ? (
@@ -695,10 +695,10 @@ export default function ProductDetailPage() {
                   />
 
                   <div className="flex items-center justify-between mt-3 lg:mt-4">
-                    <span className="char-count">{commentText.length}/1000</span>
+                    <span className="text-[0.8125rem] text-[#6b7280] mt-1.5">{commentText.length}/1000</span>
                     <button
                       type="submit"
-                      className="btn btn-primary"
+                      className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px"
                       disabled={submittingComment || !commentText.trim()}
                     >
                       {submittingComment ? 'Mengirim...' : replyTo ? 'Kirim Balasan' : 'Kirim Komentar'}
@@ -708,7 +708,7 @@ export default function ProductDetailPage() {
               ) : (
                 <div className="text-center py-6 lg:py-10 px-4 lg:px-5 bg-[#111827] border border-[#374151] rounded-xl mb-4 lg:mb-8">
                   <p className="text-sm lg:text-[15px] text-[#9ca3af] mb-3 lg:mb-4">Silakan login untuk memberikan komentar</p>
-                  <button className="btn btn-primary" onClick={() => router.push('/login')}>
+                  <button className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px" onClick={() => router.push('/login')}>
                     Login
                   </button>
                 </div>
@@ -842,7 +842,7 @@ export default function ProductDetailPage() {
 
             {/* Seller Info */}
             <div className="p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
-              <h3 className="section-title section-title-md">Penjual</h3>
+              <h3 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Penjual</h3>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-[#374151] border border-[#374151] rounded-full flex items-center justify-center flex-shrink-0">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6 text-[#9ca3af]">
@@ -864,7 +864,7 @@ export default function ProductDetailPage() {
               <div className="flex flex-col gap-2.5">
                 {product?.phone_number && (
                   <button
-                    className="flex items-center justify-center gap-2.5 py-3 px-4 rounded-[10px] text-[15px] font-semibold cursor-pointer transition-all border-0 bg-[#374151] text-[#f9fafb] border border-[#374151] hover:bg-[#111827] hover:-translate-y-0.5"
+                    className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all text-sm inline-flex items-center justify-center gap-2 bg-[#374151] text-[#f9fafb] border border-[#374151] hover:bg-[#1f2937]"
                     onClick={handleCall}
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[18px] h-[18px]">
@@ -899,7 +899,7 @@ export default function ProductDetailPage() {
           <div className="fixed bottom-0 left-0 right-0 bg-[#1f2937] border-t border-[#374151] p-3 grid gap-3 z-[1000]" style={{ gridTemplateColumns: hasPhone && hasWhatsApp ? '1fr 2fr' : '1fr' }}>
             {hasPhone && (
               <button
-                className="flex items-center justify-center gap-2 py-2.5 px-2.5 rounded-[10px] text-[15px] font-semibold cursor-pointer transition-all border-0 bg-[#374151] text-[#f9fafb] border border-[#374151]"
+                className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all text-sm inline-flex items-center justify-center gap-2 bg-[#374151] text-[#f9fafb] border border-[#374151] hover:bg-[#1f2937]"
                 onClick={handleCall}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[18px] h-[18px]">
@@ -994,10 +994,10 @@ export default function ProductDetailPage() {
                   Laporan Anda akan membantu kami menjaga keamanan marketplace.
                 </p>
 
-                <div className="form-group">
-                  <label className="form-label">Alasan Pelaporan *</label>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-[#9ca3af] mb-2">Alasan Pelaporan *</label>
                   <select
-                    className="form-input"
+                    className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                     value={reportReason}
                     onChange={(e) => setReportReason(e.target.value)}
                     required
@@ -1012,17 +1012,17 @@ export default function ProductDetailPage() {
                   </select>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">Keterangan (Opsional)</label>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-[#9ca3af] mb-2">Keterangan (Opsional)</label>
                   <textarea
-                    className="form-input"
+                    className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280] resize-y min-h-[120px]"
                     value={reportDescription}
                     onChange={(e) => setReportDescription(e.target.value)}
                     placeholder="Jelaskan masalah yang Anda temukan..."
                     rows={4}
                     maxLength={500}
                   />
-                  <span className="char-count">{reportDescription.length}/500</span>
+                  <span className="text-[0.8125rem] text-[#6b7280] mt-1.5">{reportDescription.length}/500</span>
                 </div>
               </div>
 

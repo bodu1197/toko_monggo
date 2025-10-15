@@ -511,7 +511,7 @@ export default function EditProductPage() {
     return (
       <div className="min-h-screen bg-[#111827] flex items-center justify-center">
         <div className="text-center">
-          <div className="spinner-large"></div>
+          <div className="w-12 h-12 border-4 border-[#374151] border-t-[#6366f1] rounded-full animate-spin"></div>
           <p className="mt-4 text-[#9ca3af]">Memuat informasi produk...</p>
         </div>
       </div>
@@ -527,7 +527,7 @@ export default function EditProductPage() {
     <div className="min-h-screen bg-[#111827] py-6 pb-10 sm:py-10">
       <div className="max-w-[900px] mx-auto px-5">
         <div className="grid grid-cols-[auto_1fr_auto] items-center gap-5 mb-8 pb-6 border-b border-[#374151]">
-          <button className="back-btn" onClick={() => router.back()}>
+          <button className="flex items-center gap-2 py-2 px-0 bg-transparent border-none text-[#f9fafb] text-[15px] font-medium cursor-pointer transition-all hover:text-[#9ca3af]" onClick={() => router.back()}>
             ← Kembali
           </button>
           <h1 className="text-center text-[28px] font-bold text-[#f9fafb]">Edit Produk</h1>
@@ -537,7 +537,7 @@ export default function EditProductPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* Foto Produk */}
           <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
-            <h2 className="section-title">Foto Produk</h2>
+            <h2 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Foto Produk</h2>
             <p className="text-sm text-[#9ca3af] mb-5">Upload hingga 5 foto produk</p>
 
             <div className="mt-5">
@@ -601,10 +601,10 @@ export default function EditProductPage() {
 
           {/* Info Produk */}
           <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
-            <h2 className="section-title">Informasi Produk</h2>
+            <h2 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Informasi Produk</h2>
 
-            <div className="form-group">
-              <label htmlFor="title" className="form-label">Nama Produk *</label>
+            <div className="mb-6">
+              <label htmlFor="title" className="block text-sm font-medium text-[#9ca3af] mb-2">Nama Produk *</label>
               <input
                 id="title"
                 name="title"
@@ -614,13 +614,13 @@ export default function EditProductPage() {
                 placeholder="Contoh: iPhone 12 Pro 128GB"
                 required
                 maxLength={100}
-                className="form-input"
+                className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
               />
-              <span className="char-count">{formData.title.length}/100</span>
+              <span className="text-[0.8125rem] text-[#6b7280] mt-1.5">{formData.title.length}/100</span>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="description" className="form-label">Deskripsi *</label>
+            <div className="mb-6">
+              <label htmlFor="description" className="block text-sm font-medium text-[#9ca3af] mb-2">Deskripsi *</label>
               <textarea
                 id="description"
                 name="description"
@@ -630,21 +630,21 @@ export default function EditProductPage() {
                 required
                 rows={6}
                 maxLength={2000}
-                className="form-input"
+                className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
               />
-              <span className="char-count">{formData.description.length}/2000</span>
+              <span className="text-[0.8125rem] text-[#6b7280] mt-1.5">{formData.description.length}/2000</span>
             </div>
 
             <div className="grid grid-cols-2 gap-5">
-              <div className="form-group">
-                <label htmlFor="category1" className="form-label">Kategori Utama *</label>
+              <div className="mb-6">
+                <label htmlFor="category1" className="block text-sm font-medium text-[#9ca3af] mb-2">Kategori Utama *</label>
                 <select
                   id="category1"
                   name="category1"
                   value={formData.category1}
                   onChange={handleChange}
                   required
-                  className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
+                  className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280] cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
                 >
                   <option value="">Pilih Kategori</option>
                   {mainCategories.map(cat => (
@@ -653,8 +653,8 @@ export default function EditProductPage() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="category2" className="form-label">Sub Kategori *</label>
+              <div className="mb-6">
+                <label htmlFor="category2" className="block text-sm font-medium text-[#9ca3af] mb-2">Sub Kategori *</label>
                 <select
                   id="category2"
                   name="category2"
@@ -662,7 +662,7 @@ export default function EditProductPage() {
                   onChange={handleChange}
                   required
                   disabled={!formData.category1}
-                  className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
+                  className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280] cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
                 >
                   <option value="">Pilih Sub Kategori</option>
                   {subcategories.map(sub => (
@@ -672,15 +672,15 @@ export default function EditProductPage() {
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="condition" className="form-label">Kondisi *</label>
+            <div className="mb-6">
+              <label htmlFor="condition" className="block text-sm font-medium text-[#9ca3af] mb-2">Kondisi *</label>
               <select
                 id="condition"
                 name="condition"
                 value={formData.condition}
                 onChange={handleChange}
                 required
-                className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
+                className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280] cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
               >
                 <option value="Baru">Baru</option>
                 <option value="Seperti Baru">Seperti Baru</option>
@@ -693,10 +693,10 @@ export default function EditProductPage() {
 
           {/* Harga */}
           <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
-            <h2 className="section-title">Harga</h2>
+            <h2 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Harga</h2>
 
-            <div className="form-group">
-              <label htmlFor="price" className="form-label">Harga (Rp) *</label>
+            <div className="mb-6">
+              <label htmlFor="price" className="block text-sm font-medium text-[#9ca3af] mb-2">Harga (Rp) *</label>
               <input
                 id="price"
                 name="price"
@@ -706,7 +706,7 @@ export default function EditProductPage() {
                 placeholder="0"
                 required
                 min="0"
-                className="form-input"
+                className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
               />
             </div>
 
@@ -724,18 +724,18 @@ export default function EditProductPage() {
 
           {/* Lokasi */}
           <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
-            <h2 className="section-title">Lokasi</h2>
+            <h2 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Lokasi</h2>
 
             <div className="grid grid-cols-2 gap-5">
-              <div className="form-group">
-                <label htmlFor="province" className="form-label">Provinsi *</label>
+              <div className="mb-6">
+                <label htmlFor="province" className="block text-sm font-medium text-[#9ca3af] mb-2">Provinsi *</label>
                 <select
                   id="province"
                   name="province"
                   value={formData.province}
                   onChange={handleChange}
                   required
-                  className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
+                  className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280] cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
                 >
                   <option value="">Pilih Provinsi</option>
                   {provinces.map(province => (
@@ -744,8 +744,8 @@ export default function EditProductPage() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="city" className="form-label">Kota/Kabupaten *</label>
+              <div className="mb-6">
+                <label htmlFor="city" className="block text-sm font-medium text-[#9ca3af] mb-2">Kota/Kabupaten *</label>
                 <select
                   id="city"
                   name="city"
@@ -753,7 +753,7 @@ export default function EditProductPage() {
                   onChange={handleChange}
                   required
                   disabled={!formData.province}
-                  className="form-input cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
+                  className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280] cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_16px_center] pr-10"
                 >
                   <option value="">Pilih Kota</option>
                   {cities.map(city => (
@@ -766,11 +766,11 @@ export default function EditProductPage() {
 
           {/* Kontak */}
           <section className="bg-[#1f2937] border border-[#374151] rounded-2xl p-7">
-            <h2 className="section-title">Kontak</h2>
+            <h2 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Kontak</h2>
             <p className="text-sm text-[#9ca3af] mb-5">Minimal isi 1 nomor kontak</p>
 
-            <div className="form-group">
-              <label htmlFor="whatsapp" className="form-label">Nomor WhatsApp</label>
+            <div className="mb-6">
+              <label htmlFor="whatsapp" className="block text-sm font-medium text-[#9ca3af] mb-2">Nomor WhatsApp</label>
               <input
                 id="whatsapp"
                 name="whatsapp"
@@ -779,13 +779,13 @@ export default function EditProductPage() {
                 onChange={handleChange}
                 placeholder="08123456789"
                 pattern="[0-9]{10,13}"
-                className="form-input"
+                className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
               />
               <p className="text-[13px] text-[#6b7280] mt-1.5">Format: 08xxxxxxxxxx (10-13 digit)</p>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="phone" className="form-label">Nomor Telepon</label>
+            <div className="mb-6">
+              <label htmlFor="phone" className="block text-sm font-medium text-[#9ca3af] mb-2">Nomor Telepon</label>
               <input
                 id="phone"
                 name="phone"
@@ -794,17 +794,17 @@ export default function EditProductPage() {
                 onChange={handleChange}
                 placeholder="08123456789"
                 pattern="[0-9]{10,13}"
-                className="form-input"
+                className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
               />
               <p className="text-[13px] text-[#6b7280] mt-1.5">Format: 08xxxxxxxxxx (10-13 digit)</p>
             </div>
           </section>
 
           {/* Submit Button */}
-          <div className="form-actions">
+          <div className="flex gap-3 mt-6">
             <button
               type="button"
-              className="btn btn-secondary btn-lg"
+              className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all text-sm inline-flex items-center justify-center gap-2 bg-[#374151] text-[#f9fafb] border border-[#374151] hover:bg-[#1f2937]"
               onClick={() => router.back()}
             >
               Batal
@@ -812,11 +812,11 @@ export default function EditProductPage() {
             <button
               type="submit"
               disabled={submitting}
-              className={`btn btn-primary btn-lg ${submitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px ${submitting ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {submitting ? (
                 <>
-                  <span className="spinner"></span>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                   Menyimpan...
                 </>
               ) : (

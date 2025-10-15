@@ -154,8 +154,8 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <div className="form-group">
-                <label htmlFor="email" className="form-label">
+              <div className="mb-6">
+                <label htmlFor="email" className="block text-sm font-medium text-[#9ca3af] mb-2">
                   Email
                 </label>
                 <input
@@ -165,12 +165,12 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nama@email.com"
                   required
-                  className="form-input"
+                  className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="password" className="form-label">
+              <div className="mb-6">
+                <label htmlFor="password" className="block text-sm font-medium text-[#9ca3af] mb-2">
                   Kata Sandi
                 </label>
                 <div className="relative">
@@ -181,7 +181,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    className="form-input"
+                    className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                   />
                   <button
                     type="button"
@@ -206,11 +206,11 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`btn btn-primary btn-full ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                className={`w-full py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
                 {loading ? (
                   <>
-                    <span className="spinner spinner-sm"></span>
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                     Memproses...
                   </>
                 ) : (

@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
               {error}
             </p>
             <button
-              className="btn btn-primary btn-full"
+              className="w-full py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px"
               onClick={() => router.push('/recover')}
             >
               Minta Link Baru
@@ -154,8 +154,8 @@ export default function ResetPasswordPage() {
                 </div>
               )}
 
-              <div className="form-group">
-                <label htmlFor="password" className="form-label">
+              <div className="mb-6">
+                <label htmlFor="password" className="block text-sm font-medium text-[#9ca3af] mb-2">
                   Kata Sandi Baru
                 </label>
                 <div className="relative">
@@ -167,7 +167,7 @@ export default function ResetPasswordPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Minimal 8 karakter"
                     required
-                    className="form-input pr-12"
+                    className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280] pr-12"
                     autoFocus
                   />
                   <button
@@ -183,8 +183,8 @@ export default function ResetPasswordPage() {
                 </p>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="confirmPassword" className="form-label">
+              <div className="mb-6">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#9ca3af] mb-2">
                   Konfirmasi Kata Sandi
                 </label>
                 <div className="relative">
@@ -196,7 +196,7 @@ export default function ResetPasswordPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Ketik ulang kata sandi"
                     required
-                    className="form-input pr-12"
+                    className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280] pr-12"
                   />
                   <button
                     type="button"
@@ -221,11 +221,11 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={loading || !password || !confirmPassword}
-                className="btn btn-primary btn-full"
+                className="w-full py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px"
               >
                 {loading ? (
                   <>
-                    <span className="spinner"></span>
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                     Memproses...
                   </>
                 ) : (

@@ -212,8 +212,8 @@ export default function SignupPage() {
                 </div>
               )}
 
-              <div className="form-group">
-                <label htmlFor="name" className="form-label">
+              <div className="mb-6">
+                <label htmlFor="name" className="block text-sm font-medium text-[#9ca3af] mb-2">
                   Nama Lengkap
                 </label>
                 <input
@@ -224,12 +224,12 @@ export default function SignupPage() {
                   onChange={handleChange}
                   placeholder="Nama Anda"
                   required
-                  className="form-input"
+                  className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="email" className="form-label">
+              <div className="mb-6">
+                <label htmlFor="email" className="block text-sm font-medium text-[#9ca3af] mb-2">
                   Email
                 </label>
                 <input
@@ -240,12 +240,12 @@ export default function SignupPage() {
                   onChange={handleChange}
                   placeholder="nama@email.com"
                   required
-                  className="form-input"
+                  className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="password" className="form-label">
+              <div className="mb-6">
+                <label htmlFor="password" className="block text-sm font-medium text-[#9ca3af] mb-2">
                   Kata Sandi
                 </label>
                 <div className="relative">
@@ -257,7 +257,7 @@ export default function SignupPage() {
                     onChange={handleChange}
                     placeholder="Minimal 8 karakter"
                     required
-                    className="form-input"
+                    className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                   />
                   <button
                     type="button"
@@ -269,8 +269,8 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="confirmPassword" className="form-label">
+              <div className="mb-6">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#9ca3af] mb-2">
                   Konfirmasi Kata Sandi
                 </label>
                 <div className="relative">
@@ -282,7 +282,7 @@ export default function SignupPage() {
                     onChange={handleChange}
                     placeholder="Ketik ulang kata sandi"
                     required
-                    className="form-input"
+                    className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                   />
                   <button
                     type="button"
@@ -294,7 +294,7 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className="mb-6">
                 <label className="flex items-center gap-2 cursor-pointer text-sm text-[#9ca3af]">
                   <input type="checkbox" required className="w-auto cursor-pointer" />
                   <span className="text-[13px]">
@@ -313,11 +313,11 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`btn btn-primary btn-full ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                className={`w-full py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
                 {loading ? (
                   <>
-                    <span className="spinner spinner-sm"></span>
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                     Memproses...
                   </>
                 ) : (
