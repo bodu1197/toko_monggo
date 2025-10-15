@@ -581,7 +581,7 @@ export default function ProductDetailPage() {
 
             {/* Price & Title - Mobile Only */}
             <div className="lg:hidden p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
-              <h1 className="text-[22px] font-bold text-[#f9fafb] mb-4 leading-snug break-words">
+              <h1 className="text-[18px] font-bold text-[#f9fafb] mb-4 leading-snug break-words">
                 {product.title}
               </h1>
               <div className="flex items-center gap-3">
