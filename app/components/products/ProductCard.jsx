@@ -182,9 +182,9 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
       </div>
 
       <div className="p-4 md:p-3.5 flex flex-col bg-gray-800 min-h-[120px] md:min-h-[110px]">
-        <h4 className="text-base md:text-[15px] font-semibold text-white m-0 mb-auto pb-2.5 h-12 md:h-[45px] leading-[1.5] overflow-hidden text-ellipsis [-webkit-line-clamp:2] [-webkit-box-orient:vertical] [display:-webkit-box]">
+        <div className="text-base md:text-[15px] font-semibold text-white m-0 mb-auto pb-2.5 h-12 md:h-[45px] leading-[1.5] overflow-hidden text-ellipsis [-webkit-line-clamp:2] [-webkit-box-orient:vertical] [display:-webkit-box]">
           {product.title}
-        </h4>
+        </div>
         <p className="text-lg md:text-[17px] font-bold text-emerald-500 my-2 md:my-1.5 mb-1">
           Rp {product.price?.toLocaleString('id-ID') || 0}
         </p>
