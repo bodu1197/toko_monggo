@@ -851,7 +851,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-[#111827]">
       {/* Header */}
       <header className="bg-[#1f2937] border-b border-[#374151] py-4 sticky top-0 z-[1000]">
-        <div className="container">
+        <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <h1 className="text-2xl max-md:text-xl font-bold text-[#f9fafb]">🛡️ 관리자 대시보드</h1>
@@ -1065,8 +1065,8 @@ export default function AdminPage() {
                     </svg>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <div className="stat-number stat-number-lg max-md:text-[28px]">{stats.totalUsers}</div>
-                    <div className="stat-label stat-label-md max-md:text-[13px]">총 회원 수</div>
+                    <div className="block text-[2rem] font-bold text-[#f9fafb] mb-1 max-md:text-[28px]">{stats.totalUsers}</div>
+                    <div className="block text-[0.875rem] text-[#9ca3af] max-md:text-[13px]">총 회원 수</div>
                   </div>
                 </div>
 
@@ -1077,8 +1077,8 @@ export default function AdminPage() {
                     </svg>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <div className="stat-number stat-number-lg max-md:text-[28px]">{stats.totalProducts}</div>
-                    <div className="stat-label stat-label-md max-md:text-[13px]">총 상품 수</div>
+                    <div className="block text-[2rem] font-bold text-[#f9fafb] mb-1 max-md:text-[28px]">{stats.totalProducts}</div>
+                    <div className="block text-[0.875rem] text-[#9ca3af] max-md:text-[13px]">총 상품 수</div>
                   </div>
                 </div>
 
@@ -1089,8 +1089,8 @@ export default function AdminPage() {
                     </svg>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <div className="stat-number stat-number-lg max-md:text-[28px]">{stats.activeProducts}</div>
-                    <div className="stat-label stat-label-md max-md:text-[13px]">활성 상품</div>
+                    <div className="block text-[2rem] font-bold text-[#f9fafb] mb-1 max-md:text-[28px]">{stats.activeProducts}</div>
+                    <div className="block text-[0.875rem] text-[#9ca3af] max-md:text-[13px]">활성 상품</div>
                   </div>
                 </div>
 
@@ -1103,8 +1103,8 @@ export default function AdminPage() {
                     </svg>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <div className="stat-number stat-number-lg max-md:text-[28px]">{stats.totalReports}</div>
-                    <div className="stat-label stat-label-md max-md:text-[13px]">총 신고 수</div>
+                    <div className="block text-[2rem] font-bold text-[#f9fafb] mb-1 max-md:text-[28px]">{stats.totalReports}</div>
+                    <div className="block text-[0.875rem] text-[#9ca3af] max-md:text-[13px]">총 신고 수</div>
                   </div>
                 </div>
               </div>
@@ -1231,7 +1231,7 @@ export default function AdminPage() {
                 </table>
 
                 {filteredUsers.length === 0 && (
-                  <div className="empty-state">
+                  <div className="text-center py-20 px-5 text-[#9ca3af]">
                     <p>검색 결과가 없습니다</p>
                   </div>
                 )}
@@ -1344,7 +1344,7 @@ export default function AdminPage() {
                 </table>
 
                 {filteredProducts.length === 0 && (
-                  <div className="empty-state">
+                  <div className="text-center py-20 px-5 text-[#9ca3af]">
                     <p>검색 결과가 없습니다</p>
                   </div>
                 )}
@@ -1495,7 +1495,7 @@ export default function AdminPage() {
                 </table>
 
                 {filteredReports.length === 0 && (
-                  <div className="empty-state">
+                  <div className="text-center py-20 px-5 text-[#9ca3af]">
                     <p>신고 내역이 없습니다</p>
                   </div>
                 )}
@@ -1628,7 +1628,7 @@ export default function AdminPage() {
                 </table>
 
                 {regionalStats.length === 0 && (
-                  <div className="empty-state">
+                  <div className="text-center py-20 px-5 text-[#9ca3af]">
                     <p>지역 데이터가 없습니다</p>
                   </div>
                 )}
@@ -1749,7 +1749,7 @@ export default function AdminPage() {
                 </table>
 
                 {filteredTrashProducts.length === 0 && (
-                  <div className="empty-state">
+                  <div className="text-center py-20 px-5 text-[#9ca3af]">
                     <p>휴지통이 비어 있습니다</p>
                   </div>
                 )}
