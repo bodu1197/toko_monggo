@@ -444,59 +444,6 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,900px)_minmax(0,380px)] gap-10 max-w-[1400px] mx-auto items-start justify-center">
           {/* Left Column */}
           <div className="flex flex-col gap-6">
-            {/* Price & Title - Mobile Only */}
-            <div className="lg:hidden p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
-              <h1 className="text-[22px] font-bold text-[#f9fafb] mb-4 leading-snug break-words">
-                {product.title}
-              </h1>
-              <div className="flex items-center gap-3">
-                <span className="text-[26px] font-bold text-[#6366f1]">
-                  Rp {product.price?.toLocaleString('id-ID')}
-                </span>
-                {product.is_negotiable && (
-                  <span className="px-3 py-1.5 bg-[rgba(99,102,241,0.1)] border border-[#6366f1] rounded-[20px] text-[13px] font-semibold text-[#6366f1]">
-                    Bisa Nego
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Location & Date - Mobile Only */}
-            <div className="lg:hidden p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
-              <div className="flex flex-col gap-4">
-                <div className="flex items-start gap-3">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-[#6366f1] flex-shrink-0 mt-0.5">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm text-[#9ca3af]">Lokasi</span>
-                    <span className="text-[15px] font-semibold text-[#f9fafb]">
-                      {product.regencies?.regency_name}, {product.provinces?.province_name}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-[#6366f1] flex-shrink-0 mt-0.5">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                  </svg>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm text-[#9ca3af]">Diposting</span>
-                    <span className="text-[15px] font-semibold text-[#f9fafb]">
-                      {new Date(product.created_at).toLocaleDateString('id-ID', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Image Gallery */}
             <div className="flex flex-col gap-4 w-screen -mx-3 px-3 lg:w-auto lg:mx-0 lg:px-0">
               <div className="relative w-full aspect-video bg-[#1f2937] border border-[#374151] rounded-2xl lg:rounded-2xl overflow-hidden flex items-center justify-center">
@@ -555,6 +502,59 @@ export default function ProductDetailPage() {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Price & Title - Mobile Only */}
+            <div className="lg:hidden p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
+              <h1 className="text-[22px] font-bold text-[#f9fafb] mb-4 leading-snug break-words">
+                {product.title}
+              </h1>
+              <div className="flex items-center gap-3">
+                <span className="text-[26px] font-bold text-[#6366f1]">
+                  Rp {product.price?.toLocaleString('id-ID')}
+                </span>
+                {product.is_negotiable && (
+                  <span className="px-3 py-1.5 bg-[rgba(99,102,241,0.1)] border border-[#6366f1] rounded-[20px] text-[13px] font-semibold text-[#6366f1]">
+                    Bisa Nego
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Location & Date - Mobile Only */}
+            <div className="lg:hidden p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start gap-3">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-[#6366f1] flex-shrink-0 mt-0.5">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm text-[#9ca3af]">Lokasi</span>
+                    <span className="text-[15px] font-semibold text-[#f9fafb]">
+                      {product.regencies?.regency_name}, {product.provinces?.province_name}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-[#6366f1] flex-shrink-0 mt-0.5">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm text-[#9ca3af]">Diposting</span>
+                    <span className="text-[15px] font-semibold text-[#f9fafb]">
+                      {new Date(product.created_at).toLocaleDateString('id-ID', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Details Section */}
