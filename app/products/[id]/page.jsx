@@ -505,7 +505,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Details Section */}
-            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-2 lg:order-3">
+            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-2 lg:order-4">
               <h3 className="section-title section-title-md">Detail</h3>
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center pb-4 border-b border-[#374151] last:border-b-0 last:pb-0">
@@ -520,7 +520,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Description Section */}
-            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-3 lg:order-4">
+            <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl order-3 lg:order-2">
               <h3 className="section-title section-title-md">Deskripsi</h3>
               <p className="text-sm lg:text-[15px] leading-relaxed text-[#9ca3af] whitespace-pre-wrap">{product.description}</p>
 
@@ -733,7 +733,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Right Sidebar */}
-          <div className="sticky top-[90px] flex flex-col gap-5 order-5 lg:order-2">
+          <div className="sticky top-[90px] flex flex-col gap-5 order-5 lg:order-3">
             {/* Price & Title */}
             <div className="pb-4 lg:pb-6 border-b border-[#374151]">
               <h1 className="text-[15px] lg:text-[22px] font-semibold lg:font-bold text-[#f9fafb] mb-2.5 lg:mb-4 leading-normal lg:leading-snug break-words">
