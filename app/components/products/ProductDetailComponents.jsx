@@ -120,11 +120,11 @@ export const ShareModal = ({ show, onClose, product }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-[10000] p-5 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-[10000] p-5 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="bg-surface-secondary border border-border-primary rounded-2xl w-full max-w-[420px] max-h-[90vh] overflow-y-auto shadow-lg animate-slideUp"
+        className="bg-surface-secondary border border-border-primary rounded-2xl w-full max-w-[420px] max-h-[90vh] overflow-y-auto shadow-lg animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-5 lg:p-6 border-b border-border-primary">
@@ -203,11 +203,11 @@ export const ReportModal = ({ show, onClose, onSubmit, submitting }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-[10000] p-5 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-[10000] p-5 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="bg-surface-secondary border border-border-primary rounded-2xl w-full max-w-[calc(100%-32px)] lg:max-w-[500px] max-h-[90vh] overflow-y-auto shadow-lg animate-slideUp"
+        className="bg-surface-secondary border border-border-primary rounded-2xl w-full max-w-[calc(100%-32px)] lg:max-w-[500px] max-h-[90vh] overflow-y-auto shadow-lg animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-5 lg:p-6 border-b border-border-primary">

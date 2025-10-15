@@ -97,7 +97,7 @@ export default function NotificationPermission({ user, supabase }) {
   }
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:max-w-md bg-surface-secondary border border-border-primary rounded-xl shadow-lg p-4 z-50 animate-slideUp">
+    <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:max-w-md bg-surface-secondary border border-border-primary rounded-xl shadow-lg p-4 z-50 animate-slide-up">
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0 w-10 h-10 bg-info/20 rounded-full flex items-center justify-center">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-info">
