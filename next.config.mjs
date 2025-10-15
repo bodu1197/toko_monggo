@@ -9,6 +9,13 @@ const nextConfig = {
   compress: true, // Enable Gzip compression
   poweredByHeader: false, // Remove X-Powered-By header
 
+  // Target modern browsers (reduces bundle size)
+  modularizeImports: {
+    lodash: {
+      transform: 'lodash/{{member}}',
+    },
+  },
+
   // CSS optimization
   experimental: {
     optimizeCss: true, // Enable CSS optimization (requires critters)

@@ -30,5 +30,11 @@
   "overrides": {
     "glob": "^11.0.3",
     "rimraf": "^6.0.1"
-  }
+  },
+  "browserslist": [
+    ">0.3%",
+    "not dead",
+    "not op_mini all",
+    "last 2 versions"
+  ]
 }
