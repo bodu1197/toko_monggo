@@ -23,7 +23,7 @@ const nextConfig = {
   experimental: {
     optimizeCss: true, // Enable CSS optimization (requires critters)
     optimizePackageImports: ['react', 'react-dom'], // Tree-shake React imports
-    cssChunking: true, // Enable CSS chunking for better caching
+    cssChunking: 'strict', // Enable CSS chunking for better caching (strict mode)
   },
 
   // Compiler optimizations
