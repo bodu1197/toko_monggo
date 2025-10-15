@@ -26,6 +26,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState(null);
   const [locationStatus, setLocationStatus] = useState('idle'); // idle, loading, success, denied
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // 검색 상태
   const [searchQuery, setSearchQuery] = useState('');
@@ -533,7 +534,21 @@ export default function HomePage() {
     loadProvinces();
     loadMainCategories();
     fetchProducts();
-  }, [loadProvinces, loadMainCategories, fetchProducts]);
+
+    // 인증 상태 확인
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+    };
+    checkAuth();
+
+    // 인증 상태 변화 감지
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [loadProvinces, loadMainCategories, fetchProducts, supabase]);
 
   return (
     <div className={`min-h-screen flex flex-col ${isMobile ? 'pb-20' : ''}`}>
@@ -996,12 +1011,12 @@ export default function HomePage() {
             </svg>
             <span className="text-[11px] font-medium">Sekitar</span>
           </button>
-          <button className="flex flex-col items-center gap-1 bg-transparent border-none text-[#9ca3af] cursor-pointer py-2 transition-colors duration-300" onClick={() => router.push('/profile')}>
+          <button className="flex flex-col items-center gap-1 bg-transparent border-none text-[#9ca3af] cursor-pointer py-2 transition-colors duration-300" onClick={() => router.push(isLoggedIn ? '/profile' : '/login')}>
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <span className="text-[11px] font-medium">Profil</span>
+            <span className="text-[11px] font-medium">{isLoggedIn ? 'Profil' : 'Login'}</span>
           </button>
         </nav>
       )}
