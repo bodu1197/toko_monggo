@@ -63,6 +63,7 @@ export default function AdminPage() {
     name: '',
     position: 'header',
     ad_code: '',
+    device_type: 'both',
     is_active: true
   });
 
@@ -1866,6 +1867,21 @@ export default function AdminPage() {
 
                     <div>
                       <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                        디바이스 타입
+                      </label>
+                      <select
+                        value={adFormData.device_type}
+                        onChange={(e) => setAdFormData({...adFormData, device_type: e.target.value})}
+                        className="w-full px-4 py-2.5 bg-[#1f2937] border border-[#374151] rounded-lg text-[#f9fafb] focus:outline-none focus:ring-2 focus:ring-[#6366f1]"
+                      >
+                        <option value="both">PC + 모바일 (둘 다)</option>
+                        <option value="pc">PC만</option>
+                        <option value="mobile">모바일만</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#9ca3af] mb-2">
                         광고 코드 (Google Ads 스크립트 또는 HTML)
                       </label>
                       <textarea
@@ -1907,6 +1923,7 @@ export default function AdminPage() {
                                   name: adFormData.name,
                                   position: adFormData.position,
                                   ad_code: adFormData.ad_code,
+                                  device_type: adFormData.device_type,
                                   is_active: adFormData.is_active
                                 })
                                 .eq('id', editingAd.id);
@@ -1921,6 +1938,7 @@ export default function AdminPage() {
                                   name: adFormData.name,
                                   position: adFormData.position,
                                   ad_code: adFormData.ad_code,
+                                  device_type: adFormData.device_type,
                                   is_active: adFormData.is_active
                                 });
 
@@ -1933,6 +1951,7 @@ export default function AdminPage() {
                               name: '',
                               position: 'header',
                               ad_code: '',
+                              device_type: 'both',
                               is_active: true
                             });
                             setEditingAd(null);
@@ -1955,6 +1974,7 @@ export default function AdminPage() {
                               name: '',
                               position: 'header',
                               ad_code: '',
+                              device_type: 'both',
                               is_active: true
                             });
                           }}
@@ -2002,6 +2022,13 @@ export default function AdminPage() {
                                    ad.position === 'between_products' ? '상품 목록 사이' :
                                    '상품 상세페이지'}
                                 </span>
+                                {' | '}
+                                디바이스: <span className="text-[#a78bfa]">
+                                  {ad.device_type === 'both' ? 'PC + 모바일' :
+                                   ad.device_type === 'pc' ? 'PC만' :
+                                   ad.device_type === 'mobile' ? '모바일만' :
+                                   'PC + 모바일'}
+                                </span>
                               </p>
                             </div>
 
@@ -2013,6 +2040,7 @@ export default function AdminPage() {
                                     name: ad.name,
                                     position: ad.position,
                                     ad_code: ad.ad_code,
+                                    device_type: ad.device_type || 'both',
                                     is_active: ad.is_active
                                   });
                                 }}
