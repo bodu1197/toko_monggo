@@ -1397,46 +1397,48 @@ export default function AdminPage() {
 
               <div className="bg-[#1f2937] border border-[#374151] rounded-xl overflow-hidden max-md:overflow-x-auto">
                 <table className="w-full border-collapse max-md:min-w-[800px]">
-                  <thead>
+                  <thead className="bg-[#374151]">
                     <tr>
-                      <th>신고 유형</th>
-                      <th>신고 대상</th>
-                      <th>신고자</th>
-                      <th>신고 사유</th>
-                      <th>신고일</th>
-                      <th>상태</th>
-                      <th>처리</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">신고 유형</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">신고 대상</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">신고자</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">신고 사유</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">신고일</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">상태</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">처리</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredReports.map(report => (
-                      <tr key={report.id}>
-                        <td>
-                          <span className={`type-badge ${report.report_type}`}>
-                            {report.report_type === 'product' ? '상품' : '회원'}
-                          </span>
-                        </td>
-                        <td>
+                      <tr key={report.id} className="transition-colors hover:bg-[#374151]">
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
                           {report.report_type === 'product' ? (
-                            <div className="report-target">
-                              <div>{report.reported_product?.title || '삭제된 상품'}</div>
-                              <small>판매자: {report.reported_product?.seller?.full_name || '-'}</small>
+                            <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(99,102,241,0.1)] text-[#6366f1]">상품</span>
+                          ) : (
+                            <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(245,158,11,0.1)] text-[#f59e0b]">회원</span>
+                          )}
+                        </td>
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                          {report.report_type === 'product' ? (
+                            <div className="flex flex-col gap-1">
+                              <div className="font-medium">{report.reported_product?.title || '삭제된 상품'}</div>
+                              <small className="text-xs text-[#9ca3af]">판매자: {report.reported_product?.seller?.full_name || '-'}</small>
                             </div>
                           ) : (
-                            <div className="report-target">
-                              <div>{report.reported_user?.full_name || '사용자'}</div>
-                              <small>{report.reported_user?.email || '-'}</small>
+                            <div className="flex flex-col gap-1">
+                              <div className="font-medium">{report.reported_user?.full_name || '사용자'}</div>
+                              <small className="text-xs text-[#9ca3af]">{report.reported_user?.email || '-'}</small>
                             </div>
                           )}
                         </td>
-                        <td>
-                          <div className="reporter-info">
-                            <div>{report.reporter?.full_name || '사용자'}</div>
-                            <small>{report.reporter?.email || '-'}</small>
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                          <div className="flex flex-col gap-1">
+                            <div className="font-medium">{report.reporter?.full_name || '사용자'}</div>
+                            <small className="text-xs text-[#9ca3af]">{report.reporter?.email || '-'}</small>
                           </div>
                         </td>
-                        <td>
-                          <span className="reason-badge">
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                          <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(239,68,68,0.1)] text-[#ef4444]">
                             {report.reason === 'fraud' ? '사기' :
                              report.reason === 'fake' ? '가짜상품' :
                              report.reason === 'spam' ? '스팸' :
@@ -1444,26 +1446,26 @@ export default function AdminPage() {
                              report.reason === 'duplicate' ? '중복' : '기타'}
                           </span>
                           {report.description && (
-                            <div className="report-description">{report.description}</div>
+                            <div className="mt-2 text-xs text-[#9ca3af] leading-relaxed">{report.description}</div>
                           )}
                         </td>
-                        <td>{new Date(report.created_at).toLocaleDateString('ko-KR')}</td>
-                        <td>
-                          <span className={`status-badge ${
-                            report.status === 'pending' ? 'pending' :
-                            report.status === 'reviewing' ? 'reviewing' :
-                            report.status === 'resolved' ? 'resolved' : 'rejected'
-                          }`}>
-                            {report.status === 'pending' ? '대기중' :
-                             report.status === 'reviewing' ? '검토중' :
-                             report.status === 'resolved' ? '처리완료' : '반려'}
-                          </span>
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">{new Date(report.created_at).toLocaleDateString('ko-KR')}</td>
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                          {report.status === 'pending' ? (
+                            <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(251,191,36,0.1)] text-[#f59e0b]">대기중</span>
+                          ) : report.status === 'reviewing' ? (
+                            <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(59,130,246,0.1)] text-[#3b82f6]">검토중</span>
+                          ) : report.status === 'resolved' ? (
+                            <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(16,185,129,0.1)] text-[#10b981]">처리완료</span>
+                          ) : (
+                            <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(107,114,128,0.1)] text-[#6b7280]">반려</span>
+                          )}
                         </td>
-                        <td>
-                          <div className="action-buttons">
+                        <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                          <div className="flex items-center gap-2 flex-wrap">
                             {report.status === 'pending' && report.report_type === 'product' && (
                               <button
-                                className="btn-suspend"
+                                className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#f59e0b] text-white hover:bg-[#d97706] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(245,158,11,0.4)]"
                                 onClick={() => handleSuspendProduct(report.reported_product_id)}
                                 title="상품 발행중지"
                               >
@@ -1472,7 +1474,7 @@ export default function AdminPage() {
                             )}
                             {report.status !== 'resolved' && (
                               <button
-                                className="btn-resolve"
+                                className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#10b981] text-white hover:bg-[#059669] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(16,185,129,0.4)]"
                                 onClick={() => handleResolveReport(report.id)}
                                 title="처리완료"
                               >
@@ -1497,80 +1499,80 @@ export default function AdminPage() {
 
           {/* Access Statistics Tab */}
           {activeTab === 'access' && (
-            <div className="access-section">
-              <h2 className="section-title">접속 통계</h2>
+            <div className="min-h-[600px]">
+              <h2 className="section-title section-title-lg">접속 통계</h2>
 
               {/* Hourly */}
-              <div className="chart-container">
-                <h3 className="chart-title">시간별 접속 (최근 24시간)</h3>
-                <div className="chart">
+              <div className="mb-8 p-6 bg-[#1f2937] border border-[#374151] rounded-xl max-md:p-4">
+                <h3 className="text-xl font-bold text-[#f9fafb] mb-6 max-md:text-lg max-md:mb-4">시간별 접속 (최근 24시간)</h3>
+                <div className="flex items-end justify-between gap-2 h-64 overflow-x-auto pb-2">
                   {accessStats.hourly.map((item, index) => (
-                    <div key={index} className="chart-bar">
+                    <div key={index} className="flex flex-col items-center gap-2 min-w-[30px]">
+                      <div className="text-xs text-[#9ca3af] font-semibold">{item.count}</div>
                       <div
-                        className="bar"
+                        className="w-full bg-gradient-to-t from-[#6366f1] to-[#818cf8] rounded-t transition-all hover:from-[#4f46e5] hover:to-[#6366f1]"
                         style={{
                           height: `${Math.max(item.count * 10, 5)}px`,
                         }}
                       />
-                      <div className="bar-label">{item.label}</div>
-                      <div className="bar-value">{item.count}</div>
+                      <div className="text-[10px] text-[#6b7280] font-medium whitespace-nowrap">{item.label}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Daily */}
-              <div className="chart-container">
-                <h3 className="chart-title">일별 접속 (최근 30일)</h3>
-                <div className="chart">
+              <div className="mb-8 p-6 bg-[#1f2937] border border-[#374151] rounded-xl max-md:p-4">
+                <h3 className="text-xl font-bold text-[#f9fafb] mb-6 max-md:text-lg max-md:mb-4">일별 접속 (최근 30일)</h3>
+                <div className="flex items-end justify-between gap-2 h-64 overflow-x-auto pb-2">
                   {accessStats.daily.map((item, index) => (
-                    <div key={index} className="chart-bar">
+                    <div key={index} className="flex flex-col items-center gap-2 min-w-[20px]">
+                      <div className="text-xs text-[#9ca3af] font-semibold">{item.count}</div>
                       <div
-                        className="bar"
+                        className="w-full bg-gradient-to-t from-[#10b981] to-[#34d399] rounded-t transition-all hover:from-[#059669] hover:to-[#10b981]"
                         style={{
                           height: `${Math.max(item.count * 5, 5)}px`,
                         }}
                       />
-                      <div className="bar-label">{item.label}</div>
-                      <div className="bar-value">{item.count}</div>
+                      <div className="text-[10px] text-[#6b7280] font-medium whitespace-nowrap">{item.label}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Monthly */}
-              <div className="chart-container">
-                <h3 className="chart-title">월별 접속 (최근 12개월)</h3>
-                <div className="chart">
+              <div className="mb-8 p-6 bg-[#1f2937] border border-[#374151] rounded-xl max-md:p-4">
+                <h3 className="text-xl font-bold text-[#f9fafb] mb-6 max-md:text-lg max-md:mb-4">월별 접속 (최근 12개월)</h3>
+                <div className="flex items-end justify-between gap-3 h-64 overflow-x-auto pb-2">
                   {accessStats.monthly.map((item, index) => (
-                    <div key={index} className="chart-bar">
+                    <div key={index} className="flex flex-col items-center gap-2 min-w-[40px]">
+                      <div className="text-xs text-[#9ca3af] font-semibold">{item.count}</div>
                       <div
-                        className="bar"
+                        className="w-full bg-gradient-to-t from-[#f59e0b] to-[#fbbf24] rounded-t transition-all hover:from-[#d97706] hover:to-[#f59e0b]"
                         style={{
                           height: `${Math.max(item.count * 2, 5)}px`,
                         }}
                       />
-                      <div className="bar-label">{item.label}</div>
-                      <div className="bar-value">{item.count}</div>
+                      <div className="text-[11px] text-[#6b7280] font-medium whitespace-nowrap">{item.label}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Yearly */}
-              <div className="chart-container">
-                <h3 className="chart-title">연도별 접속</h3>
-                <div className="chart">
+              <div className="mb-8 p-6 bg-[#1f2937] border border-[#374151] rounded-xl max-md:p-4">
+                <h3 className="text-xl font-bold text-[#f9fafb] mb-6 max-md:text-lg max-md:mb-4">연도별 접속</h3>
+                <div className="flex items-end justify-center gap-4 h-64 overflow-x-auto pb-2">
                   {accessStats.yearly.map((item, index) => (
-                    <div key={index} className="chart-bar">
+                    <div key={index} className="flex flex-col items-center gap-2 min-w-[60px]">
+                      <div className="text-sm text-[#9ca3af] font-semibold">{item.count}</div>
                       <div
-                        className="bar"
+                        className="w-full bg-gradient-to-t from-[#ef4444] to-[#f87171] rounded-t transition-all hover:from-[#dc2626] hover:to-[#ef4444]"
                         style={{
                           height: `${Math.max(item.count / 10, 5)}px`,
                         }}
                       />
-                      <div className="bar-label">{item.label}</div>
-                      <div className="bar-value">{item.count}</div>
+                      <div className="text-xs text-[#6b7280] font-medium">{item.label}</div>
                     </div>
                   ))}
                 </div>
@@ -1580,17 +1582,17 @@ export default function AdminPage() {
 
           {/* Regional Statistics Tab */}
           {activeTab === 'regional' && (
-            <div className="regional-section">
-              <h2 className="section-title">지역별 방문자 통계 (GPS 위치 기반)</h2>
+            <div className="min-h-[600px]">
+              <h2 className="section-title section-title-lg">지역별 방문자 통계 (GPS 위치 기반)</h2>
 
-              <div className="regional-table-container">
-                <table className="regional-table">
-                  <thead>
+              <div className="bg-[#1f2937] border border-[#374151] rounded-xl overflow-hidden max-md:overflow-x-auto">
+                <table className="w-full border-collapse max-md:min-w-[600px]">
+                  <thead className="bg-[#374151]">
                     <tr>
-                      <th>순위</th>
-                      <th>시/군</th>
-                      <th>접속 수</th>
-                      <th>비율</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">순위</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">시/군</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">접속 수</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">비율</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1598,19 +1600,19 @@ export default function AdminPage() {
                       const totalAccess = regionalStats.reduce((sum, s) => sum + s.count, 0);
                       const percentage = ((stat.count / totalAccess) * 100).toFixed(1);
                       return (
-                        <tr key={index}>
-                          <td>#{index + 1}</td>
-                          <td>{stat.region}</td>
-                          <td>{stat.count}회</td>
-                          <td>
-                            <div className="percentage-cell">
-                              <div className="percentage-bar">
+                        <tr key={index} className="transition-colors hover:bg-[#374151]">
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">#{index + 1}</td>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">{stat.region}</td>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">{stat.count}회</td>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 h-6 bg-[#374151] rounded-full overflow-hidden">
                                 <div
-                                  className="percentage-fill"
+                                  className="h-full bg-gradient-to-r from-[#6366f1] to-[#818cf8] transition-all"
                                   style={{ width: `${percentage}%` }}
                                 />
                               </div>
-                              <span>{percentage}%</span>
+                              <span className="text-sm font-semibold text-[#6366f1] min-w-[45px]">{percentage}%</span>
                             </div>
                           </td>
                         </tr>
@@ -1630,11 +1632,11 @@ export default function AdminPage() {
 
           {/* Trash Tab */}
           {activeTab === 'trash' && (
-            <div className="trash-section">
-              <div className="section-header">
-                <h2 className="section-title">휴지통 (삭제된 상품)</h2>
-                <div className="search-box">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="min-h-[600px]">
+              <div className="flex justify-between items-center mb-8 max-md:flex-col max-md:gap-4 max-md:items-stretch">
+                <h2 className="section-title section-title-lg">휴지통 (삭제된 상품)</h2>
+                <div className="flex items-center gap-3 py-2.5 px-4 bg-[#1f2937] border border-[#374151] rounded-lg min-w-[300px] transition-all focus-within:border-[#6366f1] focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] max-md:min-w-full">
+                  <svg className="w-[18px] h-[18px] text-[#6b7280] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"/>
                     <path d="m21 21-4.35-4.35"/>
                   </svg>
@@ -1643,32 +1645,33 @@ export default function AdminPage() {
                     placeholder="상품 검색..."
                     value={trashSearchQuery}
                     onChange={handleTrashSearch}
+                    className="flex-1 bg-transparent border-none outline-none text-[#f9fafb] text-sm placeholder:text-[#6b7280]"
                   />
                 </div>
               </div>
 
-              <div className="info-banner">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <div className="flex items-start gap-3 p-4 mb-6 bg-[rgba(59,130,246,0.1)] border border-[#3b82f6] rounded-lg">
+                <svg className="w-5 h-5 text-[#3b82f6] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10"/>
                   <line x1="12" y1="16" x2="12" y2="12"/>
                   <line x1="12" y1="8" x2="12.01" y2="8"/>
                 </svg>
-                <div>
-                  <strong>증거 보관소:</strong> 삭제된 회원의 상품들이 증거로 보관됩니다. 복구하거나 영구 삭제할 수 있습니다.
+                <div className="text-sm text-[#60a5fa] leading-relaxed">
+                  <strong className="font-semibold">증거 보관소:</strong> 삭제된 회원의 상품들이 증거로 보관됩니다. 복구하거나 영구 삭제할 수 있습니다.
                 </div>
               </div>
 
-              <div className="users-table-container">
-                <table className="users-table">
-                  <thead>
+              <div className="bg-[#1f2937] border border-[#374151] rounded-xl overflow-hidden max-md:overflow-x-auto">
+                <table className="w-full border-collapse max-md:min-w-[800px]">
+                  <thead className="bg-[#374151]">
                     <tr>
-                      <th>상품명</th>
-                      <th>원소유자</th>
-                      <th>가격</th>
-                      <th>상태</th>
-                      <th>삭제일</th>
-                      <th>삭제 사유</th>
-                      <th>액션</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">상품명</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">원소유자</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">가격</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">상태</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">삭제일</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">삭제 사유</th>
+                      <th className="py-4 px-5 text-left text-[13px] font-semibold text-[#9ca3af] uppercase tracking-wide max-md:py-3 max-md:px-4">액션</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1676,32 +1679,38 @@ export default function AdminPage() {
                       const images = product.images || [];
                       const firstImage = images[0]?.image_url;
                       return (
-                        <tr key={product.id}>
-                          <td>
-                            <div className="user-cell">
+                        <tr key={product.id} className="transition-colors hover:bg-[#374151]">
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                            <div className="flex items-center gap-3">
                               {firstImage && (
-                                <div className="user-avatar">
-                                  <Image src={firstImage} alt={product.title} width={40} height={40} />
+                                <div className="w-10 h-10 rounded-lg bg-[#374151] border-2 border-[#374151] flex items-center justify-center overflow-hidden shrink-0">
+                                  <Image src={firstImage} alt={product.title} width={40} height={40} className="w-full h-full object-cover" />
                                 </div>
                               )}
                               <span>{product.title}</span>
                             </div>
                           </td>
-                          <td>
-                            <div className="user-info">
-                              <div>{product.user_full_name || '-'}</div>
-                              <small>{product.user_email || '-'}</small>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                            <div className="flex flex-col gap-1">
+                              <div className="font-medium">{product.user_full_name || '-'}</div>
+                              <small className="text-xs text-[#9ca3af]">{product.user_email || '-'}</small>
                             </div>
                           </td>
-                          <td>Rp {product.price?.toLocaleString('id-ID')}</td>
-                          <td>
-                            <span className={`status-badge ${product.status === 'active' ? 'active' : product.status === 'suspended' ? 'suspended' : ''}`}>
-                              {product.status === 'active' ? '활성' : product.status === 'suspended' ? '중지' : product.status === 'sold' ? '판매완료' : '숨김'}
-                            </span>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">Rp {product.price?.toLocaleString('id-ID')}</td>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                            {product.status === 'active' ? (
+                              <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(16,185,129,0.1)] text-[#10b981]">활성</span>
+                            ) : product.status === 'suspended' ? (
+                              <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(251,191,36,0.1)] text-[#f59e0b]">중지</span>
+                            ) : product.status === 'sold' ? (
+                              <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(99,102,241,0.1)] text-[#6366f1]">판매완료</span>
+                            ) : (
+                              <span className="inline-block py-1 px-3 rounded-xl text-xs font-semibold bg-[rgba(107,114,128,0.1)] text-[#6b7280]">숨김</span>
+                            )}
                           </td>
-                          <td>{new Date(product.deleted_at).toLocaleDateString('ko-KR')}</td>
-                          <td>
-                            <span className="reason-text" title={product.deletion_reason}>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">{new Date(product.deleted_at).toLocaleDateString('ko-KR')}</td>
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                            <span className="text-xs text-[#9ca3af]" title={product.deletion_reason}>
                               {product.deletion_reason ?
                                 (product.deletion_reason.length > 20 ?
                                   product.deletion_reason.substring(0, 20) + '...' :
@@ -1709,17 +1718,17 @@ export default function AdminPage() {
                                 : '-'}
                             </span>
                           </td>
-                          <td>
-                            <div className="action-buttons">
+                          <td className="py-4 px-5 text-sm text-[#f9fafb] border-t border-[#374151] max-md:py-3 max-md:px-4">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <button
-                                className="btn-activate"
+                                className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#10b981] text-white hover:bg-[#059669] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(16,185,129,0.4)]"
                                 onClick={() => handleRestoreProduct(product.id)}
                                 title="상품 복구"
                               >
                                 복구
                               </button>
                               <button
-                                className="btn-delete"
+                                className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#ef4444] text-white hover:bg-[#dc2626] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(239,68,68,0.4)]"
                                 onClick={() => handlePermanentDeleteProduct(product.id, product.title)}
                                 title="영구 삭제"
                               >
