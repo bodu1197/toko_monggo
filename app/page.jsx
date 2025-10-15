@@ -708,8 +708,8 @@ export default function HomePage() {
             )}
 
             {isMobile === false && locationStatus === 'idle' && (
-              <button className="w-full py-3 px-6 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-px" onClick={handleNearbyClick}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button className="flex items-center justify-center gap-2 h-[42px] px-4 bg-[#4b5563] border-none rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap hover:bg-[#374151] hover:-translate-y-0.5" onClick={handleNearbyClick}>
+                <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="10" r="3"/>
                   <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
                 </svg>
