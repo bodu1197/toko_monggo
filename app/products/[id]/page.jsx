@@ -444,23 +444,6 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,900px)_minmax(0,380px)] gap-10 max-w-[1400px] mx-auto items-start justify-center">
           {/* Left Column */}
           <div className="flex flex-col gap-6">
-            {/* Price & Title */}
-            <div className="p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
-              <h1 className="text-[15px] lg:text-[22px] font-semibold lg:font-bold text-[#f9fafb] mb-2.5 lg:mb-4 leading-normal lg:leading-snug break-words">
-                {product.title}
-              </h1>
-              <div className="flex items-center gap-3">
-                <span className="text-lg lg:text-[26px] font-bold text-[#6366f1]">
-                  Rp {product.price?.toLocaleString('id-ID')}
-                </span>
-                {product.is_negotiable && (
-                  <span className="px-2.5 lg:px-3 py-1 lg:py-1.5 bg-[rgba(99,102,241,0.1)] border border-[#6366f1] rounded-[20px] text-[11px] lg:text-[13px] font-semibold text-[#6366f1]">
-                    Bisa Nego
-                  </span>
-                )}
-              </div>
-            </div>
-
             {/* Location & Date */}
             <div className="p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
               <div className="flex flex-col gap-4">
@@ -827,6 +810,26 @@ export default function ProductDetailPage() {
                       </div>
                     </div>
                   ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="hidden lg:flex flex-col gap-6">
+            {/* Price & Title */}
+            <div className="p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
+              <h1 className="text-[22px] font-bold text-[#f9fafb] mb-4 leading-snug break-words">
+                {product.title}
+              </h1>
+              <div className="flex items-center gap-3">
+                <span className="text-[26px] font-bold text-[#6366f1]">
+                  Rp {product.price?.toLocaleString('id-ID')}
+                </span>
+                {product.is_negotiable && (
+                  <span className="px-3 py-1.5 bg-[rgba(99,102,241,0.1)] border border-[#6366f1] rounded-[20px] text-[13px] font-semibold text-[#6366f1]">
+                    Bisa Nego
+                  </span>
                 )}
               </div>
             </div>
