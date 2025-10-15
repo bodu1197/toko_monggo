@@ -46,26 +46,23 @@ export function preloadImages(imagePaths) {
 }
 
 /**
- * Get optimized image loader for Next.js Image component
- * @param {object} params - Next.js image loader params
+ * Get optimized Supabase image URL
+ * @param {string} src - Original image URL
+ * @param {number} width - Desired width
+ * @param {number} quality - Image quality (1-100)
  * @returns {string} Optimized image URL
  */
-export function imageLoader({ src, width, quality = 75 }) {
+export function getOptimizedImageUrl(src, width, quality = 75) {
+  if (!src) return src;
+
   // For Supabase storage images with transform API
-  if (src.includes('supabase')) {
-    const url = new URL(src);
-
-    // Use Supabase's image transformation API if available
-    if (url.pathname.includes('/storage/v1/object/public/')) {
-      // Convert to render endpoint for transformations
-      const renderUrl = src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
-      return `${renderUrl}?width=${width}&quality=${quality}&format=webp`;
-    }
-
-    return `${src}?width=${width}&quality=${quality}`;
+  if (src.includes('supabase') && src.includes('/storage/v1/object/public/')) {
+    // Convert to render endpoint for transformations
+    const renderUrl = src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
+    return `${renderUrl}?width=${width}&quality=${quality}&format=webp`;
   }
 
-  // For external images (picsum, dicebear, etc)
+  // Return original URL for non-Supabase images
   return src;
 }
 

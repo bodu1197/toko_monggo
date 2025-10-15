@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { generateBlurPlaceholder } from '../../utils/imageOptimization';
+import { generateBlurPlaceholder, getOptimizedImageUrl } from '../../utils/imageOptimization';
 
 /**
  * Optimized Image Component with automatic LCP detection
@@ -95,9 +95,14 @@ export default function OptimizedImage({
 
   const { width: placeholderWidth, height: placeholderHeight } = getPlaceholderDimensions();
 
+  // Optimize Supabase images if needed
+  const optimizedSrc = src.includes('supabase')
+    ? getOptimizedImageUrl(src, width || 800, isPriority ? 80 : 65)
+    : src;
+
   return (
     <Image
-      src={src}
+      src={optimizedSrc}
       alt={alt}
       sizes={imageSizes}
       className={className}

@@ -108,9 +108,9 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     // Aggressive compression for better performance
     unoptimized: false,
-    // Custom loader for Supabase optimization
-    loader: 'custom',
-    loaderFile: './image-loader.js',
+    // Temporarily disable custom loader to fix broken images
+    // loader: 'custom',
+    // loaderFile: './image-loader.js',
   },
 
   // Headers for caching and security
