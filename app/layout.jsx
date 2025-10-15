@@ -4,7 +4,7 @@ import LocationTracker from './components/LocationTracker';
 import { SupabaseClientProvider } from './components/SupabaseClientProvider';
 
 const inter = localFont({
-  src: '../public/fonts/inter-latin.woff2',
+  src: '../public/fonts/inter.woff2',
   display: 'swap', // 폰트 로딩 중에도 텍스트 표시 (FOUT 방지)
   preload: true,   // 폰트 미리 로드
   variable: '--font-inter', // CSS 변수로 사용 가능
