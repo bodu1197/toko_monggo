@@ -133,6 +133,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
             sizes="(max-width: 768px) 50vw, 25vw"
             className="object-cover"
             loading="lazy"
+            quality={75}
             placeholder="blur"
             blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
           />
