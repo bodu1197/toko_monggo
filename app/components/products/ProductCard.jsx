@@ -133,8 +133,9 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
             fill
             sizes="(max-width: 768px) 50vw, 25vw"
             className="object-cover"
-            priority={true}
-            fetchPriority="high"
+            priority={priority}
+            loading={priority ? undefined : "lazy"}
+            fetchPriority={priority ? "high" : "low"}
             quality={75}
             placeholder="blur"
             blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="

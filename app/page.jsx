@@ -922,7 +922,7 @@ export default function HomePage() {
                   key={product.id}
                   product={product}
                   context="home"
-                  priority={index === 0}
+                  priority={index < 4}
                 />
               ))
             ) : (
