@@ -88,24 +88,30 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.supabase.co',
+        hostname: '**.supabase.co',
       },
       {
         protocol: 'https',
-        hostname: '*.supabase.in',
+        hostname: '**.supabase.in',
       },
       {
         protocol: 'https',
         hostname: 'api.dicebear.com',
       },
+      // Add specific Supabase project URL
+      {
+        protocol: 'https',
+        hostname: 'zthksbitvezxwhbymatz.supabase.co',
+      },
     ],
-    formats: ['image/avif', 'image/webp'], // AVIF first (better compression)
+    formats: ['image/webp'], // WebP only for better compatibility
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-    dangerouslyAllowSVG: true,
-    contentDispositionType: 'attachment',
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Remove restrictive CSP and contentDispositionType that might cause issues
+    // dangerouslyAllowSVG: true,
+    // contentDispositionType: 'attachment',
+    // contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     // Aggressive compression for better performance
     unoptimized: false,
     // Temporarily disable custom loader to fix broken images

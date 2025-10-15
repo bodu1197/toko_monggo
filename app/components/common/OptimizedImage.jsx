@@ -95,14 +95,12 @@ export default function OptimizedImage({
 
   const { width: placeholderWidth, height: placeholderHeight } = getPlaceholderDimensions();
 
-  // Optimize Supabase images if needed
-  const optimizedSrc = src.includes('supabase')
-    ? getOptimizedImageUrl(src, width || 800, isPriority ? 80 : 65)
-    : src;
+  // Don't modify the image URL, let Next.js handle it
+  // This was causing the 400 errors
 
   return (
     <Image
-      src={optimizedSrc}
+      src={src}
       alt={alt}
       sizes={imageSizes}
       className={className}
@@ -114,8 +112,9 @@ export default function OptimizedImage({
       loading={isPriority ? undefined : "lazy"}
       fetchPriority={isPriority ? "high" : undefined}
       quality={isPriority ? 80 : 65}
-      placeholder="blur"
-      blurDataURL={generateBlurPlaceholder(placeholderWidth, placeholderHeight)}
+      // Remove blur placeholder that might cause issues
+      // placeholder="blur"
+      // blurDataURL={generateBlurPlaceholder(placeholderWidth, placeholderHeight)}
       // Error handling
       onLoadingComplete={(result) => {
         if (typeof window !== 'undefined' && result.naturalWidth === 0) {
