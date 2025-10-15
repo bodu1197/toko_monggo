@@ -440,7 +440,7 @@ export default function ProductDetailPage() {
         </div>
       </header>
 
-      <div className="container !pt-[400px] pb-6 px-5">
+      <div className="container !pt-5 pb-6 px-5">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,900px)_minmax(0,380px)] gap-10 max-w-[1400px] mx-auto items-start justify-center">
           {/* Left Column */}
           <div className="flex flex-col gap-6">
