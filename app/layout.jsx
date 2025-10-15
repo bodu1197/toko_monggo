@@ -1,7 +1,7 @@
 import localFont from 'next/font/local';
-import './globals.css';
 import LocationTracker from './components/LocationTracker';
 import { SupabaseClientProvider } from './components/SupabaseClientProvider';
+import CSSLoader from './components/CSSLoader';
 
 const inter = localFont({
   src: '../public/fonts/inter.woff2',
@@ -107,6 +107,48 @@ export default function RootLayout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#111827" />
 
+        {/* Critical CSS - Inline for immediate render */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          /* Critical CSS for above-the-fold content */
+          :root {
+            --color-primary-50: #f9fafb;
+            --color-primary-100: #f3f4f6;
+            --color-primary-200: #e5e7eb;
+            --color-primary-300: #d1d5db;
+            --color-primary-400: #9ca3af;
+            --color-primary-500: #6b7280;
+            --color-primary-600: #4b5563;
+            --color-primary-700: #374151;
+            --color-primary-800: #1f2937;
+            --color-primary-900: #111827;
+            --color-surface-primary: #111827;
+            --color-surface-secondary: #1f2937;
+            --color-text-primary: #f9fafb;
+            --color-text-secondary: #d1d5db;
+            --color-border-primary: #374151;
+          }
+
+          body {
+            background-color: #111827;
+            color: #f9fafb;
+            min-height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+
+          * {
+            box-sizing: border-box;
+          }
+
+          /* Prevent FOUC */
+          .hidden-until-loaded {
+            visibility: hidden;
+          }
+        `}} />
+
+
         {/* Preconnect to critical domains for faster resource loading */}
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
@@ -154,6 +196,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={inter.className}>
         <SupabaseClientProvider>
+          <CSSLoader />
           <LocationTracker />
           {children}
         </SupabaseClientProvider>
