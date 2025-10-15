@@ -6,7 +6,7 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <footer style={{
-      background: 'var(--bg-secondary)',
+      background: '#1f2937',
       borderTop: '1px solid var(--border-color)',
       padding: '48px 24px',
       color: 'var(--text-secondary)'
@@ -138,10 +138,11 @@ export default function Footer() {
           textAlign: 'center',
           fontSize: '14px',
           paddingTop: '24px',
+          paddingBottom: '0',
           borderTop: '1px solid var(--border-color)',
           color: 'var(--text-muted)'
         }}>
-          <p>© 2025 Group Monggo. All rights reserved.</p>
+          <p style={{ margin: '0' }}>© 2025 Group Monggo. All rights reserved.</p>
         </div>
       </div>
     </footer>
