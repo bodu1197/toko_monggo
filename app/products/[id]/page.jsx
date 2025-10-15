@@ -599,7 +599,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Comments Section */}
-            <div className="p-4 lg:p-8 bg-[#1f2937] border border-[#374151] rounded-xl lg:rounded-2xl order-4 lg:order-7 mt-4 lg:mt-0">
+            <div className="p-4 lg:p-8 bg-[#1f2937] border border-[#374151] rounded-xl lg:rounded-2xl order-4 lg:order-6 mt-4 lg:mt-0">
               <h3 className="section-title section-title-md">Ulasan & Komentar ({comments.length})</h3>
 
               {/* Comment Form */}
