@@ -924,12 +924,8 @@ export default function HomePage() {
       )}
 
       {/* Products Grid */}
-      <section className="flex-1 py-[60px] bg-[#111827]">
+      <section className={`flex-1 bg-[#111827] ${isMobile ? 'pt-4 pb-4' : 'pt-5 pb-[60px]'}`}>
         <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-[1.25rem] font-bold text-[#f9fafb]">Produk Terbaru</h2>
-          </div>
-
           <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-4 gap-6'}`}>
             {loading ? (
               <div className="col-span-full">
