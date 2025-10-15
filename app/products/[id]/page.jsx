@@ -441,7 +441,7 @@ export default function ProductDetailPage() {
       </header>
 
       <div className="container py-8 px-5">
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,900px)_minmax(0,380px)] gap-10 max-w-[1400px] mx-auto items-start justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-10 max-w-[900px] mx-auto items-start justify-center">
           {/* Left Column */}
           <div className="flex flex-col gap-6 lg:contents">
             {/* Image Gallery */}
