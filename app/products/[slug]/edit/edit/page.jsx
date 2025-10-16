@@ -176,7 +176,7 @@ export default function EditProductPage() {
             parent_category
           )
         `)
-        .eq('id', params.id)
+        .eq('slug', params.id)
         .single();
 
       if (productError) throw productError;
@@ -423,19 +423,19 @@ export default function EditProductPage() {
       const { error: updateError } = await supabase
         .from('products')
         .update(updateData)
-        .eq('id', params.id);
+        .eq('slug', params.id);
 
       if (updateError) throw updateError;
 
       // 2.5. Check if title changed and update slug
       if (formData.title !== product.title) {
-        const baseSlug = generateSlug(formData.title, params.id);
-        const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, params.id);
+        const baseSlug = generateSlug(formData.title, product.id);
+        const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, product.id);
 
         const { error: slugError } = await supabase
           .from('products')
           .update({ slug: uniqueSlug })
-          .eq('id', params.id);
+          .eq('slug', params.id);
 
         if (slugError) {
           console.error('Slug update error:', slugError);
@@ -470,7 +470,7 @@ export default function EditProductPage() {
         for (let i = 0; i < newImageFiles.length; i++) {
           const file = newImageFiles[i];
           const fileExt = 'jpg';
-          const fileName = `${params.id}_${Date.now()}_${i}.${fileExt}`;
+          const fileName = `${product.id}_${Date.now()}_${i}.${fileExt}`;
           const filePath = `products/${fileName}`;
 
           const { error: uploadError } = await supabase.storage
@@ -487,7 +487,7 @@ export default function EditProductPage() {
             .getPublicUrl(filePath);
 
           uploadedImages.push({
-            product_id: params.id,
+            product_slug: params.id,
             image_url: publicUrl,
             order: currentMaxOrder + i + 1,
           });

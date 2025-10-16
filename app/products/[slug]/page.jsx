@@ -65,9 +65,6 @@ export default function ProductDetailPage() {
     try {
       setLoading(true);
 
-      // Check if params.id is a UUID or slug
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id);
-
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -87,15 +84,10 @@ export default function ProductDetailPage() {
             parent_category
           )
         `)
-        .eq(isUUID ? 'id' : 'slug', params.id)
+        .eq('slug', params.id)
         .single();
 
       if (error) throw error;
-
-      // If slug was used, redirect to slug-based URL for consistency
-      if (!isUUID && data && window.location.pathname.includes(data.id)) {
-        router.replace(`/products/${data.slug}`);
-      }
 
       // Fetch seller profile separately
       if (data && data.user_id) {
@@ -116,7 +108,7 @@ export default function ProductDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase, params.id, router]);
+  }, [supabase, params.id]);
 
   const fetchSimilarProducts = useCallback(async (productData) => {
     if (!productData || !productData.categories?.parent_category || !productData.regency_id) {
@@ -157,7 +149,7 @@ export default function ProductDetailPage() {
         `)
         .eq('regency_id', productData.regency_id)
         .eq('status', 'active')
-        .neq('id', productData.id)
+        .neq('slug', productData.slug)
         .gt('expires_at', new Date().toISOString())
         .in('category_id', categoryIds)
         .order('created_at', { ascending: false })
@@ -167,7 +159,7 @@ export default function ProductDetailPage() {
 
       // Map to the format expected by ProductCard
       const formattedProducts = (data || []).map(product => ({
-        id: product.id,
+        id: product.slug,
         title: product.title,
         price: product.price,
         city: product.regencies?.regency_name || '',
@@ -255,7 +247,7 @@ export default function ProductDetailPage() {
       const { data, error } = await supabase
         .from('product_comments')
         .select('*')
-        .eq('product_id', params.id)
+        .eq('product_slug', params.id)
         .is('parent_id', null)
         .order('created_at', { ascending: false });
 
@@ -300,7 +292,7 @@ export default function ProductDetailPage() {
         .from('favorites')
         .select('id')
         .eq('user_id', currentUser.id)
-        .eq('product_id', params.id)
+        .eq('product_slug', params.id)
         .maybeSingle();
 
       if (error) throw error;
@@ -329,7 +321,7 @@ export default function ProductDetailPage() {
           .from('favorites')
           .delete()
           .eq('user_id', currentUser.id)
-          .eq('product_id', params.id);
+          .eq('product_slug', params.id);
 
         if (error) throw error;
         setIsFavorite(false);
@@ -338,7 +330,7 @@ export default function ProductDetailPage() {
           .from('favorites')
           .insert({
             user_id: currentUser.id,
-            product_id: params.id
+            product_slug: params.id
           });
 
         if (error) throw error;
@@ -400,7 +392,7 @@ export default function ProductDetailPage() {
       const { error } = await supabase
         .from('product_comments')
         .insert({
-          product_id: params.id,
+          product_slug: params.id,
           user_id: currentUser.id,
           parent_id: replyTo,
           comment: commentText.trim(),
@@ -467,7 +459,7 @@ export default function ProductDetailPage() {
         .insert({
           reporter_id: currentUser.id,
           report_type: 'product',
-          reported_product_id: params.id,
+          reported_product_slug: params.id,
           reason: reportReason,
           description: reportDescription.trim() || null,
           status: 'pending'

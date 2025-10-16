@@ -14,7 +14,7 @@ export function generateProductSchema(product, seller) {
     },
     offers: {
       '@type': 'Offer',
-      url: `https://tokomonggo.com/products/${product.id}`,
+      url: `https://tokomonggo.com/products/${product.slug}`,
       priceCurrency: 'IDR',
       price: product.price,
       priceValidUntil: product.expires_at,

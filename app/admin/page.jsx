@@ -231,7 +231,7 @@ export default function AdminPage() {
 
       // Get unique IDs for related data
       const reporterIds = [...new Set(reportsData.map(r => r.reporter_id).filter(Boolean))];
-      const productIds = [...new Set(reportsData.map(r => r.reported_product_id).filter(Boolean))];
+      const productSlugs = [...new Set(reportsData.map(r => r.reported_product_slug).filter(Boolean))];
       const userIds = [...new Set(reportsData.map(r => r.reported_user_id).filter(Boolean))];
       const resolverIds = [...new Set(reportsData.map(r => r.resolved_by).filter(Boolean))];
 
@@ -245,23 +245,23 @@ export default function AdminPage() {
       // Fetch products with seller info
       const { data: productsData } = await supabase
         .from('products')
-        .select('id, title, user_id')
-        .in('id', productIds);
+        .select('id, slug, title, user_id')
+        .in('slug', productSlugs);
 
       // Create maps
       const profilesMap = {};
       profilesData?.forEach(p => { profilesMap[p.id] = p; });
 
       const productsMap = {};
-      productsData?.forEach(p => { productsMap[p.id] = p; });
+      productsData?.forEach(p => { productsMap[p.slug] = p; });
 
       // Enrich reports with related data
       const enrichedReports = reportsData.map(report => ({
         ...report,
         reporter: profilesMap[report.reporter_id] || null,
-        reported_product: report.reported_product_id ? {
-          ...productsMap[report.reported_product_id],
-          seller: profilesMap[productsMap[report.reported_product_id]?.user_id] || null
+        reported_product: report.reported_product_slug ? {
+          ...productsMap[report.reported_product_slug],
+          seller: profilesMap[productsMap[report.reported_product_slug]?.user_id] || null
         } : null,
         reported_user: profilesMap[report.reported_user_id] || null,
         resolver: profilesMap[report.resolved_by] || null
@@ -278,18 +278,18 @@ export default function AdminPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase, reportFilter]);
 
-  const handleSuspendProduct = async (productId) => {
+  const handleSuspendProduct = async (productSlug) => {
     if (!confirm('이 상품을 발행 중지하시겠습니까?')) return;
 
     try {
-      console.log('[Admin] Attempting to suspend product:', productId);
+      console.log('[Admin] Attempting to suspend product:', productSlug);
       console.log('[Admin] Current user:', user?.id);
       console.log('[Admin] Current user role:', profile?.role);
 
       const { data, error } = await supabase
         .from('products')
         .update({ status: 'suspended' })
-        .eq('id', productId)
+        .eq('slug', productSlug)
         .select();
 
       console.log('[Admin] Suspend result:', { data, error });
@@ -312,14 +312,14 @@ export default function AdminPage() {
     }
   };
 
-  const handleActivateProduct = async (productId) => {
+  const handleActivateProduct = async (productSlug) => {
     if (!confirm('이 상품을 활성화하시겠습니까?')) return;
 
     try {
       const { error } = await supabase
         .from('products')
         .update({ status: 'active' })
-        .eq('id', productId);
+        .eq('slug', productSlug);
 
       if (error) throw error;
 
@@ -332,17 +332,17 @@ export default function AdminPage() {
     }
   };
 
-  const handleDeleteProduct = async (productId) => {
+  const handleDeleteProduct = async (productSlug) => {
     if (!confirm('이 상품을 완전히 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.')) return;
 
     try {
-      console.log('[Admin] Deleting product:', productId);
+      console.log('[Admin] Deleting product:', productSlug);
 
       // 1. 먼저 상품의 이미지 URL들을 가져옴
       const { data: productImages, error: fetchError } = await supabase
         .from('product_images')
         .select('image_url')
-        .eq('product_id', productId);
+        .eq('product_slug', productSlug);
 
       if (fetchError) {
         console.error('[Admin] Error fetching images:', fetchError);
@@ -354,7 +354,7 @@ export default function AdminPage() {
       const { data: deleteData, error: deleteError } = await supabase
         .from('products')
         .delete()
-        .eq('id', productId)
+        .eq('slug', productSlug)
         .select();
 
       console.log('[Admin] Delete product result:', { deleteData, deleteError });
@@ -369,7 +369,7 @@ export default function AdminPage() {
         const { error: imageError } = await supabase
           .from('product_images')
           .delete()
-          .eq('product_id', productId);
+          .eq('product_slug', productSlug);
 
         if (imageError) {
           // 이미 CASCADE로 삭제되었을 수 있으므로 에러 로그만 출력
@@ -418,8 +418,8 @@ export default function AdminPage() {
     }
   };
 
-  const handleEditProduct = (productId) => {
-    router.push(`/products/${productId}/edit`);
+  const handleEditProduct = (productSlug) => {
+    router.push(`/products/${productSlug}/edit`);
   };
 
   const handleResolveReport = async (reportId) => {
@@ -1455,7 +1455,7 @@ export default function AdminPage() {
                             <div className="flex items-center gap-2 flex-wrap">
                               <button
                                 className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#6366f1] text-white hover:bg-[#4f46e5] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(99,102,241,0.4)]"
-                                onClick={() => handleEditProduct(product.id)}
+                                onClick={() => handleEditProduct(product.slug)}
                                 title="상품 수정"
                               >
                                 수정
@@ -1463,7 +1463,7 @@ export default function AdminPage() {
                               {product.status === 'active' ? (
                                 <button
                                   className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#f59e0b] text-white hover:bg-[#d97706] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(245,158,11,0.4)]"
-                                  onClick={() => handleSuspendProduct(product.id)}
+                                  onClick={() => handleSuspendProduct(product.slug)}
                                   title="상품 발행중지"
                                 >
                                   중지
@@ -1471,7 +1471,7 @@ export default function AdminPage() {
                               ) : product.status === 'suspended' ? (
                                 <button
                                   className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#10b981] text-white hover:bg-[#059669] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(16,185,129,0.4)]"
-                                  onClick={() => handleActivateProduct(product.id)}
+                                  onClick={() => handleActivateProduct(product.slug)}
                                   title="상품 활성화"
                                 >
                                   활성화
@@ -1479,7 +1479,7 @@ export default function AdminPage() {
                               ) : null}
                               <button
                                 className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#ef4444] text-white hover:bg-[#dc2626] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(239,68,68,0.4)]"
-                                onClick={() => handleDeleteProduct(product.id)}
+                                onClick={() => handleDeleteProduct(product.slug)}
                                 title="상품 삭제"
                               >
                                 삭제
@@ -1621,7 +1621,7 @@ export default function AdminPage() {
                             {report.status === 'pending' && report.report_type === 'product' && (
                               <button
                                 className="py-1.5 px-3.5 border-none rounded-md text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap bg-[#f59e0b] text-white hover:bg-[#d97706] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(245,158,11,0.4)]"
-                                onClick={() => handleSuspendProduct(report.reported_product_id)}
+                                onClick={() => handleSuspendProduct(report.reported_product_slug)}
                                 title="상품 발행중지"
                               >
                                 발행중지
