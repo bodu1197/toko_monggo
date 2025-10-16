@@ -566,7 +566,7 @@ export default function EditProductPage() {
     <div className="min-h-screen bg-[#111827] py-6 pb-10 sm:py-10">
       <div className="max-w-[900px] mx-auto px-5">
         <div className="grid grid-cols-[auto_1fr_auto] items-center gap-5 mb-8 pb-6 border-b border-[#374151]">
-          <button className="flex items-center gap-2 py-2 px-0 bg-transparent border-none text-[#f9fafb] text-[15px] font-medium cursor-pointer transition-all hover:text-[#9ca3af]" onClick={() => router.back()}>
+          <button className="flex items-center gap-2 py-2 px-0 bg-transparent border-none text-[#f9fafb] text-[15px] font-medium cursor-pointer transition-all hover:text-[#9ca3af]" onClick={() => router.push('/profile')}>
             ← Kembali
           </button>
           <h1 className="text-center text-[28px] font-bold text-[#f9fafb]">Edit Produk</h1>
@@ -847,7 +847,7 @@ export default function EditProductPage() {
             <button
               type="button"
               className="py-3 px-6 rounded-lg font-medium cursor-pointer transition-all text-sm inline-flex items-center justify-center gap-2 bg-[#374151] text-[#f9fafb] border border-[#374151] hover:bg-[#1f2937]"
-              onClick={() => router.back()}
+              onClick={() => router.push('/profile')}
             >
               Batal
             </button>
