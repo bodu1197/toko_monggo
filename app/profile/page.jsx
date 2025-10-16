@@ -75,9 +75,9 @@ export default function ProfilePage() {
       const { data, error } = await supabaseClient
         .from('favorites')
         .select(`
-          product_id,
+          product_slug,
           products (
-            id,
+            slug,
             title,
             price,
             status,
@@ -190,14 +190,14 @@ export default function ProfilePage() {
     }
   }, [supabaseClient, user, setProfile, editForm]);
 
-  const handleDeleteProduct = useCallback(async (productId) => {
+  const handleDeleteProduct = useCallback(async (productSlug) => {
     if (!confirm('Yakin ingin menghapus produk ini?')) return;
 
     try {
       const { data: productImages, error: fetchError } = await supabaseClient
         .from('product_images')
         .select('image_url')
-        .eq('product_id', productId);
+        .eq('product_slug', productSlug);
 
       if (fetchError) {
         console.error('Error fetching product images:', fetchError);
@@ -206,7 +206,7 @@ export default function ProfilePage() {
       const { error: deleteError } = await supabaseClient
         .from('products')
         .delete()
-        .eq('id', productId);
+        .eq('slug', productSlug);
 
       if (deleteError) throw deleteError;
 
@@ -239,7 +239,7 @@ export default function ProfilePage() {
     }
   }, [supabaseClient, user, fetchUserProducts]);
 
-  const handleStatusChange = useCallback(async (productId, currentStatus) => {
+  const handleStatusChange = useCallback(async (productSlug, currentStatus) => {
     const newStatus = currentStatus === 'paused' ? 'active' : 'paused';
     const confirmMessage = newStatus === 'paused'
       ? 'Apakah Anda ingin menghentikan sementara penjualan produk ini?'
@@ -251,7 +251,7 @@ export default function ProfilePage() {
       const { error } = await supabaseClient
         .from('products')
         .update({ status: newStatus })
-        .eq('id', productId);
+        .eq('slug', productSlug);
 
       if (error) throw error;
 
@@ -534,9 +534,9 @@ export default function ProfilePage() {
               <div className={`grid gap-5 md:gap-3 ${isMobile ? 'grid-cols-1' : 'grid-cols-4 md:grid-cols-2'}`}>
                 {userProducts.map(product => (
                   <ProductCard
-                    key={product.id}
+                    key={product.slug}
                     product={{
-                      id: product.id,
+                      slug: product.slug,
                       title: product.title,
                       price: product.price,
                       city: product.regencies?.regency_name,
@@ -580,9 +580,9 @@ export default function ProfilePage() {
               <div className={`grid gap-5 md:gap-3 ${isMobile ? 'grid-cols-1' : 'grid-cols-4 md:grid-cols-2'}`}>
                 {favoriteProducts.map(product => (
                   <ProductCard
-                    key={product.id}
+                    key={product.slug}
                     product={{
-                      id: product.id,
+                      slug: product.slug,
                       title: product.title,
                       price: product.price,
                       city: product.regencies?.regency_name,

@@ -32,14 +32,14 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
 
   useEffect(() => {
     const checkFavoriteStatus = async () => {
-      if (!currentUser || !product?.id) return;
+      if (!currentUser || !product?.slug) return;
 
       try {
         const { data, error } = await supabase
           .from('favorites')
           .select('id')
           .eq('user_id', currentUser.id)
-          .eq('product_id', product.id)
+          .eq('product_slug', product.slug)
           .maybeSingle();
 
         if (error) throw error;
@@ -50,32 +50,30 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
     };
 
     checkFavoriteStatus();
-  }, [currentUser, product?.id, supabase]);
+  }, [currentUser, product?.slug, supabase]);
 
   if (!product) return null;
 
   const handleCardClick = () => {
-    // Use slug if available, otherwise use ID
-    const identifier = product.slug || product.id;
-    router.push(`/products/${identifier}`);
+    router.push(`/products/${product.slug}`);
   };
 
   const handleEditClick = (e) => {
     e.stopPropagation();
-    router.push(`/products/${product.id}/edit`);
+    router.push(`/products/${product.slug}/edit`);
   };
 
   const handleDeleteClick = (e) => {
     e.stopPropagation();
     if (onDelete) {
-      onDelete(product.id);
+      onDelete(product.slug);
     }
   };
 
   const handleStatusChange = (e) => {
     e.stopPropagation();
     if (onStatusChange) {
-      onStatusChange(product.id, product.status);
+      onStatusChange(product.slug, product.status);
     }
   };
 
@@ -100,7 +98,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
           .from('favorites')
           .delete()
           .eq('user_id', currentUser.id)
-          .eq('product_id', product.id);
+          .eq('product_slug', product.slug);
 
         if (error) throw error;
         setIsFavorite(false);
@@ -109,7 +107,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
           .from('favorites')
           .insert({
             user_id: currentUser.id,
-            product_id: product.id
+            product_slug: product.slug
           });
 
         if (error) throw error;
@@ -126,7 +124,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
   const handleRenewClick = (e) => {
     e.stopPropagation();
     if (onRenew) {
-      onRenew(product.id);
+      onRenew(product.slug);
     }
   };
 
