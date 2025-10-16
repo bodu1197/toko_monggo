@@ -116,7 +116,7 @@ export default function ProductDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase, params.id]);
+  }, [supabase, params.id, router]);
 
   const fetchSimilarProducts = useCallback(async (productData) => {
     if (!productData || !productData.categories?.parent_category || !productData.regency_id) {
