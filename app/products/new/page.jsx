@@ -306,12 +306,17 @@ export default function NewProductPage() {
         throw new Error(`Kategori tidak ditemukan: ${formData.category2} (${formData.category1})`);
       }
 
-      // 3. Create product with temporary slug (위치 정보 및 연락처 포함)
-      // First insert without slug to get the product ID
+      // 3. Generate unique slug first (slug is now the PRIMARY KEY)
+      const tempId = crypto.randomUUID().slice(0, 8); // 8자리 임시 ID
+      const baseSlug = generateSlug(formData.title, tempId);
+      const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug);
+
+      // 4. Create product with slug as PRIMARY KEY
       const { data: product, error: productError } = await supabase
         .from('products')
         .insert([
           {
+            slug: uniqueSlug, // slug is now PRIMARY KEY
             user_id: user.id,
             title: formData.title,
             description: formData.description,
@@ -324,34 +329,22 @@ export default function NewProductPage() {
             phone_number: formData.phone || null,
             whatsapp_number: formData.whatsapp || null,
             status: 'active',
-            slug: 'temp-slug', // Temporary slug to satisfy NOT NULL constraint
           },
         ])
         .select()
         .single();
 
-      if (productError) throw productError;
-
-      // 4. Generate proper slug and update
-      const baseSlug = generateSlug(formData.title, product.id);
-      const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug);
-
-      const { error: slugError } = await supabase
-        .from('products')
-        .update({ slug: uniqueSlug })
-        .eq('id', product.id);
-
-      if (slugError) {
-        console.error('Slug update error:', slugError);
-        throw new Error('Failed to generate product URL');
+      if (productError) {
+        console.error('Product creation error:', productError);
+        throw productError;
       }
 
-      // 5. Upload images
+      // 5. Upload images (use slug instead of id)
       const uploadedImages = [];
       for (let i = 0; i < imageFiles.length; i++) {
         const file = imageFiles[i];
         const fileExt = file.name.split('.').pop();
-        const fileName = `${product.id}_${i}_${Date.now()}.${fileExt}`;
+        const fileName = `${uniqueSlug}_${i}_${Date.now()}.${fileExt}`;
         const filePath = `products/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
@@ -368,13 +361,13 @@ export default function NewProductPage() {
           .getPublicUrl(filePath);
 
         uploadedImages.push({
-          product_id: product.id,
+          product_slug: uniqueSlug, // Changed from product_id to product_slug
           image_url: publicUrl,
           order: i,
         });
       }
 
-      // 5. Insert image records
+      // 6. Insert image records
       if (uploadedImages.length > 0) {
         const { error: imagesError } = await supabase
           .from('product_images')
@@ -386,7 +379,8 @@ export default function NewProductPage() {
       }
 
       alert('Produk berhasil ditambahkan!');
-      router.push(`/products/${product.id}`);
+      // Use slug for SEO-friendly URL
+      router.push(`/products/${uniqueSlug}`);
     } catch (error) {
       console.error('Product creation error:', error);
       alert('Terjadi kesalahan saat menambahkan produk: ' + error.message);

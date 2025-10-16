@@ -1,188 +1,110 @@
-# CLAUDE.md
+개선 제안:
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+   1. 테스트 코드 부재: 프로젝트 구조 상에 tests 또는 __tests__와 같은 테스트 코드 폴더가 보이지 않습니다. 기능이
+      고도화되고 복잡해질수록 안정성을 보장하기 위해 Jest, React Testing Library, Cypress 등을 도입하여
+      단위/통합/E2E 테스트를 작성하는 것을 강력히 권장합니다.
+   2. 상태 관리: 현재는 React Context와 Hook(useAuth.js) 기반으로 상태를 관리하는 것으로 보입니다. 애플리케이션
+      규모가 더 커지면 전역 상태 관리가 복잡해질 수 있으므로, Zustand나 Recoil 같은 경량 상태 관리 라이브러리
+      도입을 고려해볼 수 있습니다.
+   3. TypeScript 도입: 프로젝트가 JavaScript로 작성되어 있습니다. 대규모 프로젝트에서는 TypeScript를 도입하여 타입
+      안정성을 확보하고, 개발 과정에서의 오류를 줄이며, 코드 자동 완성 등 개발 경험을 향상시키는 것이 장기적으로
+      유리합니다.
+	  
+	  
+	   현재 구조가 매우 훌륭하지만, 모든 프로젝트는 지속적인 보안 강화가 필요합니다. 다음 사항들을 확인하고
+  보완한다면 더욱 견고해질 것입니다.
 
-## Project Overview
+   1. 서버사이드 입력값 검증 (Input Validation):
+       * 확인 필요: app/api/ 경로의 API 핸들러나 상품 생성/수정 페이지에서 서버로 데이터 전송 시, 데이터의
+         유효성을 검증하는 로직이 충분한지 확인해야 합니다. 예를 들어, 가격에 음수가 들어오거나, 설명란에
+         비정상적으로 긴 텍스트가 들어오는 경우 등을 방어해야 합니다.
+       * 제언: zod나 yup과 같은 스키마 기반 유효성 검사 라이브러리를 도입하여 API의 시작점에서 모든 입력값을
+         명시적으로 검증하는 패턴을 적용하는 것을 강력히 권장합니다.
 
-This is "soriplay" - a social media web application with Instagram-like features including user authentication, social feeds, stories, and profile management. The application is built using React with client-side routing and Supabase for backend services.
+   2. 의존성 취약점 스캔 (Dependency Vulnerability Scanning):
+       * 확인 필요: package.json에 명시된 외부 라이브러리(의존성)들에 알려진 보안 취약점이 있는지 주기적으로
+         확인해야 합니다.
+       * 제언: GitHub에서는 Dependabot을 통해 이를 자동화할 수 있으며, 로컬에서는 npm audit 또는 yarn audit
+         명령어를 실행하여 손쉽게 취약점을 점검하고 패치할 수 있습니다. CI 파이프라인에 이 단계를 추가하는 것이
+         가장 이상적입니다.
 
-## Architecture
+   3. 교차 사이트 스크립팅 (XSS) 방어:
+       * 확인 필요: app/components/products/CommentsSection.jsx 와 같이 사용자가 입력한 콘텐츠를 화면에 보여주는
+         기능에서 XSS 공격에 대한 방어가 되어 있는지 확인해야 합니다. React는 기본적으로 XSS에 안전하지만,
+         dangerouslySetInnerHTML 속성을 사용하거나 사용자 콘텐츠를 부주의하게 다룰 경우 취약점이 발생할 수
+         있습니다.
+       * 제언: 사용자 입력 콘텐츠를 렌더링할 때는 항상 텍스트로만 처리하고, 만약 HTML 렌더링이 꼭 필요하다면
+         DOMPurify와 같은 라이브러리를 사용하여 악성 스크립트를 제거하는 과정을 거쳐야 합니다.
 
-### Frontend Stack
-- **React 18**: UI framework loaded via ESM from esm.sh CDN
-- **React Router DOM v6**: Client-side routing
-- **Supabase JS Client v2**: Authentication and backend services
-- **No build system**: Uses native browser module support with import maps
 
-### Application Structure
+현재 구조도 훌륭하지만, 구글 페이지 속도 100점에 가깝게 만들기 위해 다음 항목들을 점검하고 실행하는 것을
+  추천합니다.
 
-The application follows a hybrid architecture:
-- Static HTML files (`index.html`, `main.html`, `signup.html`, `password-recovery.html`) serve as entry points
-- React components in JSX files (`app.jsx`, `MyPage.jsx`) handle the dynamic UI
-- A single root div (`#root`) is used for React app mounting
+   1. 이미지 최적화 (LCP, CLS 개선):
+       * 점검: OptimizedImage.jsx 컴포넌트가 Next.js의 <Image> 컴포넌트를 올바르게 사용하고 있는지 확인해야
+         합니다. 특히 width, height 속성을 명시하여 이미지 공간을 미리 확보하고, sizes 속성을 통해 다양한 화면
+         크기에 맞는 최적의 이미지를 제공하는지 점검이 필요합니다. 이것이 누적 레이아웃 이동(CLS)을 방지하는
+         핵심입니다.
+       * 실행: 프로젝트 내의 모든 <img> 태그를 OptimizedImage 컴포넌트로 대체하고, 각 이미지에 맞는 priority
+         속성을 중요한 이미지(예: 페이지 상단 배너)에 추가하여 LCP(최대 콘텐츠풀 페인트)를 개선하세요.
 
-### Module Loading Pattern
+   2. 폰트 최적화 (CLS 개선):
+       * 점검: 현재 폰트를 public 폴더에 두고 CSS로 불러오는 방식을 사용하고 있을 가능성이 높습니다. 이 방식은
+         폰트 로딩 중에 글꼴이 바뀌며 레이아웃이 흔들리는 현상(CLS)을 유발할 수 있습니다.
+       * 실행: `next/font`를 사용하도록 마이그레이션하는 것을 강력히 권장합니다. app/layout.jsx에서
+         next/font/google 또는 next/font/local을 사용하여 폰트를 불러오면, 빌드 시점에 폰트가 최적화되고 CSS에
+         인라인으로 포함됩니다. 이를 통해 폰트 관련 네트워크 요청이 사라지고 CLS 점수가 0이 되는 효과를 얻을 수
+         있습니다.
 
-Import maps are defined in `index.html` to enable CDN-based module resolution:
-```javascript
-{
-  "imports": {
-    "react": "https://esm.sh/react@18",
-    "react-dom/client": "https://esm.sh/react-dom@18/client",
-    "react-router-dom": "https://esm.sh/react-router-dom@6",
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2",
-    "react/jsx-runtime": "https://esm.sh/react@18/jsx-runtime",
-    "react/jsx-dev-runtime": "https://esm.sh/react@18/jsx-dev-runtime"
-  }
-}
-```
+   3. JavaScript 번들 사이즈 최적화 (INP, FCP 개선):
+       * 점검: 페이지 초기 로드에 필요 없는 무거운 JavaScript 라이브러리나 컴포넌트가 포함되어 있는지 확인해야
+         합니다.
+       * 실행: next/dynamic을 사용하여 동적 임포트(Dynamic Import)를 적용하세요. 예를 들어, 사용자가 버튼을
+         클릭해야만 나타나는 모달창, 스크롤해야 보이는 CommentsSection.jsx 등은 초기 번들에 포함시킬 필요가
+         없습니다.
+   1         import dynamic from 'next/dynamic'
+   2         const CommentsSection = dynamic(() => import('../components/products/CommentsSection'))
+       * @next/bundle-analyzer를 설치하여 어떤 라이브러리가 번들 크기를 많이 차지하는지 시각적으로 분석하고
+         최적화 대상을 찾을 수 있습니다.
 
-### Routing Architecture
+   4. 제3자 스크립트(Third-Party Scripts) 지연 로딩:
+       * 점검: Advertisement.jsx 컴포넌트는 외부 광고 스크립트를 사용할 가능성이 높습니다. 구글 애널리틱스, 광고
+         스크립트 등 제3자 스크립트는 페이지 속도를 저해하는 주요 원인입니다.
+       * 실행: Next.js의 <Script> 컴포넌트를 사용하고 strategy 속성을 부여하세요. lazyOnload 전략은 페이지가 어느
+         정도 로드된 후에 스크립트를 불러오며, worker 전략(실험적 기능)은 메인 스레드가 아닌 웹 워커에서
+         스크립트를 실행하여 메인 스레드 차단을 방지합니다.
+		 
+		  SEO 최고 수준 달성을 위한 상세 점검 항목
 
-The application has the following route structure (defined in `app.jsx:178-183`):
-- `/` - Login page (Login component)
-- `/signup` - Registration page (Signup component)
-- `/recover` - Password recovery page (Recover component)
-- `/main` - Main social feed (Main component)
-- `/me` - User profile page (MyPage component)
+  이미 훌륭한 기반을 갖추고 있으므로, 이제는 디테일을 완성하여 경쟁 우위를 확보해야 합니다.
 
-### Authentication Flow
+   1. 구조화된 데이터(Structured Data) 검증 및 확장:
+       * 점검: structuredData.js가 Product, BreadcrumbList, Review(리뷰/평점) 등 핵심 스키마를 정확한 형식으로
+         생성하고 있는지 확인해야 합니다.
+       * 실행: [Google 리치 결과 테스트 도구](https://search.google.com/test/rich-results)를 사용하여 상품 페이지
+         URL을 검사하세요. '페이지를 가져올 수 없음' 오류나 스키마 경고/오류가 없는지 반드시 확인해야 합니다.
+         오류가 발견되면 즉시 수정해야 리치 결과 노출 자격을 잃지 않습니다.
 
-**Supabase Integration** (`supabaseClient.js:1-6`):
-- Credentials are stored in global `window.SUPABASE_URL` and `window.SUPABASE_ANON_KEY`
-- Single Supabase client instance is exported for use across components
-- OAuth providers supported: Google and Apple (via `signInWithOAuth`)
+   2. 정식 URL(Canonical URL) 설정:
+       * 점검: 상품 목록 페이지에 정렬(예: ?sort=price_asc), 필터링 기능이 있다면 동일한 콘텐츠를 가진 여러 URL이
+         생성될 수 있습니다. (e.g., /products, /products?sort=newest). 이는 검색 엔진에게 중복 콘텐츠로 인식되어
+         SEO 평가가 분산될 위험이 있습니다.
+       * 실행: Next.js의 metadata 객체 내 alternates.canonical 속성을 사용하여 각 페이지의 대표 URL(정식 URL)을
+         명시해 주세요. 이를 통해 여러 버전의 URL이 존재하더라도 SEO 점수를 하나의 대표 URL로 통합할 수 있습니다.
 
-**OAuth Redirect Pattern**:
-```javascript
-supabase.auth.signInWithOAuth({
-  provider: 'google' | 'apple',
-  options: { redirectTo: window.location.origin + '/main' }
-})
-```
+   3. 오픈 그래프(Open Graph) 및 소셜 공유 메타데이터 완성:
+       * 점검: metadata.js가 구글 검색뿐만 아니라 카카오톡, 페이스북 등 소셜 미디어 공유를 위한
+         메타데이터(og:title, og:description, og:image 등)도 생성하는지 확인합니다.
+       * 실행: 사용자가 상품 링크를 공유했을 때 매력적인 이미지와 제목, 설명이 표시되도록 오픈 그래프 태그를 모든
+         주요 페이지(특히 상품 페이지)에 완벽하게 구현해야 합니다. 이는 트래픽 유입에 큰 영향을 줍니다.
 
-### Component Structure
+   4. 시맨틱 HTML 및 접근성(Accessibility):
+       * 점검: 페이지의 구조를 검색 엔진이 더 잘 이해할 수 있도록 시맨틱 HTML 태그(<main>, <nav>, <article>,
+         <aside> 등)를 적절히 사용하고 있는지 확인합니다.
+       * 실행: 모든 이미지에 의미 있는 alt 텍스트를 반드시 추가하세요. 이는 이미지 검색 최적화(Image SEO)의
+         기본이며, 스크린 리더 사용자를 위한 웹 접근성 향상에도 기여합니다. 구글은 접근성이 좋은 사이트를
+         긍정적으로 평가합니다.
 
-**Shared Components**:
-- `SocialLogin` (`app.jsx:7-63`): Reusable OAuth button component for Google/Apple login
+   5. 내부 링크 전략:
+       * 점검: 상품 상세 페이지에서 '관련 상품', '함께 본 상품' 등으로 연결되는 내부 링크 구조가 잘 되어
 
-**Page Components**:
-1. **Login** (`app.jsx:64-230`): Email/password login with OAuth options
-2. **Signup** (`app.jsx:231-451`): Registration with password matching validation
-3. **Recover** (`app.jsx:452-552`): Password recovery via email
-4. **Main** (`app.jsx:553-891`): Social feed with stories, posts, and bottom navigation
-5. **MyPage** (`MyPage.jsx`): User profile with stats, highlights, and post grid
-
-### Styling Architecture
-
-- **Base styles**: `styles.css` - shared form components, buttons, layouts
-- **Profile styles**: `mypage.css` - profile-specific styles
-- **Inline styles**: `main.html` contains embedded CSS for the feed view
-- **Theme system**: Uses CSS custom properties (variables) for colors and spacing
-- **Responsive design**: Mobile-first with breakpoints at 600px
-
-### State Management
-
-- Local component state using React hooks (`useState`, `useEffect`)
-- Navigation via React Router's `useNavigate` hook
-- No global state management library
-- Authentication state managed by Supabase client
-
-### Data Flow
-
-**Image Sources**:
-- Placeholder images from picsum.photos with random parameters
-- User avatars, story images, and post images all use this service
-- Example: `https://picsum.photos/60/60?random=1`
-
-**Navigation Pattern**:
-- Bottom navigation (mobile-only) with 5 items: home, check, add, bell, profile
-- Navigation handled via `navigate()` from React Router
-- Some nav items incorrectly navigate to `/signup` or `/recover` (apparent placeholder logic)
-
-## Development
-
-### Running the Application
-
-This is a static web application with no build step. To develop:
-
-1. **Serve files locally**: Use any static file server
-   ```bash
-   python -m http.server 8000
-   # or
-   npx serve .
-   ```
-
-2. **Configure Supabase**: Set credentials in the HTML before loading
-   ```html
-   <script>
-     window.SUPABASE_URL = 'your-project-url';
-     window.SUPABASE_ANON_KEY = 'your-anon-key';
-   </script>
-   ```
-
-3. **Access**: Navigate to `http://localhost:8000/member_design/index.html`
-
-### File Organization
-
-```
-member_design/
-├── index.html              # Login page entry point
-├── signup.html             # Registration page entry point
-├── main.html               # Feed page (standalone HTML)
-├── password-recovery.html  # Password reset entry point
-├── app.jsx                 # Main React app with routing
-├── MyPage.jsx              # Profile page component
-├── supabaseClient.js       # Supabase client configuration
-├── styles.css              # Global styles
-└── mypage.css              # Profile-specific styles
-```
-
-### Code Patterns
-
-**Loading States**:
-```javascript
-const [loading, setLoading] = useState(false);
-// On submit:
-setLoading(true);
-setTimeout(() => {
-  setLoading(false);
-  navigate('/target');
-}, 800);
-```
-
-**Form Handling**:
-- All forms use `e.preventDefault()` to intercept submission
-- Password matching validation in Signup component (`app.jsx:235-243`)
-- Required fields enforced via HTML5 `required` attribute
-
-**Component Navigation**:
-- Use `useNavigate()` hook from react-router-dom
-- Call `navigate('/path')` to change routes
-
-### Important Notes
-
-1. **No TypeScript**: Pure JavaScript codebase
-2. **No package.json**: Dependencies loaded via CDN
-3. **Mixed architecture**: Both static HTML and React SPA patterns coexist
-4. **Development mode**: Using React development runtime (`jsx-dev-runtime`)
-5. **No authentication state persistence**: Users will be logged out on page refresh unless Supabase session is configured
-6. **Hardcoded data**: Stories, posts, and user data are all mock/placeholder content
-7. **Navigation inconsistencies**: Some bottom nav buttons navigate to incorrect pages (likely needs fixing)
-
-### Common Modifications
-
-**Adding a new route**:
-1. Create component in `app.jsx` or separate `.jsx` file
-2. Add `<Route>` in App component's Routes block
-3. Add navigation trigger in appropriate component
-
-**Styling changes**:
-- Form components: Edit `styles.css`
-- Profile page: Edit `mypage.css`
-- Feed view: Edit inline styles in `main.html` or create separate CSS file
-
-**Supabase operations**:
-- Import from `./supabaseClient.js`
-- Use `supabase.auth.*` for authentication
-- Use `supabase.from().*` for database operations (not currently implemented)
