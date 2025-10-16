@@ -89,20 +89,21 @@ export default function LoginPage() {
     }
   };
 
-  const handleAppleLogin = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-      if (error) throw error;
-    } catch (error) {
-      console.error('Apple login error:', error);
-      setError('Gagal masuk dengan Apple');
-    }
-  };
+  // Apple Login - Disabled for now
+  // const handleAppleLogin = async () => {
+  //   try {
+  //     const { error } = await supabase.auth.signInWithOAuth({
+  //       provider: 'apple',
+  //       options: {
+  //         redirectTo: `${window.location.origin}/auth/callback`,
+  //       },
+  //     });
+  //     if (error) throw error;
+  //   } catch (error) {
+  //     console.error('Apple login error:', error);
+  //     setError('Gagal masuk dengan Apple');
+  //   }
+  // };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-5 bg-[#111827]">
@@ -224,10 +225,10 @@ export default function LoginPage() {
               <span className="relative bg-[#1f2937] px-4 text-[#6b7280] text-sm">atau masuk dengan</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="w-full">
               <button
                 type="button"
-                className="flex items-center justify-center gap-2 p-3 bg-[#374151] border border-[#4b5563] text-[#f9fafb] font-medium rounded-lg transition-all duration-300 hover:bg-[#111827] hover:border-[#4b5563]"
+                className="w-full flex items-center justify-center gap-2 p-3 bg-[#374151] border border-[#4b5563] text-[#f9fafb] font-medium rounded-lg transition-all duration-300 hover:bg-[#111827] hover:border-[#4b5563]"
                 onClick={handleGoogleLogin}
               >
                 <svg className="text-[#4285F4] font-bold" viewBox="0 0 24 24" width="18" height="18">
@@ -238,6 +239,7 @@ export default function LoginPage() {
                 </svg>
                 Google
               </button>
+              {/* Apple Login - Disabled
               <button
                 type="button"
                 className="flex items-center justify-center gap-2 p-3 bg-[#374151] border border-[#4b5563] text-[#f9fafb] font-medium rounded-lg transition-all duration-300 hover:bg-[#111827] hover:border-[#4b5563]"
@@ -248,6 +250,7 @@ export default function LoginPage() {
                 </svg>
                 Apple
               </button>
+              */}
             </div>
           </div>
         </div>
