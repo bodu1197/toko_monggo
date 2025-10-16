@@ -4,8 +4,7 @@
   "cleanUrls": true,
   "functions": {
     "app/**/*.{js,jsx,ts,tsx}": {
-      "maxDuration": 10,
-      "memory": 1024
+      "maxDuration": 10
     }
   },
   "headers": [
