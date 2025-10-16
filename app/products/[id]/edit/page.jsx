@@ -590,6 +590,8 @@ export default function EditProductPage() {
                       onChange={handleNewImageUpload}
                       style={{ display: 'none' }}
                       disabled={submitting}
+                      aria-label="Upload additional product images"
+                      title="Upload additional images"
                     />
                     <div className="text-[48px] mb-2 opacity-60">📷</div>
                     <div className="text-[13px] text-[#9ca3af] font-medium">Tambah Foto</div>

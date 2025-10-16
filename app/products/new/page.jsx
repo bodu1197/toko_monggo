@@ -418,6 +418,8 @@ export default function NewProductPage() {
                       multiple
                       onChange={handleImageUpload}
                       style={{ display: 'none' }}
+                      aria-label="Upload product images (maximum 5)"
+                      title="Upload product images"
                     />
                     <div className="text-[48px] mb-2 opacity-60">📷</div>
                     <div className="text-[13px] text-[#9ca3af] font-medium">Tambah Foto</div>
