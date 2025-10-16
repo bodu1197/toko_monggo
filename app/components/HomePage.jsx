@@ -673,7 +673,12 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
 
             {/* PC: 위치 거부시 인라인 표시 */}
             {isMobile === false && locationStatus === 'denied' && (
-              <button className="flex items-center justify-center gap-2 h-[42px] px-4 bg-[#4b5563] border-none rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap hover:bg-[#374151] hover:-translate-y-0.5" onClick={handleNearbyClick}>
+              <button
+                className="flex items-center justify-center gap-2 h-[42px] px-4 bg-[#4b5563] border-none rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap hover:bg-[#374151] hover:-translate-y-0.5"
+                onClick={handleNearbyClick}
+                title="Klik untuk mencari produk di sekitar Anda (izin lokasi diperlukan)"
+                aria-label="Aktifkan lokasi untuk mencari produk di sekitar"
+              >
                 <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="10" r="3"/>
                   <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
@@ -683,7 +688,12 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
             )}
 
             {isMobile === false && locationStatus === 'idle' && (
-              <button className="flex items-center justify-center gap-2 h-[42px] px-4 bg-[#4b5563] border-none rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap hover:bg-[#374151] hover:-translate-y-0.5" onClick={handleNearbyClick}>
+              <button
+                className="flex items-center justify-center gap-2 h-[42px] px-4 bg-[#4b5563] border-none rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap hover:bg-[#374151] hover:-translate-y-0.5"
+                onClick={handleNearbyClick}
+                title="Tampilkan produk di sekitar lokasi Anda (radius 50km)"
+                aria-label="Cari produk di sekitar lokasi Anda"
+              >
                 <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="10" r="3"/>
                   <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
@@ -846,7 +856,12 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
             </button>
 
             {locationStatus === 'idle' && (
-              <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]" onClick={handleNearbyClick}>
+              <button
+                className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]"
+                onClick={handleNearbyClick}
+                title="Tampilkan produk di sekitar 50km"
+                aria-label="Cari produk di sekitar lokasi"
+              >
                 <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="10" r="3"/>
                   <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
@@ -856,7 +871,12 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
             )}
 
             {locationStatus === 'denied' && (
-              <button className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]" onClick={handleNearbyClick}>
+              <button
+                className="h-[42px] px-4 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap bg-[#4b5563] border-none text-white hover:bg-[#374151]"
+                onClick={handleNearbyClick}
+                title="Aktifkan lokasi untuk fitur ini"
+                aria-label="Aktifkan akses lokasi"
+              >
                 <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="10" r="3"/>
                   <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
@@ -948,7 +968,12 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
             </svg>
             <span className="text-[11px] font-medium">Jual</span>
           </button>
-          <button className="flex flex-col items-center gap-1 bg-transparent border-none text-[#9ca3af] cursor-pointer py-2 transition-colors duration-300" onClick={handleNearbyClick}>
+          <button
+            className="flex flex-col items-center gap-1 bg-transparent border-none text-[#9ca3af] cursor-pointer py-2 transition-colors duration-300"
+            onClick={handleNearbyClick}
+            title="Produk di sekitar Anda"
+            aria-label="Cari produk di sekitar lokasi Anda"
+          >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="10" r="3"/>
               <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
