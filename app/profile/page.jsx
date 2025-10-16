@@ -9,6 +9,7 @@ import { useScreenSize } from '../hooks/useScreenSize';
 import LoadingState from '../components/common/LoadingState';
 import ProductCard from '../components/products/ProductCard';
 import { useSupabaseClient } from '../components/SupabaseClientProvider';
+import { isOldDiceBearUrl, migrateDiceBearUrl } from '../utils/avatarMigration';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -284,6 +285,39 @@ export default function ProfilePage() {
     }
   }, [user, fetchUserProducts, fetchFavoriteProducts]);
 
+  // Auto-migrate old DiceBear avatars
+  useEffect(() => {
+    const migrateAvatar = async () => {
+      if (profile?.avatar_url && isOldDiceBearUrl(profile.avatar_url)) {
+        console.log('🔄 Migrating old DiceBear avatar...');
+        const newUrl = migrateDiceBearUrl(profile.avatar_url);
+
+        if (newUrl !== profile.avatar_url) {
+          try {
+            const { error } = await supabaseClient
+              .from('profiles')
+              .update({ avatar_url: newUrl })
+              .eq('id', user.id);
+
+            if (error) {
+              console.error('Failed to migrate avatar:', error);
+            } else {
+              console.log('✅ Avatar migrated successfully');
+              // Update local state
+              setProfile({ ...profile, avatar_url: newUrl });
+            }
+          } catch (error) {
+            console.error('Avatar migration error:', error);
+          }
+        }
+      }
+    };
+
+    if (profile && user) {
+      migrateAvatar();
+    }
+  }, [profile?.avatar_url, user, supabaseClient]);
+
   useEffect(() => {
     if (profile) {
       setEditForm({
@@ -330,18 +364,42 @@ export default function ProfilePage() {
           <div className="flex justify-center mb-6">
             <div className="relative w-[120px] h-[120px]">
               {profile?.avatar_url ? (
-                <Image
-                  src={profile.avatar_url}
-                  alt="Avatar"
-                  width={120}
-                  height={120}
-                  className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] object-cover object-center"
-                  priority
-                  onError={(e) => {
-                    console.error('Avatar image failed to load:', profile.avatar_url);
-                    console.error('Error event:', e);
-                  }}
-                />
+                <div className="relative w-[120px] h-[120px]">
+                  {/* Use img tag for DiceBear SVGs to avoid Next.js Image issues */}
+                  {profile.avatar_url.includes('dicebear.com') ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt="Avatar"
+                      className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] object-cover object-center"
+                      onError={(e) => {
+                        console.error('Avatar failed to load, using fallback');
+                        e.target.style.display = 'none';
+                        e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      src={profile.avatar_url}
+                      alt="Avatar"
+                      width={120}
+                      height={120}
+                      className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] object-cover object-center"
+                      priority
+                      onError={(e) => {
+                        console.error('Avatar failed to load, using fallback');
+                        e.target.style.display = 'none';
+                        e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                  )}
+                  {/* Fallback icon (hidden by default) */}
+                  <div className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] bg-[#374151] flex items-center justify-center" style={{ display: 'none' }}>
+                    <svg className="w-[60px] h-[60px] text-[#6b7280]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                </div>
               ) : (
                 <div className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] bg-[#374151] flex items-center justify-center">
                   <svg className="w-[60px] h-[60px] text-[#6b7280]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

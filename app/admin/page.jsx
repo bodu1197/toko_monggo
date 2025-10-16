@@ -8,14 +8,19 @@ import { useScreenSize } from '../hooks/useScreenSize';
 import LoadingState from '../components/common/LoadingState';
 import { useAuth } from '../hooks/useAuth'; // useAuth 훅 import
 import { useSupabaseClient } from '../components/SupabaseClientProvider';
+import { migrateAllAvatars } from '../utils/avatarMigration';
 
 export default function AdminPage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth({ redirectTo: '/login' }); // useAuth 훅 적용
   const supabase = useSupabaseClient(); // Get the client instance here
   const [isAuthorized, setIsAuthorized] = useState(false); // 관리자 권한 확인을 위해 유지
-  const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, users, products, access, layout
+  const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, users, products, access, layout, migration
   const isMobile = useScreenSize();
+
+  // Avatar migration state
+  const [migrationStatus, setMigrationStatus] = useState(null);
+  const [isMigrating, setIsMigrating] = useState(false);
 
   // Dashboard stats
   const [stats, setStats] = useState({
@@ -850,6 +855,44 @@ export default function AdminPage() {
     }
   };
 
+  // Avatar Migration Handler
+  const handleMigrateAvatars = async () => {
+    if (!confirm('⚠️ 모든 사용자의 DiceBear 아바타를 v9.x PNG 포맷으로 마이그레이션하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.')) {
+      return;
+    }
+
+    setIsMigrating(true);
+    setMigrationStatus({ type: 'info', message: '마이그레이션 시작 중...' });
+
+    try {
+      const result = await migrateAllAvatars(supabase);
+
+      if (result.success) {
+        setMigrationStatus({
+          type: 'success',
+          message: `✅ 마이그레이션 완료!\n\n총 ${result.total}개 프로필 중:\n- ${result.migrated}개 성공\n- ${result.errors}개 실패`
+        });
+
+        // Refresh stats
+        fetchDashboardStats();
+        fetchUsers();
+      } else {
+        setMigrationStatus({
+          type: 'error',
+          message: `❌ 마이그레이션 실패: ${result.error}`
+        });
+      }
+    } catch (error) {
+      console.error('Migration error:', error);
+      setMigrationStatus({
+        type: 'error',
+        message: `❌ 마이그레이션 중 오류 발생: ${error.message}`
+      });
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
   useEffect(() => {
     if (!loading) {
       if (user && profile?.role === 'admin') {
@@ -1169,6 +1212,50 @@ export default function AdminPage() {
                     <div className="block text-[0.875rem] text-[#9ca3af] max-md:text-[13px]">총 신고 수</div>
                   </div>
                 </div>
+              </div>
+
+              {/* Avatar Migration Tool */}
+              <div className="mt-8 p-6 bg-[#1f2937] border border-[#374151] rounded-2xl">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-[#f9fafb] mb-2">🔄 DiceBear 아바타 마이그레이션</h3>
+                    <p className="text-sm text-[#9ca3af]">
+                      모든 사용자의 DiceBear 아바타를 최신 v9.x PNG 포맷으로 자동 마이그레이션합니다.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleMigrateAvatars}
+                    disabled={isMigrating}
+                    className={`px-6 py-3 rounded-lg font-medium text-sm transition-all ${
+                      isMigrating
+                        ? 'bg-[#374151] text-[#6b7280] cursor-not-allowed'
+                        : 'bg-[#6366f1] text-white hover:bg-[#4f46e5] hover:-translate-y-px'
+                    }`}
+                  >
+                    {isMigrating ? (
+                      <>
+                        <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
+                        마이그레이션 중...
+                      </>
+                    ) : (
+                      '마이그레이션 시작'
+                    )}
+                  </button>
+                </div>
+
+                {migrationStatus && (
+                  <div
+                    className={`p-4 rounded-lg mt-4 ${
+                      migrationStatus.type === 'success'
+                        ? 'bg-[rgba(16,185,129,0.1)] border border-[#10b981] text-[#10b981]'
+                        : migrationStatus.type === 'error'
+                        ? 'bg-[rgba(239,68,68,0.1)] border border-[#ef4444] text-[#ef4444]'
+                        : 'bg-[rgba(59,130,246,0.1)] border border-[#3b82f6] text-[#3b82f6]'
+                    }`}
+                  >
+                    <pre className="whitespace-pre-wrap text-sm font-mono">{migrationStatus.message}</pre>
+                  </div>
+                )}
               </div>
             </div>
           )}

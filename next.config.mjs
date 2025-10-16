@@ -97,6 +97,7 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'api.dicebear.com',
+        pathname: '/9.x/**', // Only allow v9.x API
       },
       // Add specific Supabase project URL
       {

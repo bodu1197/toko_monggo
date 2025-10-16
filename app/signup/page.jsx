@@ -29,8 +29,9 @@ export default function SignupPage() {
   };
 
   const generateAvatar = (name) => {
+    // Use latest API version and PNG format for better Next.js Image compatibility
     const seed = encodeURIComponent(name || Math.random().toString());
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+    return `https://api.dicebear.com/9.x/avataaars/png?seed=${seed}&size=200`;
   };
 
   const handleSubmit = async (e) => {
