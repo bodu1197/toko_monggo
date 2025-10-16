@@ -27,3 +27,23 @@
   --color-border-primary: #374151;
   --color-border-secondary: #4b5563;
 }
+
+/* LCP 최적화 - Render Delay 해결 */
+/* GPU 가속으로 이미지 렌더링 속도 향상 */
+img {
+  content-visibility: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Next.js Image 컴포넌트 최적화 */
+img[data-nimg] {
+  will-change: auto;
+}
+
+/* LCP 이미지 즉시 렌더링 */
+img[fetchpriority="high"] {
+  content-visibility: visible !important;
+  contain-intrinsic-size: auto 300px;
+}

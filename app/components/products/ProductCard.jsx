@@ -151,10 +151,10 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
 
   return (
     <div
-      className="bg-white rounded-xl overflow-hidden shadow-[0_4px_6px_rgba(0,0,0,0.05)] transition-all duration-200 cursor-pointer flex flex-col hover:-translate-y-[5px] hover:shadow-[0_10px_15px_rgba(0,0,0,0.1)]"
+      className="bg-white rounded-xl overflow-hidden shadow-[0_4px_6px_rgba(0,0,0,0.05)] transition-all duration-200 cursor-pointer flex flex-col will-change-transform hover:-translate-y-[5px] hover:shadow-[0_10px_15px_rgba(0,0,0,0.1)]"
       onClick={handleCardClick}
     >
-      <div className="relative w-full aspect-[4/3] bg-gray-100">
+      <div className="relative w-full aspect-[4/3] bg-gray-100 will-change-contents">
         {product.image ? (
           <OptimizedImage
             src={product.image}

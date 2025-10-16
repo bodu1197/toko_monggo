@@ -46,8 +46,8 @@ export default function OptimizedImage({
         return index === 0;
 
       case 'product-card':
-        // First 2 product cards on home page are likely LCP (mobile) or first 4 (desktop)
-        return index < 2;
+        // First 4 product cards are LCP candidates
+        return isAboveFold || index < 4;
 
       case 'home':
         // Above fold images on home page
@@ -109,9 +109,11 @@ export default function OptimizedImage({
       height={height}
       // Performance optimizations
       priority={isPriority}
-      loading={isPriority ? undefined : "lazy"}
-      fetchPriority={isPriority ? "high" : undefined}
-      quality={isPriority ? 80 : 65}
+      loading={isPriority ? "eager" : "lazy"}
+      fetchPriority={isPriority ? "high" : "low"}
+      quality={isPriority ? 85 : 70}
+      // Prevent render-blocking for LCP images
+      decoding="async"
       // Remove blur placeholder that might cause issues
       // placeholder="blur"
       // blurDataURL={generateBlurPlaceholder(placeholderWidth, placeholderHeight)}
