@@ -84,7 +84,7 @@ export default function ProductDetailPage() {
             parent_category
           )
         `)
-        .eq('slug', params.id)
+        .eq('slug', params.slug)
         .single();
 
       if (error) throw error;
@@ -108,7 +108,7 @@ export default function ProductDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase, params.id]);
+  }, [supabase, params.slug]);
 
   const fetchSimilarProducts = useCallback(async (productData) => {
     if (!productData || !productData.categories?.parent_category || !productData.regency_id) {
@@ -247,7 +247,7 @@ export default function ProductDetailPage() {
       const { data, error } = await supabase
         .from('product_comments')
         .select('*')
-        .eq('product_slug', params.id)
+        .eq('product_slug', params.slug)
         .is('parent_id', null)
         .order('created_at', { ascending: false });
 
@@ -279,7 +279,7 @@ export default function ProductDetailPage() {
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
-  }, [supabase, params.id]);
+  }, [supabase, params.slug]);
 
   const checkFavoriteStatus = useCallback(async () => {
     if (!currentUser) {
@@ -292,7 +292,7 @@ export default function ProductDetailPage() {
         .from('favorites')
         .select('id')
         .eq('user_id', currentUser.id)
-        .eq('product_slug', params.id)
+        .eq('product_slug', params.slug)
         .maybeSingle();
 
       if (error) throw error;
@@ -300,7 +300,7 @@ export default function ProductDetailPage() {
     } catch (error) {
       console.error('Error checking favorite status:', error);
     }
-  }, [supabase, currentUser, params.id]);
+  }, [supabase, currentUser, params.slug]);
 
   const toggleFavorite = async () => {
     if (!currentUser) {
@@ -321,7 +321,7 @@ export default function ProductDetailPage() {
           .from('favorites')
           .delete()
           .eq('user_id', currentUser.id)
-          .eq('product_slug', params.id);
+          .eq('product_slug', params.slug);
 
         if (error) throw error;
         setIsFavorite(false);
@@ -330,7 +330,7 @@ export default function ProductDetailPage() {
           .from('favorites')
           .insert({
             user_id: currentUser.id,
-            product_slug: params.id
+            product_slug: params.slug
           });
 
         if (error) throw error;
@@ -356,7 +356,7 @@ export default function ProductDetailPage() {
     fetchComments();
 
     return () => window.removeEventListener('resize', checkMobile);
-  }, [params.id, fetchComments, fetchCurrentUser, fetchProduct]);
+  }, [params.slug, fetchComments, fetchCurrentUser, fetchProduct]);
 
   useEffect(() => {
     if (product) {
@@ -392,7 +392,7 @@ export default function ProductDetailPage() {
       const { error } = await supabase
         .from('product_comments')
         .insert({
-          product_slug: params.id,
+          product_slug: params.slug,
           user_id: currentUser.id,
           parent_id: replyTo,
           comment: commentText.trim(),
@@ -459,7 +459,7 @@ export default function ProductDetailPage() {
         .insert({
           reporter_id: currentUser.id,
           report_type: 'product',
-          reported_product_slug: params.id,
+          reported_product_slug: params.slug,
           reason: reportReason,
           description: reportDescription.trim() || null,
           status: 'pending'
