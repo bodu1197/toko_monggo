@@ -435,6 +435,7 @@ export default function EditProductPage() {
         const baseSlug = generateSlug(formData.title, randomId);
         const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, params.slug);
 
+        // Update product slug
         const { error: slugError } = await supabase
           .from('products')
           .update({ slug: uniqueSlug })
@@ -444,6 +445,22 @@ export default function EditProductPage() {
           console.error('Slug update error:', slugError);
           throw new Error('Gagal memperbarui URL produk');
         }
+
+        // IMPORTANT: Update all existing images' product_slug to new slug
+        const { error: imagesSlugError } = await supabase
+          .from('product_images')
+          .update({ product_slug: uniqueSlug })
+          .eq('product_slug', params.slug);
+
+        if (imagesSlugError) {
+          console.error('Images slug update error:', imagesSlugError);
+        }
+
+        // Update other related tables
+        await supabase.from('product_comments').update({ product_slug: uniqueSlug }).eq('product_slug', params.slug);
+        await supabase.from('favorites').update({ product_slug: uniqueSlug }).eq('product_slug', params.slug);
+        await supabase.from('view_history').update({ product_slug: uniqueSlug }).eq('product_slug', params.slug);
+        await supabase.from('reports').update({ reported_product_slug: uniqueSlug }).eq('reported_product_slug', params.slug);
 
         newSlug = uniqueSlug; // 새 slug 저장
         console.log('[Edit] ✅ Slug updated from', params.slug, 'to', uniqueSlug);
