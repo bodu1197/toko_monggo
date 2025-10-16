@@ -28,6 +28,14 @@
   --color-border-secondary: #4b5563;
 }
 
+/* CSS Variable Aliases for backward compatibility */
+:root {
+  --border-color: var(--color-border-primary);
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+}
+
 /* LCP 최적화 - Render Delay 해결 */
 /* GPU 가속으로 이미지 렌더링 속도 향상 */
 img {
