@@ -34,8 +34,16 @@ const nextConfig = {
   // CSS optimization
   experimental: {
     optimizeCss: true, // Enable CSS optimization (requires critters)
-    optimizePackageImports: ['react', 'react-dom'], // Tree-shake React imports
+    optimizePackageImports: ['react', 'react-dom', '@supabase/supabase-js'], // Tree-shake imports
     cssChunking: 'strict', // Enable CSS chunking for better caching (strict mode)
+
+    // TTFB 최적화 - 서버 응답 시간 단축
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+
+    // 스트리밍 SSR 활성화 (초기 렌더링 가속화)
+    serverComponentsExternalPackages: ['@supabase/supabase-js'],
   },
 
   // Compiler optimizations
