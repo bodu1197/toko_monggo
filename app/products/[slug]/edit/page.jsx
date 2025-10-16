@@ -428,9 +428,12 @@ export default function EditProductPage() {
       if (updateError) throw updateError;
 
       // 2.5. Check if title changed and update slug
+      let newSlug = params.slug; // 기본값은 현재 slug
       if (formData.title !== product.title) {
-        const baseSlug = generateSlug(formData.title, product.id);
-        const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, product.id);
+        // slug에서 랜덤 ID 추출 또는 새로 생성
+        const randomId = crypto.randomUUID().slice(0, 8);
+        const baseSlug = generateSlug(formData.title, randomId);
+        const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, params.slug);
 
         const { error: slugError } = await supabase
           .from('products')
@@ -439,8 +442,11 @@ export default function EditProductPage() {
 
         if (slugError) {
           console.error('Slug update error:', slugError);
-          // Non-critical error, continue anyway
+          throw new Error('Gagal memperbarui URL produk');
         }
+
+        newSlug = uniqueSlug; // 새 slug 저장
+        console.log('[Edit] ✅ Slug updated from', params.slug, 'to', uniqueSlug);
       }
 
       // 3. Delete marked images from storage and database
@@ -470,7 +476,7 @@ export default function EditProductPage() {
         for (let i = 0; i < newImageFiles.length; i++) {
           const file = newImageFiles[i];
           const fileExt = 'jpg';
-          const fileName = `${product.id}_${Date.now()}_${i}.${fileExt}`;
+          const fileName = `${params.slug}_${Date.now()}_${i}.${fileExt}`;
           const filePath = `products/${fileName}`;
 
           const { error: uploadError } = await supabase.storage
@@ -487,7 +493,7 @@ export default function EditProductPage() {
             .getPublicUrl(filePath);
 
           uploadedImages.push({
-            product_slug: params.slug,
+            product_slug: newSlug,
             image_url: publicUrl,
             order: currentMaxOrder + i + 1,
           });
@@ -504,11 +510,17 @@ export default function EditProductPage() {
         }
       }
 
-      const goToMain = confirm('Produk berhasil diperbarui!\n\nKlik OK untuk ke Beranda, atau Cancel untuk ke Profil Saya');
-      if (goToMain) {
-        router.push('/');
+      // 제목이 변경되어 slug가 바뀐 경우, 새 상품 페이지로 이동
+      if (newSlug !== params.slug) {
+        alert('Produk berhasil diperbarui!\n\nURL produk telah diperbarui. Anda akan diarahkan ke halaman produk yang baru.');
+        router.push(`/products/${newSlug}`);
       } else {
-        router.push('/profile');
+        const goToMain = confirm('Produk berhasil diperbarui!\n\nKlik OK untuk ke Beranda, atau Cancel untuk ke Profil Saya');
+        if (goToMain) {
+          router.push('/');
+        } else {
+          router.push('/profile');
+        }
       }
     } catch (error) {
       console.error('Product update error:', error);
