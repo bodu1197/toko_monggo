@@ -176,7 +176,7 @@ export default function EditProductPage() {
             parent_category
           )
         `)
-        .eq('slug', params.id)
+        .eq('slug', params.slug)
         .single();
 
       if (productError) throw productError;
@@ -264,14 +264,14 @@ export default function EditProductPage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase, router, params.id, loadCities, loadSubcategories]);
+  }, [supabase, router, params.slug, loadCities, loadSubcategories]);
 
   useEffect(() => {
-    console.log('[Edit] Page loaded, product ID:', params.id);
+    console.log('[Edit] Page loaded, product slug:', params.slug);
     loadProvinces();
     loadMainCategories();
     checkUserAndLoadProduct();
-  }, [params.id, loadProvinces, loadMainCategories, checkUserAndLoadProduct]);
+  }, [params.slug, loadProvinces, loadMainCategories, checkUserAndLoadProduct]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -423,7 +423,7 @@ export default function EditProductPage() {
       const { error: updateError } = await supabase
         .from('products')
         .update(updateData)
-        .eq('slug', params.id);
+        .eq('slug', params.slug);
 
       if (updateError) throw updateError;
 
@@ -435,7 +435,7 @@ export default function EditProductPage() {
         const { error: slugError } = await supabase
           .from('products')
           .update({ slug: uniqueSlug })
-          .eq('slug', params.id);
+          .eq('slug', params.slug);
 
         if (slugError) {
           console.error('Slug update error:', slugError);
@@ -487,7 +487,7 @@ export default function EditProductPage() {
             .getPublicUrl(filePath);
 
           uploadedImages.push({
-            product_slug: params.id,
+            product_slug: params.slug,
             image_url: publicUrl,
             order: currentMaxOrder + i + 1,
           });
