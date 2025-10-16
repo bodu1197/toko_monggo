@@ -135,7 +135,7 @@ export default function ProductDetailPage() {
       const { data, error } = await supabase
         .from('products')
         .select(`
-          id,
+          slug,
           title,
           price,
           category_id,
