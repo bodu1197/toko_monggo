@@ -306,7 +306,8 @@ export default function NewProductPage() {
         throw new Error(`Kategori tidak ditemukan: ${formData.category2} (${formData.category1})`);
       }
 
-      // 3. Create product (위치 정보 및 연락처 포함)
+      // 3. Create product with temporary slug (위치 정보 및 연락처 포함)
+      // First insert without slug to get the product ID
       const { data: product, error: productError } = await supabase
         .from('products')
         .insert([
@@ -323,6 +324,7 @@ export default function NewProductPage() {
             phone_number: formData.phone || null,
             whatsapp_number: formData.whatsapp || null,
             status: 'active',
+            slug: 'temp-slug', // Temporary slug to satisfy NOT NULL constraint
           },
         ])
         .select()
@@ -330,7 +332,7 @@ export default function NewProductPage() {
 
       if (productError) throw productError;
 
-      // 4. Generate and update slug
+      // 4. Generate proper slug and update
       const baseSlug = generateSlug(formData.title, product.id);
       const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug);
 
@@ -341,7 +343,7 @@ export default function NewProductPage() {
 
       if (slugError) {
         console.error('Slug update error:', slugError);
-        // Non-critical error, continue anyway
+        throw new Error('Failed to generate product URL');
       }
 
       // 5. Upload images
