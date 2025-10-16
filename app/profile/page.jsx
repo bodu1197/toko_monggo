@@ -400,6 +400,7 @@ export default function ProfilePage() {
                 <input
                   type="file"
                   accept="image/*"
+                  capture="environment"
                   onChange={handleAvatarUpload}
                   className="hidden"
                   aria-label="Upload avatar image"

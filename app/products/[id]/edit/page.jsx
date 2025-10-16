@@ -586,6 +586,7 @@ export default function EditProductPage() {
                     <input
                       type="file"
                       accept="image/*"
+                      capture="environment"
                       multiple
                       onChange={handleNewImageUpload}
                       style={{ display: 'none' }}
