@@ -7,14 +7,11 @@ import dynamic from 'next/dynamic';
 
 import { useScreenSize } from './hooks/useScreenSize';
 import { useSupabaseClient } from './components/SupabaseClientProvider';
+import ProductCard from './components/products/ProductCard'; // ✅ 일반 import로 변경 (LCP 개선)
 
 // Dynamic imports for better performance
 const LoadingState = dynamic(() => import('./components/common/LoadingState'), {
   loading: () => <div className="col-span-full text-center py-10">Loading...</div>
-});
-
-const ProductCard = dynamic(() => import('./components/products/ProductCard'), {
-  loading: () => <div className="bg-[#1f2937] rounded-lg h-[300px] animate-pulse" />
 });
 
 const Advertisement = dynamic(() => import('./components/Advertisement'), {
