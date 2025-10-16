@@ -3,19 +3,20 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { createBrowserClient } from '@supabase/ssr';
 import OptimizedImage from '../../components/common/OptimizedImage';
 import ProductCard from '../../components/products/ProductCard';
 import {
   ImageGallery,
-  ShareModal,
-  ReportModal,
-  Advertisement,
   CommentsLoading
 } from '../../components/products/ProductDetailComponents';
 
-// Lazy load comments section
+// Lazy load heavy components
 const CommentsSection = lazy(() => import('../../components/products/CommentsSection'));
+const ShareModal = dynamic(() => import('../../components/products/ProductDetailComponents').then(mod => ({ default: mod.ShareModal })), { ssr: false });
+const ReportModal = dynamic(() => import('../../components/products/ProductDetailComponents').then(mod => ({ default: mod.ReportModal })), { ssr: false });
+const Advertisement = dynamic(() => import('../../components/products/ProductDetailComponents').then(mod => ({ default: mod.Advertisement })), { ssr: false });
 
 export default function ProductDetailPage() {
   const router = useRouter();
