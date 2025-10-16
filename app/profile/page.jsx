@@ -316,7 +316,7 @@ export default function ProfilePage() {
     if (profile && user) {
       migrateAvatar();
     }
-  }, [profile?.avatar_url, user, supabaseClient]);
+  }, [profile?.avatar_url, user, supabaseClient, profile, setProfile]);
 
   useEffect(() => {
     if (profile) {
@@ -365,33 +365,21 @@ export default function ProfilePage() {
             <div className="relative w-[120px] h-[120px]">
               {profile?.avatar_url ? (
                 <div className="relative w-[120px] h-[120px]">
-                  {/* Use img tag for DiceBear SVGs to avoid Next.js Image issues */}
-                  {profile.avatar_url.includes('dicebear.com') ? (
-                    <img
-                      src={profile.avatar_url}
-                      alt="Avatar"
-                      className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] object-cover object-center"
-                      onError={(e) => {
-                        console.error('Avatar failed to load, using fallback');
-                        e.target.style.display = 'none';
-                        e.target.nextElementSibling.style.display = 'flex';
-                      }}
-                    />
-                  ) : (
-                    <Image
-                      src={profile.avatar_url}
-                      alt="Avatar"
-                      width={120}
-                      height={120}
-                      className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] object-cover object-center"
-                      priority
-                      onError={(e) => {
-                        console.error('Avatar failed to load, using fallback');
-                        e.target.style.display = 'none';
-                        e.target.nextElementSibling.style.display = 'flex';
-                      }}
-                    />
-                  )}
+                  {/* Use Next.js Image component for all avatars */}
+                  <Image
+                    src={profile.avatar_url}
+                    alt="Avatar"
+                    width={120}
+                    height={120}
+                    className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] object-cover object-center"
+                    priority
+                    unoptimized={profile.avatar_url.includes('dicebear.com')}
+                    onError={(e) => {
+                      console.error('Avatar failed to load, using fallback');
+                      e.target.style.display = 'none';
+                      e.target.nextElementSibling.style.display = 'flex';
+                    }}
+                  />
                   {/* Fallback icon (hidden by default) */}
                   <div className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] bg-[#374151] flex items-center justify-center" style={{ display: 'none' }}>
                     <svg className="w-[60px] h-[60px] text-[#6b7280]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
