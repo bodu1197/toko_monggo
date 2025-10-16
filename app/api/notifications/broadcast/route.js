@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import webpush from 'web-push';
 import { createClient } from '@supabase/supabase-js';
+import { BroadcastNotificationSchema, formatValidationError } from '../../../utils/validation';
 
 // Configure web-push with VAPID details
 webpush.setVapidDetails(
@@ -17,15 +18,57 @@ const supabase = createClient(
 
 export async function POST(request) {
   try {
-    const { title, body, url, tag, userFilter } = await request.json();
-
-    // Validate input
-    if (!title) {
+    // 1. 인증 확인
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader) {
       return NextResponse.json(
-        { error: 'Title is required' },
+        { error: 'Unauthorized - Missing authorization header' },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Invalid token' },
+        { status: 401 }
+      );
+    }
+
+    // 2. 관리자 권한 확인
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Forbidden - Admin access required for broadcast' },
+        { status: 403 }
+      );
+    }
+
+    // 3. 입력값 검증 (Zod)
+    const requestBody = await request.json();
+
+    let validatedData;
+    try {
+      validatedData = BroadcastNotificationSchema.parse(requestBody);
+    } catch (validationError) {
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          message: formatValidationError(validationError),
+          details: validationError.errors
+        },
         { status: 400 }
       );
     }
+
+    const { title, body, url, tag, userFilter } = validatedData;
 
     // Build query for subscriptions
     let query = supabase

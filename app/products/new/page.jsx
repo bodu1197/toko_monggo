@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useSupabaseClient } from '../../components/SupabaseClientProvider';
 import { compressImages, formatFileSize } from '../../utils/imageCompression';
 import { generateSlug, ensureUniqueSlug } from '../../utils/slugify';
+import { ProductSchema, formatValidationError } from '../../utils/validation';
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -250,29 +251,33 @@ export default function NewProductPage() {
       return;
     }
 
-    // Validasi
-    if (formData.description.length < 10) {
-      alert('Deskripsi harus minimal 10 karakter!');
-      return;
-    }
-
-    if (!formData.province || !formData.city) {
-      alert('Pilih provinsi dan kota!');
-      return;
-    }
-
-    if (!formData.category1 || !formData.category2) {
-      alert('Pilih kategori lengkap!');
-      return;
-    }
-
+    // Validasi gambar
     if (imageFiles.length === 0) {
       alert('Minimal upload 1 foto produk!');
       return;
     }
 
-    if (!formData.phone && !formData.whatsapp) {
-      alert('Minimal isi 1 nomor kontak (Telepon atau WhatsApp)!');
+    // Zod 검증 - 서버사이드 보안 강화
+    try {
+      const validationData = {
+        title: formData.title,
+        description: formData.description,
+        price: parseInt(formData.price) || 0,
+        condition: formData.condition,
+        province: formData.province,
+        city: formData.city,
+        category1: formData.category1,
+        category2: formData.category2,
+        phone: formData.phone,
+        whatsapp: formData.whatsapp,
+        negotiable: formData.negotiable
+      };
+
+      ProductSchema.parse(validationData);
+    } catch (error) {
+      const errorMessage = formatValidationError(error);
+      alert(errorMessage);
+      console.error('Validation error:', error);
       return;
     }
 
