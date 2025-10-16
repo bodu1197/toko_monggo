@@ -658,7 +658,7 @@ export default function ProductDetailPage() {
             {/* Description Section */}
             <div className="p-5 lg:p-5 bg-[#1f2937] border border-[#374151] rounded-xl">
               <h3 className="text-[1.25rem] font-bold text-[#f9fafb] mb-6">Deskripsi</h3>
-              <p className="text-sm lg:text-[15px] leading-relaxed text-[#9ca3af] whitespace-pre-wrap">{product.description}</p>
+              <p className="text-sm lg:text-[15px] leading-relaxed text-[#9ca3af] whitespace-pre-wrap break-words">{product.description}</p>
 
               {/* Share & Report Actions */}
               <div className="flex items-center gap-3 mt-6 lg:mt-6 pt-6 lg:pt-6 border-t border-[#374151]">
@@ -847,7 +847,7 @@ export default function ProductDetailPage() {
                       </div>
 
                       <div className="mb-3 lg:mb-4">
-                        <p className="text-sm lg:text-[15px] leading-normal lg:leading-relaxed text-[#9ca3af] whitespace-pre-wrap">{comment.comment}</p>
+                        <p className="text-sm lg:text-[15px] leading-normal lg:leading-relaxed text-[#9ca3af] whitespace-pre-wrap break-words">{comment.comment}</p>
                       </div>
 
                       <div className="flex gap-4">
