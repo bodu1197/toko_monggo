@@ -120,24 +120,24 @@ export default function ProfilePage() {
       const filePath = `avatars/${fileName}`;
 
       if (profile?.avatar_url) {
-        const oldUrlParts = profile.avatar_url.split('/avatars/');
+        const oldUrlParts = profile.avatar_url.split('/profile-avatars/');
         if (oldUrlParts.length > 1) {
           const oldFilePath = oldUrlParts[1];
           await supabaseClient.storage
-            .from('avatars')
+            .from('profile-avatars')
             .remove([oldFilePath]);
           console.log('Old avatar deleted:', oldFilePath);
         }
       }
 
       const { error: uploadError } = await supabaseClient.storage
-        .from('avatars')
+        .from('profile-avatars')
         .upload(filePath, compressedFile);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabaseClient.storage
-        .from('avatars')
+        .from('profile-avatars')
         .getPublicUrl(filePath);
 
       const { error: updateError } = await supabaseClient
