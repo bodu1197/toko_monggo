@@ -435,35 +435,28 @@ export default function EditProductPage() {
         const baseSlug = generateSlug(formData.title, randomId);
         const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, params.slug);
 
-        // Update product slug
+        console.log('[Edit] 🔄 Updating slug from', params.slug, 'to', uniqueSlug);
+
+        // Update product slug (CASCADE will automatically update all related tables)
         const { error: slugError } = await supabase
           .from('products')
           .update({ slug: uniqueSlug })
           .eq('slug', params.slug);
 
         if (slugError) {
-          console.error('Slug update error:', slugError);
-          throw new Error('Gagal memperbarui URL produk');
+          console.error('Product slug update error:', slugError);
+          console.error('Error details:', {
+            message: slugError.message,
+            details: slugError.details,
+            hint: slugError.hint,
+            code: slugError.code
+          });
+          throw new Error(`Gagal memperbarui URL produk: ${slugError.message}`);
         }
-
-        // IMPORTANT: Update all existing images' product_slug to new slug
-        const { error: imagesSlugError } = await supabase
-          .from('product_images')
-          .update({ product_slug: uniqueSlug })
-          .eq('product_slug', params.slug);
-
-        if (imagesSlugError) {
-          console.error('Images slug update error:', imagesSlugError);
-        }
-
-        // Update other related tables
-        await supabase.from('product_comments').update({ product_slug: uniqueSlug }).eq('product_slug', params.slug);
-        await supabase.from('favorites').update({ product_slug: uniqueSlug }).eq('product_slug', params.slug);
-        await supabase.from('view_history').update({ product_slug: uniqueSlug }).eq('product_slug', params.slug);
-        await supabase.from('reports').update({ reported_product_slug: uniqueSlug }).eq('reported_product_slug', params.slug);
 
         newSlug = uniqueSlug; // 새 slug 저장
-        console.log('[Edit] ✅ Slug updated from', params.slug, 'to', uniqueSlug);
+        console.log('[Edit] ✅ Slug updated successfully from', params.slug, 'to', uniqueSlug);
+        console.log('[Edit] ✅ All related tables updated automatically via CASCADE');
       }
 
       // 3. Delete marked images from storage and database
