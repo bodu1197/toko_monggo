@@ -22,11 +22,8 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const params = useParams();
 
-  // Initialize Supabase client
-  const [supabase] = useState(() => createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ));
+  // Initialize Supabase client - delay until client-side
+  const [supabase, setSupabase] = useState(null);
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,11 +55,13 @@ export default function ProductDetailPage() {
   const [similarProducts, setSimilarProducts] = useState([]);
 
   const fetchCurrentUser = useCallback(async () => {
+    if (!supabase) return;
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
   }, [supabase]);
 
   const fetchProduct = useCallback(async () => {
+    if (!supabase) return;
     try {
       setLoading(true);
 
@@ -112,7 +111,7 @@ export default function ProductDetailPage() {
   }, [supabase, params.slug]);
 
   const fetchSimilarProducts = useCallback(async (productData) => {
-    if (!productData || !productData.categories?.parent_category || !productData.regency_id) {
+    if (!supabase || !productData || !productData.categories?.parent_category || !productData.regency_id) {
       return;
     }
 
@@ -175,6 +174,7 @@ export default function ProductDetailPage() {
   }, [supabase]);
 
   const handleWhatsApp = async () => {
+    if (!supabase) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       const goToLogin = confirm('Anda harus login untuk menghubungi penjual.\n\nApakah Anda ingin pergi ke halaman login?');
@@ -195,6 +195,7 @@ export default function ProductDetailPage() {
   };
 
   const handleCall = async () => {
+    if (!supabase) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       const goToLogin = confirm('Anda harus login untuk menghubungi penjual.\n\nApakah Anda ingin pergi ke halaman login?');
@@ -244,6 +245,7 @@ export default function ProductDetailPage() {
   };
 
   const fetchComments = useCallback(async () => {
+    if (!supabase) return;
     try {
       const { data, error } = await supabase
         .from('product_comments')
@@ -283,7 +285,7 @@ export default function ProductDetailPage() {
   }, [supabase, params.slug]);
 
   const checkFavoriteStatus = useCallback(async () => {
-    if (!currentUser) {
+    if (!supabase || !currentUser) {
       setIsFavorite(false);
       return;
     }
@@ -304,10 +306,12 @@ export default function ProductDetailPage() {
   }, [supabase, currentUser, params.slug]);
 
   const toggleFavorite = async () => {
-    if (!currentUser) {
-      const goToLogin = confirm('Anda harus login untuk menyukai produk.\n\nApakah Anda ingin pergi ke halaman login?');
-      if (goToLogin) {
-        router.push('/login');
+    if (!supabase || !currentUser) {
+      if (!currentUser) {
+        const goToLogin = confirm('Anda harus login untuk menyukai produk.\n\nApakah Anda ingin pergi ke halaman login?');
+        if (goToLogin) {
+          router.push('/login');
+        }
       }
       return;
     }
@@ -346,18 +350,29 @@ export default function ProductDetailPage() {
   };
 
   useEffect(() => {
+    // Initialize Supabase on client-side only
+    const client = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
+    setSupabase(client);
+
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!supabase) return;
+
     fetchProduct();
     fetchCurrentUser();
     fetchComments();
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, [params.slug, fetchComments, fetchCurrentUser, fetchProduct]);
+  }, [supabase, params.slug, fetchComments, fetchCurrentUser, fetchProduct]);
 
   useEffect(() => {
     if (product) {
@@ -374,9 +389,11 @@ export default function ProductDetailPage() {
   const handleSubmitComment = async (e) => {
     e.preventDefault();
 
-    if (!currentUser) {
-      alert('Silakan login untuk memberikan komentar');
-      router.push('/login');
+    if (!supabase || !currentUser) {
+      if (!currentUser) {
+        alert('Silakan login untuk memberikan komentar');
+        router.push('/login');
+      }
       return;
     }
 
@@ -447,8 +464,10 @@ export default function ProductDetailPage() {
   const handleSubmitReport = async (e) => {
     e.preventDefault();
 
-    if (!reportReason) {
-      alert('Silakan pilih alasan pelaporan');
+    if (!supabase || !reportReason) {
+      if (!reportReason) {
+        alert('Silakan pilih alasan pelaporan');
+      }
       return;
     }
 
