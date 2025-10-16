@@ -520,19 +520,30 @@ export default function HomePage() {
     }
   }, [supabase]); // ✅ FIXED: Remove setter functions
 
-  // 검색 입력 핸들러 (debouncing)
+  // 검색 입력 핸들러 (debouncing) - 자동완성 + 실시간 검색
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchQuery) {
+        // 자동완성 표시
         fetchAutocompleteSuggestions(searchQuery);
+        // 실시간 검색 실행 (검색어가 2글자 이상일 때)
+        if (searchQuery.trim().length >= 2) {
+          searchProducts(searchQuery);
+        }
       } else {
         setSearchSuggestions([]);
         setShowSuggestions(false);
+        // 검색어가 없으면 원래 상품 목록 복원
+        if (userLocation) {
+          fetchNearbyProducts(userLocation.latitude, userLocation.longitude);
+        } else {
+          fetchProducts();
+        }
       }
     }, 300); // 300ms debounce
 
     return () => clearTimeout(timer);
-  }, [searchQuery, fetchAutocompleteSuggestions]);
+  }, [searchQuery, fetchAutocompleteSuggestions, searchProducts, userLocation, fetchNearbyProducts, fetchProducts]);
 
   // 검색 실행 핸들러
   const handleSearch = (e) => {
