@@ -44,6 +44,37 @@ export async function GET(request) {
       }
 
       console.log('[OAuth Callback] Exchange successful, user:', data?.user?.email);
+
+      // Update profile with Google avatar and name if available
+      if (data?.user) {
+        const { user } = data;
+        const updates = {};
+
+        // Get Google profile picture from user metadata
+        if (user.user_metadata?.avatar_url) {
+          updates.avatar_url = user.user_metadata.avatar_url;
+        }
+
+        // Get full name from user metadata
+        if (user.user_metadata?.full_name) {
+          updates.full_name = user.user_metadata.full_name;
+        }
+
+        // Only update if we have data to update
+        if (Object.keys(updates).length > 0) {
+          console.log('[OAuth Callback] Updating profile with Google data:', updates);
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update(updates)
+            .eq('id', user.id);
+
+          if (updateError) {
+            console.error('[OAuth Callback] Failed to update profile:', updateError);
+          } else {
+            console.log('[OAuth Callback] Profile updated successfully');
+          }
+        }
+      }
     } catch (error) {
       console.error('[OAuth Callback] Error exchanging code for session:', error);
       // Redirect to login with error

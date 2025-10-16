@@ -104,6 +104,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'zthksbitvezxwhbymatz.supabase.co',
       },
+      // Google user profile images
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
     formats: ['image/webp'], // WebP only for better compatibility
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],

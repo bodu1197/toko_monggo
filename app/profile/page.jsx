@@ -373,7 +373,7 @@ export default function ProfilePage() {
                     height={120}
                     className="w-[120px] h-[120px] rounded-full border-4 border-[#374151] object-cover object-center"
                     priority
-                    unoptimized={profile.avatar_url.includes('dicebear.com')}
+                    unoptimized={profile.avatar_url.includes('dicebear.com') || profile.avatar_url.includes('googleusercontent.com')}
                     onError={(e) => {
                       console.error('Avatar failed to load, using fallback');
                       e.target.style.display = 'none';
