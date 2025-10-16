@@ -420,52 +420,39 @@ export default function HomePage() {
     try {
       setIsSearching(true);
 
-      // PostgreSQL tsquery 형식으로 변환 (공백을 & 로)
-      const tsQuery = query.trim().split(/\s+/).join(' & ');
+      // 단순 검색: ILIKE 사용으로 변경 (전문 검색 대신 부분 일치)
+      const searchTerm = `%${query.trim()}%`;
 
-      // Uses idx_products_search (GIN index) for full-text search
-      const { data, error } = await supabase.rpc('search_products', {
-        search_query: tsQuery,
-        limit_count: 50
-      });
+      // 직접 쿼리 방식으로 변경 (RPC 대신)
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          product_images (
+            image_url,
+            order
+          ),
+          regencies (
+            regency_name,
+            provinces (
+              province_name
+            )
+          ),
+          categories (
+            name
+          )
+        `)
+        .eq('status', 'active')
+        .gt('expires_at', new Date().toISOString())
+        .or(`title.ilike.${searchTerm},description.ilike.${searchTerm}`)
+        .order('created_at', { ascending: false })
+        .limit(50);
 
       if (error) throw error;
 
-      // 검색 결과가 있으면 상세 정보 가져오기
+      // 검색 결과 변환
       if (data && data.length > 0) {
-        const productIds = data.map(p => p.id);
-
-        // Fetch full product details for search results
-        const { data: fullData, error: fullError } = await supabase
-          .from('products')
-          .select(`
-            *,
-            product_images (
-              image_url,
-              order
-            ),
-            regencies (
-              regency_name,
-              provinces (
-                province_name
-              )
-            ),
-            categories (
-              name
-            )
-          `)
-          .in('id', productIds)  // Primary key lookup - fastest
-          .eq('status', 'active');
-
-        if (fullError) throw fullError;
-
-        // rank 정보를 매핑
-        const rankMap = {};
-        data.forEach(p => {
-          rankMap[p.id] = p.rank;
-        });
-
-        const transformedProducts = fullData?.map(product => ({
+        const transformedProducts = data?.map(product => ({
           id: product.slug,
           slug: product.slug,
           title: product.title,
@@ -477,11 +464,7 @@ export default function HomePage() {
           image: product.product_images?.[0]?.image_url || null,
           latitude: product.latitude,
           longitude: product.longitude,
-          rank: rankMap[product.slug] || rankMap[product.id],
         })) || [];
-
-        // rank 순으로 정렬
-        transformedProducts.sort((a, b) => (b.rank || 0) - (a.rank || 0));
 
         setProducts(transformedProducts);
         setFilteredProducts(transformedProducts);
@@ -491,8 +474,12 @@ export default function HomePage() {
       }
     } catch (error) {
       console.error('Search error:', error);
-      setProducts([]);
-      setFilteredProducts([]);
+      // 에러 발생 시 전체 상품 표시
+      if (userLocation) {
+        fetchNearbyProducts(userLocation.latitude, userLocation.longitude);
+      } else {
+        fetchProducts();
+      }
     } finally {
       setIsSearching(false);
     }
@@ -507,17 +494,27 @@ export default function HomePage() {
     }
 
     try {
-      // PostgreSQL prefix search용 tsquery
-      const tsQuery = query.trim().split(/\s+/).join(' & ');
+      // 단순 검색으로 변경
+      const searchTerm = `${query.trim()}%`;
 
-      const { data, error } = await supabase.rpc('autocomplete_products', {
-        search_query: tsQuery,
-        limit_count: 8
-      });
+      const { data, error } = await supabase
+        .from('products')
+        .select('title, categories(name)')
+        .eq('status', 'active')
+        .gt('expires_at', new Date().toISOString())
+        .ilike('title', searchTerm)
+        .order('created_at', { ascending: false })
+        .limit(8);
 
       if (error) throw error;
 
-      setSearchSuggestions(data || []);
+      // 데이터 변환
+      const suggestions = data?.map(item => ({
+        title: item.title,
+        category_name: item.categories?.name || ''
+      })) || [];
+
+      setSearchSuggestions(suggestions);
       setShowSuggestions(true);
     } catch (error) {
       console.error('Autocomplete error:', error);
