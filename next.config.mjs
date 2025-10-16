@@ -9,6 +9,12 @@ const nextConfig = {
   compress: true, // Enable Gzip compression
   poweredByHeader: false, // Remove X-Powered-By header
 
+  // Reduce server startup time
+  reactStrictMode: false, // Disable strict mode in production for faster server responses
+
+  // Optimize server responses
+  output: 'standalone', // Optimize for deployment (smaller Docker images, faster cold starts)
+
   // Target modern browsers (reduces bundle size)
   modularizeImports: {
     lodash: {
@@ -139,8 +145,13 @@ const nextConfig = {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN',
           },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
         ],
       },
+      // Static assets - aggressive caching
       {
         source: '/_next/static/:path*',
         headers: [
@@ -150,6 +161,7 @@ const nextConfig = {
           },
         ],
       },
+      // CSS files - aggressive caching with font preload
       {
         source: '/_next/static/css/:path*',
         headers: [
@@ -160,6 +172,45 @@ const nextConfig = {
           {
             key: 'Link',
             value: '</fonts/inter.woff2>; rel=preload; as=font; type=font/woff2; crossorigin=anonymous',
+          },
+        ],
+      },
+      // Image optimization - cache for 1 year
+      {
+        source: '/_next/image:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Public assets (fonts, icons, etc) - cache for 1 year
+      {
+        source: '/fonts/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/icons/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // API routes - no caching
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, must-revalidate',
           },
         ],
       },

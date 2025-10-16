@@ -2,6 +2,12 @@
   "buildCommand": "rm -rf .next && npm run build",
   "outputDirectory": ".next",
   "cleanUrls": true,
+  "functions": {
+    "app/**/*.{js,jsx,ts,tsx}": {
+      "maxDuration": 10,
+      "memory": 1024
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",
@@ -13,6 +19,19 @@
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
         }
       ]
     },
@@ -31,6 +50,24 @@
     },
     {
       "source": "/_next/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/_next/image(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/fonts/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
