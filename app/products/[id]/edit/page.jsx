@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { useSupabaseClient } from '../../../components/SupabaseClientProvider';
 import { compressImages, formatFileSize } from '../../../utils/imageCompression';
+import { generateSlug, ensureUniqueSlug } from '../../../utils/slugify';
 
 export default function EditProductPage() {
   const router = useRouter();
@@ -425,6 +426,22 @@ export default function EditProductPage() {
         .eq('id', params.id);
 
       if (updateError) throw updateError;
+
+      // 2.5. Check if title changed and update slug
+      if (formData.title !== product.title) {
+        const baseSlug = generateSlug(formData.title, params.id);
+        const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug, params.id);
+
+        const { error: slugError } = await supabase
+          .from('products')
+          .update({ slug: uniqueSlug })
+          .eq('id', params.id);
+
+        if (slugError) {
+          console.error('Slug update error:', slugError);
+          // Non-critical error, continue anyway
+        }
+      }
 
       // 3. Delete marked images from storage and database
       for (const img of imagesToDelete) {

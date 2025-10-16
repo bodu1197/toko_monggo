@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSupabaseClient } from '../../components/SupabaseClientProvider';
 import { compressImages, formatFileSize } from '../../utils/imageCompression';
+import { generateSlug, ensureUniqueSlug } from '../../utils/slugify';
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -328,6 +329,20 @@ export default function NewProductPage() {
         .single();
 
       if (productError) throw productError;
+
+      // 4. Generate and update slug
+      const baseSlug = generateSlug(formData.title, product.id);
+      const uniqueSlug = await ensureUniqueSlug(supabase, baseSlug);
+
+      const { error: slugError } = await supabase
+        .from('products')
+        .update({ slug: uniqueSlug })
+        .eq('id', product.id);
+
+      if (slugError) {
+        console.error('Slug update error:', slugError);
+        // Non-critical error, continue anyway
+      }
 
       // 5. Upload images
       const uploadedImages = [];

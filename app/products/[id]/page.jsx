@@ -64,6 +64,10 @@ export default function ProductDetailPage() {
   const fetchProduct = useCallback(async () => {
     try {
       setLoading(true);
+
+      // Check if params.id is a UUID or slug
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id);
+
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -83,10 +87,15 @@ export default function ProductDetailPage() {
             parent_category
           )
         `)
-        .eq('id', params.id)
+        .eq(isUUID ? 'id' : 'slug', params.id)
         .single();
 
       if (error) throw error;
+
+      // If slug was used, redirect to slug-based URL for consistency
+      if (!isUUID && data && window.location.pathname.includes(data.id)) {
+        router.replace(`/products/${data.slug}`);
+      }
 
       // Fetch seller profile separately
       if (data && data.user_id) {

@@ -191,6 +191,7 @@ export default function HomePage() {
       // 데이터 변환
       const transformedProducts = data?.map(product => ({
         id: product.id,
+        slug: product.slug,
         title: product.title,
         price: product.price,
         province: product.regencies?.provinces?.province_name || '',
@@ -249,6 +250,7 @@ export default function HomePage() {
       // RPC 함수가 이미 모든 상세 정보를 반환하므로, 바로 변환
       const transformedProducts = data?.map(product => ({
         id: product.id,
+        slug: product.slug,
         title: product.title,
         price: product.price,
         province: product.province_name || '',
@@ -460,6 +462,7 @@ export default function HomePage() {
 
         const transformedProducts = fullData?.map(product => ({
           id: product.id,
+          slug: product.slug,
           title: product.title,
           price: product.price,
           province: product.regencies?.provinces?.province_name || '',

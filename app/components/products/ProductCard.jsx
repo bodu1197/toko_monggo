@@ -55,7 +55,9 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
   if (!product) return null;
 
   const handleCardClick = () => {
-    router.push(`/products/${product.id}`);
+    // Use slug if available, otherwise use ID
+    const identifier = product.slug || product.id;
+    router.push(`/products/${identifier}`);
   };
 
   const handleEditClick = (e) => {
