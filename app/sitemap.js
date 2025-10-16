@@ -68,16 +68,16 @@ export default async function sitemap() {
   ];
 
   try {
-    // Get all active products for dynamic sitemap
+    // Get all active products for dynamic sitemap (use slug instead of id)
     const { data: products } = await supabase
       .from('products')
-      .select('id, updated_at')
+      .select('slug, updated_at')
       .eq('status', 'active')
       .order('updated_at', { ascending: false })
       .limit(1000); // Limit to prevent huge sitemaps
 
     const productPages = products?.map((product) => ({
-      url: `${baseUrl}/products/${product.id}`,
+      url: `${baseUrl}/products/${product.slug}`,
       lastModified: new Date(product.updated_at),
       changeFrequency: 'weekly',
       priority: 0.9,
