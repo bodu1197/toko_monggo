@@ -260,7 +260,7 @@ export default function EditProductPage() {
     } catch (error) {
       console.error('Error loading product:', error);
       alert('Gagal memuat informasi produk');
-      router.push('/profile');
+      router.replace('/profile');
     } finally {
       setLoading(false);
     }
@@ -523,7 +523,7 @@ export default function EditProductPage() {
       // 제목이 변경되어 slug가 바뀐 경우, 새 상품 페이지로 이동
       if (newSlug !== params.slug) {
         alert('Produk berhasil diperbarui!\n\nURL produk telah diperbarui. Anda akan diarahkan ke halaman produk yang baru.');
-        router.push(`/products/${newSlug}`);
+        router.replace(`/products/${newSlug}`);
       } else {
         const goToMain = confirm('Produk berhasil diperbarui!\n\nKlik OK untuk ke Beranda, atau Cancel untuk ke Profil Saya');
         if (goToMain) {

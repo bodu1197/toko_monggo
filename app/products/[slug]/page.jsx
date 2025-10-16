@@ -517,7 +517,7 @@ export default function ProductDetailPage() {
       {/* Header */}
       <header className="bg-[#1f2937] border-b border-[#374151] py-3 sticky top-0 z-[100]">
         <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4 flex items-center justify-between">
-          <button className="flex items-center gap-2 py-2 px-0 bg-transparent border-none text-[#f9fafb] text-[15px] font-medium cursor-pointer transition-all hover:text-[#9ca3af]" onClick={() => router.back()}>
+          <button className="flex items-center gap-2 py-2 px-0 bg-transparent border-none text-[#f9fafb] text-[15px] font-medium cursor-pointer transition-all hover:text-[#9ca3af]" onClick={() => router.push('/')}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
