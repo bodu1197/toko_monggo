@@ -163,6 +163,9 @@ export default function HomePage() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
+      // Optimized query using database indexes:
+      // 1. idx_products_status_expires: Filters active + non-expired products
+      // 2. idx_products_created_at: Sorts by recent products
       const { data, error} = await supabase
         .from('products')
         .select(`
@@ -181,9 +184,9 @@ export default function HomePage() {
             name
           )
         `)
-        .eq('status', 'active')
-        .gt('expires_at', new Date().toISOString())  // Only non-expired products
-        .order('created_at', { ascending: false })
+        .eq('status', 'active')  // Uses idx_products_status_expires (composite index)
+        .gt('expires_at', new Date().toISOString())  // Uses idx_products_status_expires
+        .order('created_at', { ascending: false })  // Uses idx_products_created_at
         .limit(50);
 
       if (error) throw error;
@@ -420,6 +423,7 @@ export default function HomePage() {
       // PostgreSQL tsquery 형식으로 변환 (공백을 & 로)
       const tsQuery = query.trim().split(/\s+/).join(' & ');
 
+      // Uses idx_products_search (GIN index) for full-text search
       const { data, error } = await supabase.rpc('search_products', {
         search_query: tsQuery,
         limit_count: 50
@@ -431,6 +435,7 @@ export default function HomePage() {
       if (data && data.length > 0) {
         const productIds = data.map(p => p.id);
 
+        // Fetch full product details for search results
         const { data: fullData, error: fullError } = await supabase
           .from('products')
           .select(`
@@ -449,7 +454,7 @@ export default function HomePage() {
               name
             )
           `)
-          .in('id', productIds)
+          .in('id', productIds)  // Primary key lookup - fastest
           .eq('status', 'active');
 
         if (fullError) throw fullError;
