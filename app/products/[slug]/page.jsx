@@ -30,7 +30,7 @@ export default function ProductDetailPage() {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(undefined); // undefined to prevent hydration mismatch
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   // Comments state
@@ -1014,7 +1014,7 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Mobile Bottom Actions */}
-      {isMobile && (product?.whatsapp_number || product?.phone_number) && (
+      {isMobile === true && (product?.whatsapp_number || product?.phone_number) && (
         <div
           className="fixed bottom-0 left-0 right-0 bg-[#1f2937] border-t border-[#374151] p-3 grid gap-3 z-[1000]"
           style={{
