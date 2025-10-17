@@ -373,19 +373,22 @@ export default function ProductDetailPage() {
     fetchProduct();
     fetchCurrentUser();
     fetchComments();
-  }, [supabase, params.slug, fetchComments, fetchCurrentUser, fetchProduct]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase, params.slug]);
 
   useEffect(() => {
     if (product) {
       fetchSimilarProducts(product);
     }
-  }, [product, fetchSimilarProducts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
 
   useEffect(() => {
     if (currentUser) {
       checkFavoriteStatus();
     }
-  }, [currentUser, checkFavoriteStatus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
