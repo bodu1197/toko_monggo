@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 import { useScreenSize } from '../hooks/useScreenSize';
 import { useSupabaseClient } from './SupabaseClientProvider';
 import ProductCard from './products/ProductCard';
-import Footer from './Footer';
 
 // Dynamic imports for better performance
 const LoadingState = dynamic(() => import('./common/LoadingState'), {
@@ -17,6 +16,10 @@ const LoadingState = dynamic(() => import('./common/LoadingState'), {
 const Advertisement = dynamic(() => import('./Advertisement'), {
   loading: () => null,
   ssr: false
+});
+
+const Footer = dynamic(() => import('./Footer'), {
+  ssr: true
 });
 
 const NotificationPermission = dynamic(() => import('./NotificationPermission'), {
