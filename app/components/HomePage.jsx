@@ -728,7 +728,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
               <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
                 {/* Mobile: 검색창도 필터 안에 */}
                 <form className="flex gap-2 mb-3 pt-4" onSubmit={handleSearch}>
-            <div className="flex-1 relative min-w-[293px] max-w-[293px]">
+            <div className="flex-1 relative">
               <input
                 type="text"
                 placeholder="Cari barang bekas..."
@@ -736,7 +736,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchSuggestions.length > 0 && setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                className="w-[293px] min-w-[293px] max-w-[293px] h-[42px] px-4 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none placeholder:text-[#6b7280]"
+                className="w-full h-[42px] px-4 bg-[#111827] border border-[#374151] rounded-lg text-[#f9fafb] text-sm outline-none placeholder:text-[#6b7280]"
               />
               {showSuggestions && searchSuggestions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 bg-[#1f2937] border border-[#374151] border-t-0 rounded-b-lg max-h-[250px] overflow-y-auto z-[1001] shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
@@ -756,7 +756,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
                 </div>
               )}
             </div>
-            <button type="submit" className="w-[42px] h-[42px] p-0 flex items-center justify-center py-3 px-5 bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 hover:bg-[#374151]" disabled={isSearching} aria-label="Cari produk">
+            <button type="submit" className="w-[42px] h-[42px] flex-shrink-0 flex items-center justify-center bg-[#4b5563] border-none rounded-lg cursor-pointer transition-colors duration-300 hover:bg-[#374151]" disabled={isSearching} aria-label="Cari produk">
               {isSearching ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
