@@ -65,20 +65,21 @@ export default function Advertisement({ position, className = '' }) {
   }
 
   return (
-    <div className={`advertisement-container ${className}`}>
+    <div className={`w-full my-5 flex justify-center ${className}`}>
       {ads.map((ad) => {
         // Sanitize ad code to prevent XSS attacks
+        // Only allow safe HTML tags and attributes
         const sanitizedHtml = DOMPurify.sanitize(ad.ad_code, {
-          ADD_TAGS: ['script'], // Allow script tags for ad tracking
-          ADD_ATTR: ['onclick', 'onload'], // Allow event handlers for ads
-          FORCE_BODY: true,
-          RETURN_TRUSTED_TYPE: true
+          ALLOWED_TAGS: ['a', 'img', 'div', 'span', 'p', 'br', 'b', 'strong', 'i', 'em', 'iframe'],
+          ALLOWED_ATTR: ['src', 'alt', 'href', 'target', 'rel', 'class', 'id', 'style', 'width', 'height', 'frameborder', 'allowfullscreen'],
+          ALLOW_DATA_ATTR: false,
+          FORCE_BODY: true
         });
 
         return (
           <div
             key={ad.id}
-            className="advertisement-item"
+            className="max-w-[728px] w-full"
             dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
           />
         );

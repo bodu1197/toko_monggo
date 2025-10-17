@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSupabaseClient } from '../SupabaseClientProvider';
 import OptimizedImage from '../common/OptimizedImage';
@@ -14,8 +14,9 @@ import OptimizedImage from '../common/OptimizedImage';
  * @param {function} [props.onStatusChange] - 상태 변경 버튼 클릭 시 호출될 함수 (profile 컨텍스트용)
  * @param {function} [props.onRenew] - 갱신 버튼 클릭 시 호출될 함수 (profile 컨텍스트용)
  * @param {boolean} [props.priority=false] - LCP 이미지 우선 로딩 (첫 번째 카드용)
+ * @param {number} [props.index=0] - 카드의 인덱스 (이미지 우선순위 결정용)
  */
-export default function ProductCard({ product, context = 'home', onDelete, onStatusChange, onRenew, priority = false, index = 0 }) {
+const ProductCard = React.memo(function ProductCard({ product, context = 'home', onDelete, onStatusChange, onRenew, priority = false, index = 0 }) {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -289,4 +290,22 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
       </div>
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // Return true if props are equal (skip re-render)
+  // Return false if props are different (perform re-render)
+  return (
+    prevProps.product?.slug === nextProps.product?.slug &&
+    prevProps.product?.title === nextProps.product?.title &&
+    prevProps.product?.price === nextProps.product?.price &&
+    prevProps.product?.image === nextProps.product?.image &&
+    prevProps.product?.city === nextProps.product?.city &&
+    prevProps.product?.province === nextProps.product?.province &&
+    prevProps.product?.status === nextProps.product?.status &&
+    prevProps.product?.expires_at === nextProps.product?.expires_at &&
+    prevProps.context === nextProps.context &&
+    prevProps.index === nextProps.index &&
+    prevProps.priority === nextProps.priority
+  );
+});
+
+export default ProductCard;

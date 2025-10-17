@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
@@ -261,8 +261,9 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
     }
   };
 
-  // 필터링 로직
-  useEffect(() => {
+  // 필터링 로직 - useMemo로 최적화
+  // filters나 products가 변경될 때만 재계산
+  const filteredProductsMemo = useMemo(() => {
     let result = [...products];
 
     if (filters.province) {
@@ -273,16 +274,19 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
       result = result.filter(p => p.city === filters.city);
     }
 
-    if (filters.category) {
-      result = result.filter(p => p.category === filters.category);
-    }
-
+    // subcategory가 선택되었으면 subcategory로 필터링
+    // (product.category는 실제로 세부 카테고리 name이고, filters.category는 parent_category임)
     if (filters.subcategory) {
-      result = result.filter(p => p.subcategory === filters.subcategory);
+      result = result.filter(p => p.category === filters.subcategory);
     }
 
-    setFilteredProducts(result);
+    return result;
   }, [filters, products]);
+
+  // useMemo 결과를 state에 동기화
+  useEffect(() => {
+    setFilteredProducts(filteredProductsMemo);
+  }, [filteredProductsMemo]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
