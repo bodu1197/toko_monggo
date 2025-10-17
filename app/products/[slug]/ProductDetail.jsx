@@ -1,19 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { createBrowserClient } from '@supabase/ssr';
 import OptimizedImage from '../../components/common/OptimizedImage';
 import ProductCard from '../../components/products/ProductCard';
-import {
-  ImageGallery,
-  CommentsLoading
-} from '../../components/products/ProductDetailComponents';
+// ProductDetailComponents import will be removed if not needed
 
-// Lazy load heavy components
-const CommentsSection = lazy(() => import('../../components/products/CommentsSection'));
+// Dynamic imports for modals and ads
 const ShareModal = dynamic(() => import('../../components/products/ProductDetailComponents').then(mod => ({ default: mod.ShareModal })), { ssr: false });
 const ReportModal = dynamic(() => import('../../components/products/ProductDetailComponents').then(mod => ({ default: mod.ReportModal })), { ssr: false });
 const Advertisement = dynamic(() => import('../../components/products/ProductDetailComponents').then(mod => ({ default: mod.Advertisement })), { ssr: false });
