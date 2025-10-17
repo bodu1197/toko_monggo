@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, lazy, Suspense } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import OptimizedImage from '../common/OptimizedImage';
 
-// Lazy load heavy components
-export const Advertisement = lazy(() => import('../Advertisement'));
+// Import Advertisement directly
+import Advertisement from '../Advertisement';
+export { Advertisement };
 
 // Loading component for comments
 export const CommentsLoading = () => (
