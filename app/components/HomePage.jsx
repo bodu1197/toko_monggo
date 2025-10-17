@@ -33,6 +33,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
   const [locationStatus, setLocationStatus] = useState('idle');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true); // 초기 로드 플래그
 
   // 검색 상태
   const [searchQuery, setSearchQuery] = useState('');
@@ -440,6 +441,12 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
 
   // 검색 입력 핸들러 (debouncing)
   useEffect(() => {
+    // 초기 로드 시에는 fetch하지 않음 (SSR 데이터 사용)
+    if (isInitialLoad) {
+      setIsInitialLoad(false);
+      return;
+    }
+
     const timer = setTimeout(() => {
       if (searchQuery) {
         fetchAutocompleteSuggestions(searchQuery);
@@ -458,7 +465,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, fetchAutocompleteSuggestions, searchProducts, userLocation, fetchNearbyProducts, fetchProducts]);
+  }, [searchQuery, fetchAutocompleteSuggestions, searchProducts, userLocation, fetchNearbyProducts, fetchProducts, isInitialLoad]);
 
   // 검색 실행 핸들러
   const handleSearch = (e) => {
