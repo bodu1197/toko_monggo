@@ -511,8 +511,8 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
             </div>
 
             {/* PC 검색창 - CSS로 표시/숨김 제어 */}
-            <div className="hidden md:flex flex-1 max-w-[600px]">
-                <form className="flex gap-5 relative" onSubmit={handleSearch}>
+            <div className="hidden md:flex flex-1 min-w-[400px]">
+                <form className="flex gap-3 relative w-full" onSubmit={handleSearch}>
                   <div className="flex-1 relative">
                     <input
                       type="text"
@@ -521,7 +521,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onFocus={() => searchSuggestions.length > 0 && setShowSuggestions(true)}
                       onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                      className="w-full bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
+                      className="w-full min-w-[400px] bg-[#111827] border border-[#374151] text-[#f9fafb] py-3 px-4 rounded-lg text-sm transition-all outline-none font-[inherit] focus:border-[#4b5563] focus:shadow-[0_0_0_3px_rgba(75,85,99,0.1)] placeholder:text-[#6b7280]"
                     />
                     {showSuggestions && searchSuggestions.length > 0 && (
                       <div className="absolute top-full left-0 right-0 bg-[#1f2937] border border-[#374151] border-t-0 rounded-b-lg max-h-[300px] overflow-y-auto z-[1001] shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
@@ -556,6 +556,13 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
 
             {/* PC 버튼들 - CSS로 표시/숨김 제어 */}
             <div className="hidden md:flex items-center gap-4">
+                  <button className="h-10 py-2 px-4 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-0.5" onClick={() => router.push('/products/new')}>
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="12" y1="5" x2="12" y2="19"/>
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Jual
+                  </button>
                   <button
                     className="flex items-center justify-center w-10 h-10 bg-[#374151] border border-[#374151] rounded-lg cursor-pointer transition-all hover:bg-[#111827] hover:border-[#4b5563] hover:-translate-y-0.5"
                     onClick={() => router.push('/profile')}
@@ -565,13 +572,6 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                       <circle cx="12" cy="7" r="4"/>
                     </svg>
-                  </button>
-                  <button className="h-10 py-2 px-4 rounded-lg font-medium cursor-pointer transition-all border-none text-sm inline-flex items-center justify-center gap-2 bg-[#4b5563] text-white hover:bg-[#374151] hover:-translate-y-0.5" onClick={() => router.push('/products/new')}>
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="12" y1="5" x2="12" y2="19"/>
-                      <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Jual
                   </button>
             </div>
           </div>
