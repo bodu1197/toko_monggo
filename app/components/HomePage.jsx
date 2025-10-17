@@ -7,12 +7,9 @@ import dynamic from 'next/dynamic';
 import { useScreenSize } from '../hooks/useScreenSize';
 import { useSupabaseClient } from './SupabaseClientProvider';
 import ProductCard from './products/ProductCard';
+import LoadingState from './common/LoadingState';
 
 // Dynamic imports for better performance
-const LoadingState = dynamic(() => import('./common/LoadingState'), {
-  loading: () => <div className="col-span-full text-center py-10">Loading...</div>
-});
-
 const Advertisement = dynamic(() => import('./Advertisement'), {
   loading: () => null,
   ssr: false
