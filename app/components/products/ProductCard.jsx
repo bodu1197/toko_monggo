@@ -214,7 +214,7 @@ export default function ProductCard({ product, context = 'home', onDelete, onSta
           Rp {product.price?.toLocaleString('id-ID') || 0}
         </p>
         <p className="text-[13px] text-gray-300 m-0">
-          📍 {product.city || ''}, {product.province || ''}
+          📍 {String(product.city || '')}{product.province ? `, ${String(product.province)}` : ''}
         </p>
 
         {context === 'profile' && (
