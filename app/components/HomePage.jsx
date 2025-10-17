@@ -499,18 +499,18 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
   }, [supabase]);
 
   return (
-    <div className={`min-h-screen flex flex-col ${isMobile ? 'pb-20' : ''}`}>
-      {/* Sticky Header + Filter Wrapper - PC only */}
-      <div className={`${isMobile ? 'sticky top-0 z-[1000] bg-[#1f2937]' : 'sticky top-0 z-[1000] bg-[#1f2937] will-change-transform transform-gpu backface-hidden'}`}>
-        {/* Header - PC와 모바일 다른 레이아웃 */}
-        <header className={`${isMobile ? 'sticky top-0 z-[1000]' : ''} bg-[#1f2937] border-b border-[#374151] relative z-[1] ${isMobile ? 'py-3' : 'py-4'}`}>
+    <div className="min-h-screen flex flex-col pb-20 md:pb-0">
+      {/* Sticky Header + Filter Wrapper */}
+      <div className="sticky top-0 z-[1000] bg-[#1f2937] md:will-change-transform md:transform-gpu md:backface-hidden">
+        {/* Header - CSS로 반응형 제어 */}
+        <header className="bg-[#1f2937] border-b border-[#374151] relative z-[1] py-3 md:py-4">
           <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4 flex items-center justify-between gap-8">
             <div className="flex items-center gap-12">
-              <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold whitespace-nowrap cursor-pointer`} onClick={() => router.push('/')}>🛍️ Toko Monggo</h1>
+              <h1 className="text-xl md:text-2xl font-bold whitespace-nowrap cursor-pointer" onClick={() => router.push('/')}>🛍️ Toko Monggo</h1>
             </div>
 
-            {isMobile === false && (
-              <div className="flex-1 max-w-[600px]">
+            {/* PC 검색창 - CSS로 표시/숨김 제어 */}
+            <div className="hidden md:flex flex-1 max-w-[600px]">
                 <form className="flex gap-5 relative" onSubmit={handleSearch}>
                   <div className="flex-1 relative">
                     <input
@@ -552,11 +552,9 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
                   </button>
                 </form>
               </div>
-            )}
 
-            <div className="flex items-center gap-4">
-              {isMobile === false && (
-                <>
+            {/* PC 버튼들 - CSS로 표시/숨김 제어 */}
+            <div className="hidden md:flex items-center gap-4">
                   <button
                     className="flex items-center justify-center w-10 h-10 bg-[#374151] border border-[#374151] rounded-lg cursor-pointer transition-all hover:bg-[#111827] hover:border-[#4b5563] hover:-translate-y-0.5"
                     onClick={() => router.push('/profile')}
@@ -574,16 +572,13 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
                     </svg>
                     Jual
                   </button>
-                </>
-              )}
             </div>
           </div>
 
         </header>
 
-        {/* Filter Bar - PC는 wrapper 안, 모바일은 wrapper 밖 */}
-        {isMobile === false && (
-        <section className="bg-[#1f2937] border-b border-[#374151] py-5 relative z-[1]">
+        {/* Filter Bar - PC 전용 - CSS로 표시/숨김 제어 */}
+        <section className="hidden md:block bg-[#1f2937] border-b border-[#374151] py-5 relative z-[1]">
         <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
           <div className="flex gap-3 items-center flex-wrap">
             <div className="flex-1 min-w-[150px]">
@@ -655,7 +650,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
             </div>
 
             {/* PC: Nearby 위치 표시 인라인 */}
-            {isMobile === false && locationStatus === 'success' && (
+            {locationStatus === 'success' && (
               <div className="flex items-center gap-2 h-[42px] px-4 bg-[#111827] border border-[#374151] rounded-lg text-[#9ca3af] text-sm font-medium whitespace-nowrap">
                 <svg className="w-[18px] h-[18px] text-[#9ca3af] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
@@ -672,7 +667,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
             )}
 
             {/* PC: 위치 거부시 인라인 표시 */}
-            {isMobile === false && locationStatus === 'denied' && (
+            {locationStatus === 'denied' && (
               <button
                 className="flex items-center justify-center gap-2 h-[42px] px-4 bg-[#4b5563] border-none rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap hover:bg-[#374151] hover:-translate-y-0.5"
                 onClick={handleNearbyClick}
@@ -687,7 +682,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
               </button>
             )}
 
-            {isMobile === false && locationStatus === 'idle' && (
+            {locationStatus === 'idle' && (
               <button
                 className="flex items-center justify-center gap-2 h-[42px] px-4 bg-[#4b5563] border-none rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap hover:bg-[#374151] hover:-translate-y-0.5"
                 onClick={handleNearbyClick}
@@ -702,7 +697,6 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
               </button>
             )}
 
-            {isMobile === false && (
               <button className="h-[42px] px-5 bg-[#374151] border border-[#374151] rounded-lg text-[#9ca3af] text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 hover:bg-[#111827] hover:text-[#f9fafb] hover:border-[#4b5563]" onClick={resetFilters}>
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M1 4v6h6M23 20v-6h-6"/>
@@ -710,11 +704,9 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
                 </svg>
                 Reset
               </button>
-            )}
           </div>
         </div>
       </section>
-        )}
       </div>
 
       {/* Mobile Filter - Bottom Slide-up Popup */}
@@ -901,10 +893,10 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
         </>
       )}
 
-      {/* Products Grid */}
-      <section className={`flex-1 bg-[#111827] ${isMobile ? 'pt-4 pb-4' : 'pt-5 pb-[60px]'}`}>
+      {/* Products Grid - CSS로 반응형 제어 */}
+      <section className="flex-1 bg-[#111827] pt-4 pb-4 md:pt-5 md:pb-[60px]">
         <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4">
-          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-4 gap-6'}`}>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6">
             {loading ? (
               <div className="col-span-full">
                 <LoadingState message="Memuat produk..." />
@@ -942,9 +934,8 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
         </div>
       </section>
 
-      {/* Mobile Bottom Nav */}
-      {isMobile && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-[#1f2937] border-t border-[#374151] grid grid-cols-5 py-2 z-[1000]">
+      {/* Mobile Bottom Nav - CSS로 표시/숨김 제어 */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1f2937] border-t border-[#374151] grid grid-cols-5 py-2 z-[1000]">
           <button className="flex flex-col items-center gap-1 bg-transparent border-none text-[#4b5563] cursor-pointer py-2 transition-colors duration-300" onClick={() => router.push('/')}>
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -988,10 +979,11 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
             <span className="text-[11px] font-medium">{isLoggedIn ? 'Profil' : 'Login'}</span>
           </button>
         </nav>
-      )}
 
-      {/* Footer - PC only */}
-      {!isMobile && <Footer />}
+      {/* Footer - PC only - CSS로 표시/숨김 제어 */}
+      <div className="hidden md:block">
+        <Footer />
+      </div>
 
       {/* Notification Permission Banner */}
       <NotificationPermission user={currentUser} supabase={supabase} />
