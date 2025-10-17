@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
-import { useScreenSize } from '../hooks/useScreenSize';
 import { useSupabaseClient } from './SupabaseClientProvider';
 import ProductCard from './products/ProductCard';
 import LoadingState from './common/LoadingState';
@@ -27,7 +26,6 @@ const NotificationPermission = dynamic(() => import('./NotificationPermission'),
 export default function HomePage({ initialProducts = [], initialProvinces = [], initialCategories = [] }) {
   const router = useRouter();
   const supabase = useSupabaseClient();
-  const isMobile = useScreenSize();
   const [products, setProducts] = useState(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState(initialProducts);
   const [loading, setLoading] = useState(false);
