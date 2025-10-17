@@ -27,7 +27,7 @@ export default function ProductDetailPage() {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(undefined); // undefined to prevent hydration mismatch
+  const [isMobile, setIsMobile] = useState(false); // default to false for SSR
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   // Comments state
@@ -542,7 +542,7 @@ export default function ProductDetailPage() {
       <header className="bg-[#1f2937] border-b border-[#374151] py-3 sticky top-0 z-[100]">
         <div className="w-full max-w-[1400px] mx-auto px-5 max-md:px-4 flex items-center justify-between">
           <button className="flex items-center gap-2 py-2 px-0 bg-transparent border-none text-[#f9fafb] text-[15px] font-medium cursor-pointer transition-all hover:text-[#9ca3af]" onClick={() => router.push('/')}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
             Kembali
@@ -713,7 +713,7 @@ export default function ProductDetailPage() {
                     onClick={shareToX}
                     title="Bagikan ke X"
                   >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 lg:w-[22px] h-5 lg:h-[22px] text-[#000000]">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 lg:w-[22px] h-5 lg:h-[22px] text-white">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                     </svg>
                   </button>
@@ -1037,7 +1037,7 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Mobile Bottom Actions */}
-      {isMobile === true && (product?.whatsapp_number || product?.phone_number) && (
+      {isMobile && (product?.whatsapp_number || product?.phone_number) && (
         <div
           className="fixed bottom-0 left-0 right-0 bg-[#1f2937] border-t border-[#374151] p-3 grid gap-3 z-[1000]"
           style={{
@@ -1099,8 +1099,8 @@ export default function ProductDetailPage() {
                   <span className="text-sm lg:text-sm font-semibold text-[#f9fafb]">Facebook</span>
                 </button>
 
-                <button className="flex flex-col items-center justify-center gap-3 py-5 lg:py-6 px-3 lg:px-4 bg-[#374151] border border-[rgba(0,0,0,0.3)] rounded-xl cursor-pointer transition-all hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)] hover:bg-[rgba(0,0,0,0.1)] hover:border-[#000000]" onClick={shareToX}>
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 lg:w-10 h-8 lg:h-10 text-[#000000]">
+                <button className="flex flex-col items-center justify-center gap-3 py-5 lg:py-6 px-3 lg:px-4 bg-[#374151] border border-[rgba(255,255,255,0.3)] rounded-xl cursor-pointer transition-all hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)] hover:bg-[rgba(255,255,255,0.1)] hover:border-[#ffffff]" onClick={shareToX}>
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 lg:w-10 h-8 lg:h-10 text-white">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                   </svg>
                   <span className="text-sm lg:text-sm font-semibold text-[#f9fafb]">X</span>
