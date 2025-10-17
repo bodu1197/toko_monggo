@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { useScreenSize } from '../hooks/useScreenSize';
 import { useSupabaseClient } from './SupabaseClientProvider';
 import ProductCard from './products/ProductCard';
+import Footer from './Footer';
 
 // Dynamic imports for better performance
 const LoadingState = dynamic(() => import('./common/LoadingState'), {
@@ -14,11 +15,6 @@ const LoadingState = dynamic(() => import('./common/LoadingState'), {
 });
 
 const Advertisement = dynamic(() => import('./Advertisement'), {
-  loading: () => null,
-  ssr: false
-});
-
-const Footer = dynamic(() => import('./Footer'), {
   loading: () => null,
   ssr: false
 });
@@ -710,10 +706,10 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
       </div>
 
       {/* Mobile Filter - Bottom Slide-up Popup */}
-      {isMobile && showMobileFilters && (
+      {showMobileFilters && (
         <>
-          <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/70 z-[1500] animate-[fadeIn_0.3s_ease-out]" onClick={() => setShowMobileFilters(false)} />
-          <div className="fixed bottom-0 left-0 right-0 bg-[#1f2937] rounded-t-[20px] z-[1501] animate-[slideUpFromBottom_0.3s_ease-out] max-h-[85vh] overflow-y-auto shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+          <div className="md:hidden fixed top-0 left-0 right-0 bottom-0 bg-black/70 z-[1500] animate-[fadeIn_0.3s_ease-out]" onClick={() => setShowMobileFilters(false)} />
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1f2937] rounded-t-[20px] z-[1501] animate-[slideUpFromBottom_0.3s_ease-out] max-h-[85vh] overflow-y-auto shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between py-5 px-6 border-b border-[#374151] bg-[#1f2937] sticky top-0 z-10">
               <h3 className="text-xl font-bold text-[#f9fafb] m-0">Filter & Pencarian</h3>
               <button className="w-9 h-9 flex items-center justify-center bg-[#374151] border border-[#374151] rounded-full cursor-pointer transition-all duration-300 hover:bg-[#111827] hover:border-[#9ca3af]" onClick={() => setShowMobileFilters(false)} aria-label="Tutup filter">
