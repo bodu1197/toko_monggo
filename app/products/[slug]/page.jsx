@@ -3,34 +3,44 @@ import ProductDetail from './ProductDetail';
 
 // Generate dynamic metadata for SEO/GEO
 export async function generateMetadata({ params }) {
-  const { slug } = await params;
-  const supabase = await createClient();
+  try {
+    const resolvedParams = await params;
+    const slug = resolvedParams?.slug || '';
 
-  const { data: product, error } = await supabase
-    .from('products')
-    .select(`
-      title,
-      description,
-      price,
-      condition,
-      regencies (regency_name),
-      provinces (province_name),
-      categories (name, parent_category),
-      product_images (image_url, order)
-    `)
-    .eq('slug', slug)
-    .maybeSingle();
+    if (!slug) {
+      return {
+        title: 'Produk - TokoMonggo',
+        description: 'Lihat produk di TokoMonggo.',
+      };
+    }
 
-  if (error) {
-    console.error('Error fetching product metadata:', error);
-  }
+    const supabase = await createClient();
 
-  if (!product) {
-    return {
-      title: 'Produk Tidak Ditemukan - TokoMonggo',
-      description: 'Produk yang Anda cari tidak ditemukan di TokoMonggo.',
-    };
-  }
+    const { data: product, error } = await supabase
+      .from('products')
+      .select(`
+        title,
+        description,
+        price,
+        condition,
+        regencies (regency_name),
+        provinces (province_name),
+        categories (name, parent_category),
+        product_images (image_url, order)
+      `)
+      .eq('slug', slug)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching product metadata:', error);
+    }
+
+    if (!product) {
+      return {
+        title: 'Produk Tidak Ditemukan - TokoMonggo',
+        description: 'Produk yang Anda cari tidak ditemukan di TokoMonggo.',
+      };
+    }
 
   const mainImage = product.product_images?.sort((a, b) => a.order - b.order)[0]?.image_url;
   const location = `${product.regencies?.regency_name || ''}, ${product.provinces?.province_name || ''}`;
@@ -74,33 +84,57 @@ export async function generateMetadata({ params }) {
       canonical: `https://tokomonggo.com/products/${slug}`,
     },
   };
+  } catch (err) {
+    console.error('Error generating metadata:', err);
+    return {
+      title: 'Produk - TokoMonggo',
+      description: 'Marketplace Barang Bekas Terpercaya di Indonesia.',
+    };
+  }
 }
 
 // Server component wrapper for JSON-LD schema
 export default async function ProductPage({ params }) {
-  const { slug } = await params;
-  const supabase = await createClient();
+  let product = null;
+  let slug = '';
 
-  const { data: product, error } = await supabase
-    .from('products')
-    .select(`
-      slug,
-      title,
-      description,
-      price,
-      condition,
-      created_at,
-      user_id,
-      regencies (regency_name),
-      provinces (province_name),
-      categories (name, parent_category),
-      product_images (image_url, order)
-    `)
-    .eq('slug', slug)
-    .maybeSingle();
+  try {
+    const resolvedParams = await params;
+    slug = resolvedParams?.slug || '';
 
-  if (error) {
-    console.error('Error fetching product:', error);
+    if (!slug) {
+      return <ProductDetail />;
+    }
+
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        slug,
+        title,
+        description,
+        price,
+        condition,
+        created_at,
+        user_id,
+        regencies (regency_name),
+        provinces (province_name),
+        categories (name, parent_category),
+        product_images (image_url, order)
+      `)
+      .eq('slug', slug)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching product:', error);
+    }
+
+    product = data;
+  } catch (err) {
+    console.error('Error in ProductPage:', err);
+    // Return the client component which will handle its own data fetching
+    return <ProductDetail />;
   }
 
   // Product JSON-LD Schema for GEO/AIO
