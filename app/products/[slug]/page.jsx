@@ -90,11 +90,11 @@ export default async function ProductPage({ params }) {
       price,
       condition,
       created_at,
+      user_id,
       regencies (regency_name),
       provinces (province_name),
       categories (name, parent_category),
-      product_images (image_url, order),
-      profiles (full_name)
+      product_images (image_url, order)
     `)
     .eq('slug', slug)
     .maybeSingle();
@@ -127,7 +127,7 @@ export default async function ProductPage({ params }) {
         : 'https://schema.org/UsedCondition',
       seller: {
         '@type': 'Person',
-        name: product.profiles?.full_name || 'Penjual TokoMonggo',
+        name: 'Penjual TokoMonggo',
       },
       areaServed: {
         '@type': 'Place',
