@@ -7,7 +7,6 @@ import PWAInstallPrompt from './components/PWAInstallPrompt';
 const inter = localFont({
   src: '../public/fonts/inter.woff2',
   display: 'swap', // 폰트 로딩 중에도 텍스트 표시 (FOUT 방지)
-  preload: true,   // 폰트 미리 로드
   variable: '--font-inter', // CSS 변수로 사용 가능
   adjustFontFallback: true, // Reduce layout shift
   fallback: ['system-ui', 'arial'], // System font fallback
@@ -141,8 +140,12 @@ export default function RootLayout({ children }) {
 
 
         {/* Preconnect to critical domains for faster resource loading */}
-        <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <>
+            <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+          </>
+        )}
         <link rel="preconnect" href="https://api.dicebear.com" />
         <link rel="preconnect" href="https://picsum.photos" />
 

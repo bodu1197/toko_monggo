@@ -6,7 +6,7 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: product } = await supabase
+  const { data: product, error } = await supabase
     .from('products')
     .select(`
       title,
@@ -19,7 +19,11 @@ export async function generateMetadata({ params }) {
       product_images (image_url, order)
     `)
     .eq('slug', slug)
-    .single();
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching product metadata:', error);
+  }
 
   if (!product) {
     return {
@@ -77,7 +81,7 @@ export default async function ProductPage({ params }) {
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: product } = await supabase
+  const { data: product, error } = await supabase
     .from('products')
     .select(`
       slug,
@@ -93,7 +97,11 @@ export default async function ProductPage({ params }) {
       profiles (full_name)
     `)
     .eq('slug', slug)
-    .single();
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching product:', error);
+  }
 
   // Product JSON-LD Schema for GEO/AIO
   const productSchema = product ? {

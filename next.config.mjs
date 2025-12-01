@@ -145,6 +145,16 @@ const nextConfig = {
     // loaderFile: './image-loader.js',
   },
 
+  // Rewrites for favicon.ico to use icon.svg
+  async rewrites() {
+    return [
+      {
+        source: '/favicon.ico',
+        destination: '/icon.svg',
+      },
+    ];
+  },
+
   // Headers for caching and security
   async headers() {
     return [
@@ -175,17 +185,13 @@ const nextConfig = {
           },
         ],
       },
-      // CSS files - aggressive caching with font preload
+      // CSS files - aggressive caching
       {
         source: '/_next/static/css/:path*',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
-          },
-          {
-            key: 'Link',
-            value: '</fonts/inter.woff2>; rel=preload; as=font; type=font/woff2; crossorigin=anonymous',
           },
         ],
       },
