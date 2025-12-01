@@ -42,7 +42,10 @@ export async function generateMetadata({ params }) {
       };
     }
 
-  const mainImage = product.product_images?.sort((a, b) => a.order - b.order)[0]?.image_url;
+  const sortedImages = product.product_images?.length > 0
+    ? [...product.product_images].sort((a, b) => (a.order || 0) - (b.order || 0))
+    : [];
+  const mainImage = sortedImages[0]?.image_url;
   const location = `${product.regencies?.regency_name || ''}, ${product.provinces?.province_name || ''}`;
   const priceFormatted = `Rp ${product.price?.toLocaleString('id-ID')}`;
 
@@ -138,79 +141,94 @@ export default async function ProductPage({ params }) {
   }
 
   // Product JSON-LD Schema for GEO/AIO
-  const productSchema = product ? {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    '@id': `https://tokomonggo.com/products/${slug}`,
-    name: product.title,
-    description: product.description,
-    image: product.product_images?.sort((a, b) => a.order - b.order).map(img => img.image_url) || [],
-    category: product.categories?.parent_category || product.categories?.name,
-    itemCondition: product.condition === 'Baru'
-      ? 'https://schema.org/NewCondition'
-      : 'https://schema.org/UsedCondition',
-    offers: {
-      '@type': 'Offer',
-      url: `https://tokomonggo.com/products/${slug}`,
-      priceCurrency: 'IDR',
-      price: product.price,
-      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      availability: 'https://schema.org/InStock',
-      itemCondition: product.condition === 'Baru'
-        ? 'https://schema.org/NewCondition'
-        : 'https://schema.org/UsedCondition',
-      seller: {
-        '@type': 'Person',
-        name: 'Penjual TokoMonggo',
-      },
-      areaServed: {
-        '@type': 'Place',
-        name: `${product.regencies?.regency_name}, ${product.provinces?.province_name}`,
-        address: {
-          '@type': 'PostalAddress',
-          addressLocality: product.regencies?.regency_name,
-          addressRegion: product.provinces?.province_name,
-          addressCountry: 'ID',
-        },
-      },
-    },
-    brand: {
-      '@type': 'Brand',
-      name: 'Barang Bekas',
-    },
-  } : null;
+  let productSchema = null;
+  let breadcrumbSchema = null;
 
-  // BreadcrumbList Schema
-  const breadcrumbSchema = product ? {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Beranda',
-        item: 'https://tokomonggo.com',
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: product.categories?.parent_category || 'Produk',
-        item: `https://tokomonggo.com/category/${encodeURIComponent(product.categories?.parent_category || 'all')}`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: product.categories?.name || 'Kategori',
-        item: `https://tokomonggo.com/category/${encodeURIComponent(product.categories?.parent_category || 'all')}/${encodeURIComponent(product.categories?.name || '')}`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 4,
-        name: product.title,
-        item: `https://tokomonggo.com/products/${slug}`,
-      },
-    ],
-  } : null;
+  try {
+    if (product) {
+      // Safely sort and map images
+      const productImages = product.product_images?.length > 0
+        ? [...product.product_images].sort((a, b) => (a.order || 0) - (b.order || 0)).map(img => img.image_url)
+        : [];
+
+      productSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        '@id': `https://tokomonggo.com/products/${slug}`,
+        name: product.title || '',
+        description: product.description || '',
+        image: productImages,
+        category: product.categories?.parent_category || product.categories?.name || '',
+        itemCondition: product.condition === 'Baru'
+          ? 'https://schema.org/NewCondition'
+          : 'https://schema.org/UsedCondition',
+        offers: {
+          '@type': 'Offer',
+          url: `https://tokomonggo.com/products/${slug}`,
+          priceCurrency: 'IDR',
+          price: product.price || 0,
+          priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          availability: 'https://schema.org/InStock',
+          itemCondition: product.condition === 'Baru'
+            ? 'https://schema.org/NewCondition'
+            : 'https://schema.org/UsedCondition',
+          seller: {
+            '@type': 'Person',
+            name: 'Penjual TokoMonggo',
+          },
+          areaServed: {
+            '@type': 'Place',
+            name: `${product.regencies?.regency_name || ''}, ${product.provinces?.province_name || ''}`,
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: product.regencies?.regency_name || '',
+              addressRegion: product.provinces?.province_name || '',
+              addressCountry: 'ID',
+            },
+          },
+        },
+        brand: {
+          '@type': 'Brand',
+          name: 'Barang Bekas',
+        },
+      };
+
+      // BreadcrumbList Schema
+      breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Beranda',
+            item: 'https://tokomonggo.com',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: product.categories?.parent_category || 'Produk',
+            item: `https://tokomonggo.com/category/${encodeURIComponent(product.categories?.parent_category || 'all')}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: product.categories?.name || 'Kategori',
+            item: `https://tokomonggo.com/category/${encodeURIComponent(product.categories?.parent_category || 'all')}/${encodeURIComponent(product.categories?.name || '')}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 4,
+            name: product.title || '',
+            item: `https://tokomonggo.com/products/${slug}`,
+          },
+        ],
+      };
+    }
+  } catch (schemaError) {
+    console.error('Error generating JSON-LD schema:', schemaError);
+    // Schema errors should not crash the page
+  }
 
   return (
     <>
