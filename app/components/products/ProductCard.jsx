@@ -16,7 +16,7 @@ import OptimizedImage from '../common/OptimizedImage';
  * @param {boolean} [props.priority=false] - LCP 이미지 우선 로딩 (첫 번째 카드용)
  * @param {number} [props.index=0] - 카드의 인덱스 (이미지 우선순위 결정용)
  */
-const ProductCard = React.memo(function ProductCard({ product, context = 'home', onDelete, onStatusChange, onRenew, priority = false, index = 0 }) {
+const ProductCard = React.memo(function ProductCard({ product, context = 'home', onDelete, onStatusChange, priority = false, index = 0 }) {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -122,33 +122,6 @@ const ProductCard = React.memo(function ProductCard({ product, context = 'home',
     }
   };
 
-  const handleRenewClick = (e) => {
-    e.stopPropagation();
-    if (onRenew) {
-      onRenew(product.slug);
-    }
-  };
-
-  // Calculate expiry status
-  const getExpiryInfo = () => {
-    if (!product.expires_at) return null;
-
-    const now = new Date();
-    const expiresAt = new Date(product.expires_at);
-    const daysRemaining = Math.floor((expiresAt - now) / (1000 * 60 * 60 * 24));
-
-    const isExpired = daysRemaining < 0;
-    const isExpiringSoon = daysRemaining > 0 && daysRemaining <= 7;
-
-    return {
-      daysRemaining,
-      isExpired,
-      isExpiringSoon,
-      message: isExpired ? 'Iklan berakhir' : isExpiringSoon ? `Berakhir ${daysRemaining} hari lagi` : null
-    };
-  };
-
-  const expiryInfo = getExpiryInfo();
 
   return (
     <div
@@ -220,31 +193,7 @@ const ProductCard = React.memo(function ProductCard({ product, context = 'home',
 
         {context === 'profile' && (
           <>
-            {/* Expiry Warning */}
-            {expiryInfo && (expiryInfo.isExpired || expiryInfo.isExpiringSoon) && (
-              <div className={`px-2.5 py-1.5 rounded-md text-xs font-medium mt-2 text-center ${
-                expiryInfo.isExpired ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
-              }`}>
-                {expiryInfo.message}
-              </div>
-            )}
-
             <div className="mt-auto flex gap-2">
-              {/* Renew button for expired or expiring products */}
-              {expiryInfo && (expiryInfo.isExpired || expiryInfo.isExpiringSoon) && onRenew && (
-                <button
-                  className="flex-1 px-2 py-2 rounded-lg border border-emerald-500 bg-emerald-500 text-white cursor-pointer text-sm font-medium flex items-center justify-center gap-1.5 transition-colors duration-200 hover:bg-emerald-600"
-                  onClick={handleRenewClick}
-                  title="Perpanjang iklan 30 hari"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-                    <path d="M23 4v6h-6M1 20v-6h6"/>
-                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-                  </svg>
-                  Perpanjang
-                </button>
-              )}
-
               <button
                 className={`flex-1 px-2 py-2 rounded-lg border border-gray-300 bg-white cursor-pointer text-sm font-medium flex items-center justify-center gap-1.5 transition-colors duration-200 hover:bg-gray-50 ${
                   product.status === 'paused' ? 'text-emerald-500' : 'text-amber-500'
@@ -301,7 +250,6 @@ const ProductCard = React.memo(function ProductCard({ product, context = 'home',
     prevProps.product?.city === nextProps.product?.city &&
     prevProps.product?.province === nextProps.product?.province &&
     prevProps.product?.status === nextProps.product?.status &&
-    prevProps.product?.expires_at === nextProps.product?.expires_at &&
     prevProps.context === nextProps.context &&
     prevProps.index === nextProps.index &&
     prevProps.priority === nextProps.priority

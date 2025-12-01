@@ -137,7 +137,6 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
           )
         `)
         .eq('status', 'active')
-        .gt('expires_at', new Date().toISOString())
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -368,7 +367,6 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
           )
         `)
         .eq('status', 'active')
-        .gt('expires_at', new Date().toISOString())
         .or(`title.ilike.${searchTerm},description.ilike.${searchTerm}`)
         .order('created_at', { ascending: false })
         .limit(50);
@@ -423,7 +421,6 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
         .from('products')
         .select('title, categories(name)')
         .eq('status', 'active')
-        .gt('expires_at', new Date().toISOString())
         .ilike('title', searchTerm)
         .order('created_at', { ascending: false })
         .limit(8);
