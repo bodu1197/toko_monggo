@@ -146,7 +146,6 @@ export default function ProductDetailPage() {
         .eq('regency_id', productData.regency_id)
         .eq('status', 'active')
         .neq('slug', productData.slug)
-        .gt('expires_at', new Date().toISOString())
         .in('category_id', categoryIds)
         .order('created_at', { ascending: false })
         .limit(8);

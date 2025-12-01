@@ -77,6 +77,22 @@ export default async function sitemap() {
     },
   ];
 
+  // AI/LLM discovery pages
+  const aiPages = [
+    {
+      url: `${baseUrl}/llms.txt`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/ai.txt`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+  ];
+
   try {
     // Get all active products for dynamic sitemap (use slug instead of id)
     const { data: products } = await supabase
@@ -125,10 +141,10 @@ export default async function sitemap() {
       });
     });
 
-    return [...staticPages, ...faqPages, ...productPages, ...categoryPages];
+    return [...staticPages, ...faqPages, ...aiPages, ...productPages, ...categoryPages];
   } catch (error) {
     console.error('Error generating sitemap:', error);
     // Return static pages only if database fails
-    return [...staticPages, ...faqPages];
+    return [...staticPages, ...faqPages, ...aiPages];
   }
 }
