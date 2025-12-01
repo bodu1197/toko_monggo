@@ -105,79 +105,8 @@ export async function generateMetadata({ params }) {
   }
 }
 
-// Helper function to generate JSON-LD safely
-function generateProductJsonLd(product, slug) {
-  if (!product) return null;
-
-  try {
-    // Get first image safely
-    let imageUrl = DEFAULT_OG_IMAGE;
-    if (product.product_images && Array.isArray(product.product_images) && product.product_images.length > 0) {
-      const sortedImages = [...product.product_images].sort((a, b) => (a.order || 0) - (b.order || 0));
-      if (sortedImages[0]?.image_url) {
-        imageUrl = sortedImages[0].image_url;
-      }
-    }
-
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: product.title || 'Produk',
-      description: product.description || '',
-      image: imageUrl,
-      url: `${BASE_URL}/products/${slug}`,
-      offers: {
-        '@type': 'Offer',
-        price: product.price || 0,
-        priceCurrency: 'IDR',
-        availability: product.status === 'available'
-          ? 'https://schema.org/InStock'
-          : 'https://schema.org/OutOfStock',
-        seller: {
-          '@type': 'Organization',
-          name: 'TokoMonggo',
-        },
-      },
-    };
-  } catch (e) {
-    console.error('Error generating JSON-LD:', e);
-    return null;
-  }
-}
-
-// Server Component with JSON-LD
-export default async function ProductPage({ params }) {
-  let jsonLd = null;
-
-  try {
-    const resolvedParams = await params;
-    const slug = resolvedParams?.slug || '';
-
-    if (slug) {
-      const supabase = await createClient();
-      const { data: product } = await supabase
-        .from('products')
-        .select('title, description, price, status, product_images(image_url, order)')
-        .eq('slug', slug)
-        .maybeSingle();
-
-      if (product) {
-        jsonLd = generateProductJsonLd(product, slug);
-      }
-    }
-  } catch (err) {
-    console.error('Error fetching product for JSON-LD:', err);
-  }
-
-  return (
-    <>
-      {jsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      )}
-      <ProductDetail />
-    </>
-  );
+// Simple Server Component - no data fetching here to avoid RSC streaming issues
+// JSON-LD is now rendered client-side in ProductDetail
+export default function ProductPage() {
+  return <ProductDetail />;
 }

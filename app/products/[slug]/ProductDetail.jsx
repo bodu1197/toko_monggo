@@ -388,6 +388,65 @@ export default function ProductDetailPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
 
+  // JSON-LD structured data for SEO (client-side injection)
+  useEffect(() => {
+    if (!product || !params.slug) return;
+
+    // Remove any existing JSON-LD script for this product
+    const existingScript = document.getElementById('product-jsonld');
+    if (existingScript) {
+      existingScript.remove();
+    }
+
+    try {
+      // Get first image safely
+      let imageUrl = 'https://tokomonggo.com/og-image.jpg';
+      if (product.product_images && Array.isArray(product.product_images) && product.product_images.length > 0) {
+        const sortedImages = [...product.product_images].sort((a, b) => (a.order || 0) - (b.order || 0));
+        if (sortedImages[0]?.image_url) {
+          imageUrl = sortedImages[0].image_url;
+        }
+      }
+
+      const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.title || 'Produk',
+        description: product.description || '',
+        image: imageUrl,
+        url: `https://tokomonggo.com/products/${params.slug}`,
+        offers: {
+          '@type': 'Offer',
+          price: product.price || 0,
+          priceCurrency: 'IDR',
+          availability: product.status === 'available' || product.status === 'active'
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+          seller: {
+            '@type': 'Organization',
+            name: 'TokoMonggo',
+          },
+        },
+      };
+
+      const script = document.createElement('script');
+      script.id = 'product-jsonld';
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(jsonLd);
+      document.head.appendChild(script);
+
+      // Cleanup on unmount
+      return () => {
+        const scriptToRemove = document.getElementById('product-jsonld');
+        if (scriptToRemove) {
+          scriptToRemove.remove();
+        }
+      };
+    } catch (e) {
+      console.error('Error generating JSON-LD:', e);
+    }
+  }, [product, params.slug]);
+
   useEffect(() => {
     if (currentUser) {
       checkFavoriteStatus();
