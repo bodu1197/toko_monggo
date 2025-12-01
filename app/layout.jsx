@@ -17,6 +17,13 @@ export const metadata = {
   title: 'TokoMonggo - Marketplace Barang Bekas Terpercaya',
   description: 'Platform jual beli barang bekas terpercaya di Indonesia. Jual beli laptop bekas, handphone bekas, elektronik bekas, furniture bekas dengan harga terbaik. Marketplace online Indonesia.',
   manifest: '/manifest.json', // PWA support
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon-192.png', type: 'image/png', sizes: '192x192' },
+    ],
+    apple: '/icon-192.png',
+  },
   keywords: [
     'jual beli barang bekas',
     'marketplace barang bekas',
@@ -138,13 +145,6 @@ export default function RootLayout({ children }) {
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
         <link rel="preconnect" href="https://api.dicebear.com" />
         <link rel="preconnect" href="https://picsum.photos" />
-
-        {/* Resource hints for better performance */}
-        <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-
-        {/* PWA Manifest */}
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
 
         {/* JSON-LD for Google */}
         <script
