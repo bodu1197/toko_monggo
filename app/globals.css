@@ -36,6 +36,12 @@
   --text-muted: var(--color-text-muted);
 }
 
+/* 스크롤바 레이아웃 시프트 방지 - 항상 스크롤바 공간 확보 */
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
 /* LCP 최적화 - Render Delay 해결 */
 /* GPU 가속으로 이미지 렌더링 속도 향상 */
 img {

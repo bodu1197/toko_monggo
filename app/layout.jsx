@@ -117,6 +117,7 @@ export default function RootLayout({ children }) {
         {/* Critical CSS for immediate render */}
         <style dangerouslySetInnerHTML={{ __html: `
           :root{--color-primary-900:#111827;--color-primary-50:#f9fafb;--color-primary-300:#d1d5db;--color-primary-400:#9ca3af}
+          html{overflow-y:scroll;scrollbar-gutter:stable}
           body{background-color:#111827;color:#f9fafb;margin:0;min-height:100vh}
           .antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 

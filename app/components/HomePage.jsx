@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
@@ -27,13 +27,12 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
   const router = useRouter();
   const supabase = useSupabaseClient();
   const [products, setProducts] = useState(initialProducts);
-  const [filteredProducts, setFilteredProducts] = useState(initialProducts);
   const [loading, setLoading] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [locationStatus, setLocationStatus] = useState('idle');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [isInitialLoad, setIsInitialLoad] = useState(true); // 초기 로드 플래그
+  const isInitialLoadRef = useRef(true); // 초기 로드 플래그 (ref로 변경하여 리렌더 방지)
 
   // 검색 상태
   const [searchQuery, setSearchQuery] = useState('');
@@ -157,11 +156,9 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
       })) || [];
 
       setProducts(transformedProducts);
-      setFilteredProducts(transformedProducts);
     } catch (error) {
       console.error('Error fetching products:', error);
       setProducts([]);
-      setFilteredProducts([]);
     } finally {
       setLoading(false);
     }
@@ -205,7 +202,6 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
       })) || [];
 
       setProducts(transformedProducts);
-      setFilteredProducts(transformedProducts);
 
       if (transformedProducts.length > 0) {
         const firstProduct = transformedProducts[0];
@@ -282,10 +278,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
     return result;
   }, [filters, products]);
 
-  // useMemo 결과를 state에 동기화
-  useEffect(() => {
-    setFilteredProducts(filteredProductsMemo);
-  }, [filteredProductsMemo]);
+  // filteredProductsMemo를 직접 사용 (불필요한 state 동기화 제거)
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -389,10 +382,8 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
         })) || [];
 
         setProducts(transformedProducts);
-        setFilteredProducts(transformedProducts);
       } else {
         setProducts([]);
-        setFilteredProducts([]);
       }
     } catch (error) {
       console.error('Search error:', error);
@@ -443,8 +434,8 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
   // 검색 입력 핸들러 (debouncing)
   useEffect(() => {
     // 초기 로드 시에는 fetch하지 않음 (SSR 데이터 사용)
-    if (isInitialLoad) {
-      setIsInitialLoad(false);
+    if (isInitialLoadRef.current) {
+      isInitialLoadRef.current = false; // ref 변경은 리렌더 유발 안함
       return;
     }
 
@@ -466,7 +457,7 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, fetchAutocompleteSuggestions, searchProducts, userLocation, fetchNearbyProducts, fetchProducts, isInitialLoad]);
+  }, [searchQuery, fetchAutocompleteSuggestions, searchProducts, userLocation, fetchNearbyProducts, fetchProducts]);
 
   // 검색 실행 핸들러
   const handleSearch = (e) => {
@@ -903,9 +894,9 @@ export default function HomePage({ initialProducts = [], initialProvinces = [], 
               <div className="col-span-full">
                 <LoadingState message="Memuat produk..." />
               </div>
-            ) : filteredProducts.length > 0 ? (
+            ) : filteredProductsMemo.length > 0 ? (
               <>
-                {filteredProducts.map((product, index) => (
+                {filteredProductsMemo.map((product, index) => (
                   <React.Fragment key={product.id}>
                     <ProductCard
                       product={product}
