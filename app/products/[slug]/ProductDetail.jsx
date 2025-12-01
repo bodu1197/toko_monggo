@@ -50,6 +50,9 @@ export default function ProductDetailPage() {
   // Similar products state
   const [similarProducts, setSimilarProducts] = useState([]);
 
+  // Hydration safe state - dates will only render after mount
+  const [mounted, setMounted] = useState(false);
+
   const fetchCurrentUser = useCallback(async () => {
     if (!supabase) return;
     const { data: { user } } = await supabase.auth.getUser();
@@ -81,9 +84,13 @@ export default function ProductDetailPage() {
           )
         `)
         .eq('slug', params.slug)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) {
+        setProduct(null);
+        return;
+      }
 
       // Fetch seller profile separately
       if (data && data.user_id) {
@@ -258,7 +265,7 @@ export default function ProductDetailPage() {
             .from('profiles')
             .select('full_name, avatar_url')
             .eq('id', comment.user_id)
-            .single();
+            .maybeSingle();
 
           const { count } = await supabase
             .from('product_comments')
@@ -346,6 +353,9 @@ export default function ProductDetailPage() {
   };
 
   useEffect(() => {
+    // Mark as mounted for hydration-safe date rendering
+    setMounted(true);
+
     // Initialize Supabase on client-side only
     const client = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -649,11 +659,11 @@ export default function ProductDetailPage() {
                   <div className="flex flex-col gap-1">
                     <span className="text-sm text-[#9ca3af]">Diposting</span>
                     <span className="text-[15px] font-semibold text-[#f9fafb]">
-                      {new Date(product.created_at).toLocaleDateString('id-ID', {
+                      {mounted ? new Date(product.created_at).toLocaleDateString('id-ID', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
-                      })}
+                      }) : '...'}
                     </span>
                   </div>
                 </div>
@@ -846,11 +856,11 @@ export default function ProductDetailPage() {
                               )}
                             </span>
                             <span className="text-xs lg:text-[13px] text-[#6b7280]">
-                              {new Date(comment.created_at).toLocaleDateString('id-ID', {
+                              {mounted ? new Date(comment.created_at).toLocaleDateString('id-ID', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric'
-                              })}
+                              }) : '...'}
                             </span>
                           </div>
                         </div>
@@ -967,11 +977,11 @@ export default function ProductDetailPage() {
                   <div className="flex flex-col gap-1">
                     <span className="text-sm text-[#9ca3af]">Diposting</span>
                     <span className="text-[15px] font-semibold text-[#f9fafb]">
-                      {new Date(product.created_at).toLocaleDateString('id-ID', {
+                      {mounted ? new Date(product.created_at).toLocaleDateString('id-ID', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
-                      })}
+                      }) : '...'}
                     </span>
                   </div>
                 </div>
@@ -993,7 +1003,7 @@ export default function ProductDetailPage() {
                     {product.profiles?.full_name || 'Penjual'}
                   </span>
                   <span className="text-[13px] text-[#6b7280]">
-                    Bergabung {new Date(product.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short' })}
+                    Bergabung {mounted ? new Date(product.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short' }) : '...'}
                   </span>
                 </div>
               </div>
