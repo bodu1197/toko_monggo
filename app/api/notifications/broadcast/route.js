@@ -3,12 +3,27 @@ import webpush from 'web-push';
 import { createClient } from '@supabase/supabase-js';
 import { BroadcastNotificationSchema, formatValidationError } from '../../../utils/validation';
 
-// Configure web-push with VAPID details
-webpush.setVapidDetails(
-  process.env.VAPID_SUBJECT,
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
-);
+// Configure web-push with VAPID details (only if valid env vars are set)
+const VAPID_SUBJECT = process.env.VAPID_EMAIL || process.env.VAPID_SUBJECT;
+const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
+
+// Check if VAPID keys are valid (not placeholder values)
+const isValidVapidConfig = 
+  VAPID_SUBJECT && 
+  VAPID_PUBLIC_KEY && 
+  VAPID_PRIVATE_KEY &&
+  VAPID_SUBJECT.startsWith('mailto:') &&
+  VAPID_PUBLIC_KEY.length > 50 &&
+  VAPID_PRIVATE_KEY.length > 30;
+
+if (isValidVapidConfig) {
+  try {
+    webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+  } catch (e) {
+    console.warn('Failed to set VAPID details:', e.message);
+  }
+}
 
 // Initialize Supabase client
 const supabase = createClient(

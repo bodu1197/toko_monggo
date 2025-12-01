@@ -191,7 +191,7 @@ const nextConfig = {
       },
       // Image optimization - cache for 1 year
       {
-        source: '/_next/image:path*',
+        source: '/_next/image',
         headers: [
           {
             key: 'Cache-Control',
