@@ -63,7 +63,17 @@ export default async function sitemap() {
       url: `${baseUrl}/help`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
-      priority: 0.7,
+      priority: 0.8, // Higher priority for FAQ page (GEO optimization)
+    },
+  ];
+
+  // FAQ pages for AI/GEO optimization (high priority for search engines and AI)
+  const faqPages = [
+    {
+      url: `${baseUrl}/help#faq`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
   ];
 
@@ -115,10 +125,10 @@ export default async function sitemap() {
       });
     });
 
-    return [...staticPages, ...productPages, ...categoryPages];
+    return [...staticPages, ...faqPages, ...productPages, ...categoryPages];
   } catch (error) {
     console.error('Error generating sitemap:', error);
     // Return static pages only if database fails
-    return staticPages;
+    return [...staticPages, ...faqPages];
   }
 }
