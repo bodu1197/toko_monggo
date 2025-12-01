@@ -388,9 +388,23 @@ export default function ProductDetailPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
 
-  // JSON-LD structured data for SEO (client-side injection)
+  // Dynamic page title and JSON-LD for SEO (client-side)
   useEffect(() => {
     if (!product || !params.slug) return;
+
+    // Update page title dynamically
+    const priceFormatted = `Rp ${(product.price || 0).toLocaleString('id-ID')}`;
+    document.title = `${product.title || 'Produk'} - ${priceFormatted} | TokoMonggo`;
+
+    // Update meta description
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content',
+        product.description
+          ? `${product.description.substring(0, 150)}...`
+          : `Beli ${product.title} dengan harga ${priceFormatted}. Marketplace Barang Bekas Terpercaya.`
+      );
+    }
 
     // Remove any existing JSON-LD script for this product
     const existingScript = document.getElementById('product-jsonld');
@@ -441,9 +455,11 @@ export default function ProductDetailPage() {
         if (scriptToRemove) {
           scriptToRemove.remove();
         }
+        // Reset title on unmount
+        document.title = 'TokoMonggo - Marketplace Barang Bekas Terpercaya';
       };
     } catch (e) {
-      console.error('Error generating JSON-LD:', e);
+      console.error('Error generating SEO data:', e);
     }
   }, [product, params.slug]);
 
