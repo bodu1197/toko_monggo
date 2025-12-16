@@ -8,16 +8,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // --- IMPORTANT: CREDENTIALS ---
-// The script uses the public ANON KEY. This key might not have enough permissions
-// to delete and insert data, as these actions are likely protected by Row Level Security (RLS).
+// 환경변수에서 Supabase 정보를 로드합니다.
+// .env.local 파일에 다음 값을 설정하세요:
+//   NEXT_PUBLIC_SUPABASE_URL
+//   SUPABASE_SERVICE_ROLE_KEY (또는 NEXT_PUBLIC_SUPABASE_ANON_KEY)
 //
-// If the script fails with a permission error, you MUST replace the anon key
-// with your SERVICE_ROLE KEY. You can find this key in your Supabase project dashboard
-// under Project Settings > API > Project API keys.
+// 실행: node -r dotenv/config scripts/import_region_data.mjs dotenv_config_path=.env.local
 //
-// DO NOT acommit your service role key to Git.
-const supabaseUrl = 'https://ncjxxuzbvonbdhoblirv.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5janh4dXpidm9uYmNob2JsaXJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk4ODc5OTYsImV4cCI6MjA3NTQ2Mzk5Nn0.bvMDejO671qiiLPSfwlHGm1m2Y39on-Ce27ZJN2IULM'; // <-- REPLACE THIS WITH YOUR SERVICE_ROLE KEY IF NEEDED
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ 환경변수가 설정되지 않았습니다.');
+  console.error('   NEXT_PUBLIC_SUPABASE_URL 및 SUPABASE_SERVICE_ROLE_KEY를 .env.local에 설정하세요.');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
