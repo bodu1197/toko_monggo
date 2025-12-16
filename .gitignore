@@ -39,3 +39,10 @@ supabase/.temp/
 # Temporary and backup files
 *.bak
 nul
+.vercel
+.env*.local
+
+# Migration scripts with sensitive data
+scripts/restore-*.js
+scripts/execute-*.js
+scripts/fix-schema.js

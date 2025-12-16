@@ -6,9 +6,10 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Supabase credentials
-const supabaseUrl = 'https://zthksbitvezxwhbymatz.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0aGtzYml0dmV6eHdoYnltYXR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTAxNzIsImV4cCI6MjA3NTY4NjE3Mn0.YYnQBB3vjDe8-DsAl4CHgc_WplKYnmP79DpRA85K5FU';
+// Supabase credentials - 환경변수에서 로드
+// 주의: 이 스크립트는 현재 사용되지 않음. Supabase CLI 또는 Dashboard 사용 권장
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://tshngfzijqfuplzvmpoc.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
